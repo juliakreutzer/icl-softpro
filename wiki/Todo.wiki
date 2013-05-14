@@ -1,0 +1,11 @@
+#summary Todo-Liste
+
+= Todo =
+
+  * SVN anpassen
+  * Daten in das Verzeichnis auf ella und ins svn laden
+
+  * bis Di, 21.Mai (zur Not 28.) Spezifikationsvortragsfolien, dafür v.a.:
+    * Aufgabenverteilung
+    * Architektur
+    * Zeitplan

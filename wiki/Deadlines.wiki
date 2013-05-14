@@ -1,0 +1,32 @@
+#summary Termine, Deadlines und Fälligkeiten ;-)
+
+Projektverzeichnis auf ella: /resources/softpro/ss13/gruppe1
+
+svn: https://www.cl.uni-heidelberg.de/svn/sp-ss13-01
+
+== 14.5. Forschungsplan == 
+ERLEDIGT!
+  * Projektbeschreibung: Ziel, Methode, Evaluierung, Daten, Tools
+  * Wie plant ihr Ergebnisse zu evaluieren?
+  * Welche Tools und Daten sollen verwendet werden?
+  * Abgabe schriftlich, ca. 2 Seiten
+  * Wer macht was? -> eher Spezifikation
+  * grober Aufbau
+  * was muss überhaupt gemacht werden?
+
+== 28.5. Spezifikationsvortrag ==
+! Besser schon am 21.5. fertig !
+  * Problemstellung, Lösungsansatz, Evaluation
+  * Auswahl/Sichtung von Ressourcen und Algorithmen/Verfahren
+  * Modularisierung, Zuteilung, Zeitplan
+  * Programmarchitektur
+  * Vortrag: 25 Minuten
+
+== 22.7. Abschlussvortrag ==
+  * Umsetzung des Lösungsansatzes
+  * Evaluation
+  * Demo
+  * Lessons learned
+  * Vortrag: 25 Minuten
+
+= 30.7. Abgabefrist = 

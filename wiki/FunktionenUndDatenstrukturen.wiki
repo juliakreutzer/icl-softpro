@@ -1,0 +1,26 @@
+#summary grobe erste Beschreibung von benötigten Funktionen und Datenstrukturen
+#labels Phase-Requirements
+
+=Datenstrukturen:=
+  * *Features* für ein Review: Tupel (Label, Dictionary/HashMap)
+  * *Gewichtsvektor*: Array mit Länge der Anzahl der Dimensionen (100.000?)
+
+
+=Funktionen:=
+  # *Training*
+    * Shards aufteilen (Map)
+    * Einlesen von Datei -> Tupel s.o.
+    * SGD Perceptron
+    * Gewichtsvektoren sammeln (Reduce)
+    * l2-Norm berechnen -> Auswahl
+    * Mitteln über shards
+  # *Test*
+    * Klassifikator
+    * Evaluation -> Baselines
+
+=Perceptrons:=
+4 verschiedene Perceptron-Formen
+  # Multitask - shards = random 
+  # Multitask - shards = Produktkategorien
+  # klassisch - für jede Kategorie einzeln (sollten denen im Paper entsprechen)
+  # klassisch - für alle Daten zusammen
