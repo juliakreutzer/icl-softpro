@@ -1,0 +1,19 @@
+/**
+ * 
+ */
+
+/**
+ * @author julia
+ *
+ */
+public class ExperimentsJulia {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}
