@@ -14,13 +14,22 @@ ERLEDIGT!
   * grober Aufbau
   * was muss überhaupt gemacht werden?
 
+
+== 21.5. Vortrag fertig vorbereitet ==
+
 == 28.5. Spezifikationsvortrag ==
-! Besser schon am 21.5. fertig !
   * Problemstellung, Lösungsansatz, Evaluation
   * Auswahl/Sichtung von Ressourcen und Algorithmen/Verfahren
   * Modularisierung, Zuteilung, Zeitplan
   * Programmarchitektur
+  * abstrakte Version vom Code
   * Vortrag: 25 Minuten
+
+== 20.6. Multi-Task zusammenbauen==
+
+== 27.6. Implementierung fertig ==
+
+  * Zeit zum Testen, Verbessern, Ändern ;-)
 
 == 22.7. Abschlussvortrag ==
   * Umsetzung des Lösungsansatzes
