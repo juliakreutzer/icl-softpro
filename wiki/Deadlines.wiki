@@ -26,7 +26,7 @@ ERLEDIGT!
   * Vortrag: 25 Minuten
 
 == 20.6. Multi-Task zusammenbauen==
-
+  * Eine super Einführung in Hadoop hier: http://developer.yahoo.com/hadoop/tutorial/module4.html
 == 27.6. Implementierung fertig ==
 
   * Zeit zum Testen, Verbessern, Ändern ;-)
