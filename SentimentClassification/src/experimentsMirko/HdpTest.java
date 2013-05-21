@@ -1,4 +1,4 @@
-package ExperimentsMirko;
+package experimentsMirko;
 
 public class HdpTest {
 	public void run(String inputPath, String outputPath) throws Exception {
