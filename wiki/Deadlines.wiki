@@ -27,6 +27,7 @@ ERLEDIGT!
 
 == 20.6. Multi-Task zusammenbauen==
   * Eine super Einführung in Hadoop hier: http://developer.yahoo.com/hadoop/tutorial/module4.html
+  * Beispiel für Iterationen in Hadoop: http://stackoverflow.com/questions/5702018/how-to-re-run-whole-map-reduce-in-hadoop-before-job-completion
 == 27.6. Implementierung fertig ==
 
   * Zeit zum Testen, Verbessern, Ändern ;-)
