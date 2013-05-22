@@ -7,46 +7,63 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.util.*;
+//import org.w3c.dom.Text;
 
 public class WordCount {
 
-  public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, IntWritable> {
-    private final static IntWritable one = new IntWritable(1);
+  public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text> {
+//    private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
+    private Text aFileName = new Text();
 
-    public void map(LongWritable key, Text value, OutputCollector<Text, IntWritable> output, Reporter reporter) throws IOException {
+    public void map(LongWritable key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
       String line = value.toString();
+
+      FileSplit fileSplit = (FileSplit)reporter.getInputSplit();
+      String fileName = fileSplit.getPath().getName();
+      aFileName.set(fileName);
+      
       StringTokenizer tokenizer = new StringTokenizer(line);
       while (tokenizer.hasMoreTokens()) {
-        word.set(tokenizer.nextToken());
-        output.collect(word, one);
+    	String sauberesWort = tokenizer.nextToken().toString();
+    	sauberesWort = sauberesWort.replaceAll("\\W", "");
+        word.set(sauberesWort);
+        output.collect(word, aFileName);
       }
     }
   }
 
-  public static class Reduce extends MapReduceBase implements Reducer<Text, IntWritable, Text, IntWritable> {
-    public void reduce(Text key, Iterator<IntWritable> values, OutputCollector<Text, IntWritable> output, Reporter reporter) throws IOException {
-      int sum = 0;
+  public static class Reduce extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
+    public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+      String answer = new String();
+      ArrayList<String> fileNames = new ArrayList<String>();
+      
       while (values.hasNext()) {
-        sum += values.next().get();
+    	  String valueAsString = values.next().toString();
+
+    	  if ( !fileNames.contains( valueAsString ) ) {
+    		  answer = answer + " " + valueAsString;
+    		  fileNames.add( valueAsString );
+    	  }
       }
-      output.collect(key, new IntWritable(sum));
+      output.collect(key, new Text(answer));
     }
   }
 
   public static void main(String[] args) throws Exception {
     JobConf conf = new JobConf(WordCount.class);
-    conf.setJobName("wordcount");
+    conf.setJobName("wordcount v2");
 
     conf.setOutputKeyClass(Text.class);
-    conf.setOutputValueClass(IntWritable.class);
+    conf.setOutputValueClass(Text.class);
 
     conf.setMapperClass(Map.class);
-    conf.setCombinerClass(Reduce.class);
+//    conf.setCombinerClass(Reduce.class);
     conf.setReducerClass(Reduce.class);
 
-    conf.setInputFormat(TextInputFormat.class);
+    conf.setInputFormat(KeyValueTextInputFormat.class);
     conf.setOutputFormat(TextOutputFormat.class);
 
     FileInputFormat.setInputPaths(conf, new Path(args[0]));
