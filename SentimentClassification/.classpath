@@ -2,5 +2,30 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-2.0.0-mr1-cdh4.2.1-ant.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-2.0.0-mr1-cdh4.2.1-core.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-2.0.0-mr1-cdh4.2.1-examples.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-2.0.0-mr1-cdh4.2.1-test.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-2.0.0-mr1-cdh4.2.1-tools.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-ant.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-ant-2.0.0-mr1-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-core.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-core-2.0.0-mr1-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-examples.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-examples-2.0.0-mr1-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-test.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-test-2.0.0-mr1-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-tools.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-tools-2.0.0-mr1-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop/hadoop-annotations.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop/hadoop-annotations-2.0.0-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop/hadoop-auth.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop/hadoop-auth-2.0.0-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop/hadoop-common.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop/hadoop-common-2.0.0-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop/hadoop-common-2.0.0-cdh4.2.1-tests.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-hdfs/hadoop-hdfs.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-hdfs/hadoop-hdfs-2.0.0-cdh4.2.1.jar"/>
+	<classpathentry kind="lib" path="/usr/lib/hadoop-hdfs/hadoop-hdfs-2.0.0-cdh4.2.1-tests.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
