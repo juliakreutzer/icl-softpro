@@ -7,22 +7,21 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.util.*;
-//import org.w3c.dom.Text;
 
 public class WordCount {
 
-  public static class Map extends MapReduceBase implements Mapper<LongWritable, Text, Text, Text> {
+  public static class Map extends MapReduceBase implements Mapper<Text, Text, Text, Text> {
 //    private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
     private Text aFileName = new Text();
 
-    public void map(LongWritable key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+    public void map(Text key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
       String line = value.toString();
 
       FileSplit fileSplit = (FileSplit)reporter.getInputSplit();
-      String fileName = fileSplit.getPath().getName();
+      String einSchluessel =  key.toString();
+      String fileName = "filename: " + fileSplit.getPath().getName() + " key: " + einSchluessel;
       aFileName.set(fileName);
       
       StringTokenizer tokenizer = new StringTokenizer(line);
