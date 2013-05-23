@@ -1,0 +1,57 @@
+als	 filename: zwei.txt key: books
+ass	 filename: eins.txt key: cds
+bedigung	 filename: zwei.txt key: books
+bekommen	 filename: eins.txt key: electronics
+dann	 filename: zwei.txt key: electronics
+das	 filename: eins.txt key: cds filename: eins.txt key: electronics
+dass	 filename: zwei.txt key: electronics
+den	 filename: zwei.txt key: books filename: eins.txt key: books
+denn	 filename: eins.txt key: books
+der	 filename: eins.txt key: books filename: zwei.txt key: books
+deshalb	 filename: eins.txt key: electronics
+die	 filename: eins.txt key: electronics filename: eins.txt key: cds filename: zwei.txt key: electronics
+drfe	 filename: zwei.txt key: electronics
+eine	 filename: eins.txt key: dvds
+einen	 filename: zwei.txt key: dvds
+einmal	 filename: eins.txt key: cds filename: eins.txt key: dvds
+er	 filename: zwei.txt key: dvds filename: zwei.txt key: electronics
+es	 filename: eins.txt key: dvds filename: eins.txt key: cds
+essen	 filename: eins.txt key: electronics filename: eins.txt key: books filename: zwei.txt key: electronics
+etwas	 filename: eins.txt key: cds
+fernseher	 filename: zwei.txt key: books
+film	 filename: zwei.txt key: dvds
+flying	 filename: eins.txt key: electronics
+fragte	 filename: zwei.txt key: books
+gefrssige	 filename: zwei.txt key: books
+gehen	 filename: zwei.txt key: dvds
+geschafft	 filename: eins.txt key: cds
+gucken	 filename: zwei.txt key: dvds
+hatte	 filename: eins.txt key: cds filename: eins.txt key: electronics
+hunger	 filename: eins.txt key: electronics filename: eins.txt key: books
+ihr	 filename: eins.txt key: books filename: eins.txt key: cds filename: zwei.txt key: dvds
+ins	 filename: zwei.txt key: dvds
+kam	 filename: eins.txt key: electronics
+kino	 filename: zwei.txt key: dvds
+lautschmatzend	 filename: eins.txt key: books
+mal	 filename: zwei.txt key: dvds
+mit	 filename: zwei.txt key: dvds
+monster	 filename: eins.txt key: electronics
+nahm	 filename: eins.txt key: books
+natrlich	 filename: zwei.txt key: books
+ob	 filename: zwei.txt key: dvds
+pizza	 filename: zwei.txt key: electronics filename: eins.txt key: dvds filename: eins.txt key: cds
+popcorn	 filename: zwei.txt key: electronics
+sehr	 filename: eins.txt key: electronics
+sie	 filename: zwei.txt key: books
+spaghetti	 filename: eins.txt key: electronics
+stellte	 filename: zwei.txt key: books
+traurig	 filename: eins.txt key: electronics
+und	 filename: eins.txt key: cds filename: eins.txt key: electronics filename: zwei.txt key: electronics
+verstand	 filename: eins.txt key: books
+viel	 filename: eins.txt key: electronics
+war	 filename: eins.txt key: electronics filename: eins.txt key: dvds
+weg	 filename: eins.txt key: books
+wenn	 filename: zwei.txt key: electronics
+wolle	 filename: zwei.txt key: dvds
+wollte	 filename: zwei.txt key: dvds
+zu	 filename: eins.txt key: electronics filename: eins.txt key: cds
