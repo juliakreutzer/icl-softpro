@@ -5,7 +5,9 @@ import os, sys
 def readFile(filename):
 	f = open(filename, 'r')
 	print "Reading " + filename
-	return f.readlines()
+	fileContent = f.readlines()
+	f.close()
+	return fileContent
 
 def getFolderContent(folder):
 	files = []
@@ -36,16 +38,14 @@ def stringToCorpus(content, numTrain, numTest, label):
 			if (isFirstTrain):
 				lineTrain += line.rstrip('\n')
 				isFirstTrain = False
-				print "First"
 			else:
-				lineTrain += " NEWLINE " + line.rstrip('\n')
+				lineTrain += " <> " + line.rstrip('\n')
 		else:
 			if (isFirstTest):
 				lineTest += line.rstrip('\n')
 				isFirstTest = False
-				print "First"
 			else:
-				lineTrain += " NEWLINE " + line.rstrip('\n')
+				lineTest += " <> " + line.rstrip('\n')
 
 	return { "train": lineTrain, "test": lineTest }
 
@@ -70,6 +70,6 @@ if __name__ == "__main__":
 		content.extend( readFile(corpus + '/' + filename) )
 	
 	corpora = stringToCorpus(content, numTrain, numTest, corpus)
-	writeCorpus('test.corpus', corpora['test'])
-	writeCorpus('train.corpus', corpora['train'])
+	writeCorpus(corpus + '.test.corpus', corpora['test'])
+	writeCorpus(corpus + '.train.corpus', corpora['train'])
 	
