@@ -50,10 +50,10 @@ public class Instance {
 	}
 
 	public void foldInP(){
-		this.featureVector.put("#p", -1);
+		this.featureVector.put("!p", -1);
 	}
 	
 	public void foldInLabel(){
-		this.featureVector.put("#p",this.featureVector.get("#p")*this.label);
+		this.featureVector.put("!p",this.featureVector.get("!p")*this.label);
 	}
 }
