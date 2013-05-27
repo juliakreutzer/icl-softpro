@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="src" path="src/experimentsMirko"/>
 	<classpathentry kind="src" path="src/experimentsJulia"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="lib" path="/usr/lib/hadoop-0.20-mapreduce/hadoop-2.0.0-mr1-cdh4.2.1-ant.jar"/>
