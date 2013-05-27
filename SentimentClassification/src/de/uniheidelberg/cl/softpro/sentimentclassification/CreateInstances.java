@@ -3,30 +3,6 @@ import java.util.*;
 
 public class CreateInstances {
 	
-	/*public static ArrayList<String> readFile2(File f) {
-		ArrayList<String> kategorienInArrayList = new ArrayList<String>();
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(f));
-			String line = br.readLine();
-			while (line != null) {
-				kategorienInArrayList.add(line);
-				line = br.readLine();
-			}
-			br.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("File not found");
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		return kategorienInArrayList;
-	}*/
-	
-	/*public static void main(String[] args) {
-		ArrayList<String> erg = readFile(new File("/home/jasmin/workspace/Test/src/testDatei.txt"));
-		System.out.println(erg);
-	}*/
-	
 	public static String readFile(File f) {
 		String line = new String();
 		try {
@@ -42,15 +18,12 @@ public class CreateInstances {
 		return line;
 	}
 	
-	/*public static String[] formatting(String kategorie) {			//mit Array
-		String[] reviews = kategorie.split(" NEWLINE ");
-		reviews[0] = reviews[0].replace("dvd\t", "");		//dvd, books... ???
-		return  reviews;
-	}*/
-	
 	public static ArrayList<String> formatting(String kategorie) {		//mit ArrayList
-		String[] reviews = kategorie.split(" NEWLINE ");
-		reviews[0] = reviews[0].replace("dvd\t", "");		//dvd, books... ???
+		String[] reviews = kategorie.split("<>");
+		reviews[0] = reviews[0].replace("dvd\t", "");
+		reviews[0] = reviews[0].replace("books\t", "");
+		reviews[0] = reviews[0].replace("kitchen\t", "");
+		reviews[0] = reviews[0].replace("electronics\t", "");
 		ArrayList<String> al = new ArrayList<String>();
 		for (String review : reviews) {
 			al.add(review);
@@ -76,18 +49,10 @@ public class CreateInstances {
 				hm.put(key, value);
 			}
 			Instance inst = new Instance(hm, label);
-			System.out.println(inst.getFeatureVector());	//test
-			System.out.println(inst.getLabel());			//test
+			//System.out.println(inst.getFeatureVector());	//test
+			//System.out.println(inst.getLabel());			//test
 			instanceArray.add(inst);
 		}
 		return instanceArray;
-	}
-	
-	public static void main(String[] args) {
-		String erg = readFile(new File("/home/jasmin/workspace/Test/src/testDatei.txt"));
-		ArrayList<String> al = formatting(erg);
-		System.out.println(al);
-		ArrayList<Instance> instanceArrayList = makingInstances(al);
-		System.out.println(instanceArrayList);
 	}
 }
