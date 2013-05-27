@@ -1,5 +1,7 @@
 package de.uniheidelberg.cl.softpro.sentimentclassification;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
@@ -50,14 +52,34 @@ public class Toolbox {
 
 	public static HashMap<String, Double> convertStringToHashmap (String input) {
 		HashMap<String, Double> map = new HashMap<String, Double>();
-		for (String pair : input.split("<>")) {
-			String[] splitPair = pair.split("=", 2); 
-			map.put (splitPair[0], Double.parseDouble (splitPair[1]));
+		try {
+			for (String pair : input.split ("<>")) {
+				String[] splitPair = pair.split (" *= *", 2); 
+				map.put (splitPair[0], splitPair.length == 1 ? 0.0 : Double.parseDouble (splitPair[1]));
+			}
+		}
+		catch (NullPointerException e) {
+			System.err.println ("NullPointerException: convertStringToHashmap");
 		}
 		return map;
 	}
 
 	public static String convertHashMapToString (HashMap<String, Double> map) {
-		
+		return "";
+	}
+	
+	public static String getWeightVector( BufferedReader dataSource ) throws IOException {
+		StringBuilder weightVector = new StringBuilder();
+        String line;
+        line = dataSource.readLine();
+        while (line != null) {
+        	StringBuilder singleWeight = new StringBuilder();
+        	singleWeight.append ("<>");
+        	singleWeight.append (line);
+        	weightVector.append (singleWeight.toString());
+        	line = dataSource.readLine();
+        }
+        dataSource.close();
+		return weightVector.toString();
 	}
 }
