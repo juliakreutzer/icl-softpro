@@ -38,7 +38,7 @@ public class Perceptron{
 			//if key is already in perceptron weight vector
 			if (m2.containsKey(key1)){
 				value2 = m2.get(key1);
-			}
+			}	
 			//else is not necessary as value2 is instantiated to 0
 			dotproduct += m1.get(key1) * value2;
 		}		

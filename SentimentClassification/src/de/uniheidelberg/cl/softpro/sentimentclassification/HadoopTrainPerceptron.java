@@ -5,10 +5,12 @@ package de.uniheidelberg.cl.softpro.sentimentclassification;
  *
  */
 
-import java.io.IOException;
+import java.io.*;
+import java.net.URI;
 import java.util.*;
 
-import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.filecache.DistributedCache;
+import org.apache.hadoop.fs.*;
 import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
@@ -25,10 +27,59 @@ public class HadoopTrainPerceptron {
 	 * @param args Commandline arguments
 	 * @throws Exception
 	 */
+	
+	public static FileSystem fs;
+	public static int numberOfEpochs = 10;
+	public static int topKFeatures = 100;
+	public static String weightVectorFile = "weightVector.txt";
+
 	public static void main(String[] args) throws Exception {
+		if (args.length > 2) {
+			if ( args[2] != null) {
+				numberOfEpochs = Integer.parseInt (args[2]);
+			}
+		if (args.length > 3) {
+		}
+			if ( args[3] != null) {
+				topKFeatures = Integer.parseInt (args[2]);
+			}
+		}
+		for ( int e = 0; e < numberOfEpochs; e++ ) {
+			runHadoopJob( e, args[0], args[1]);			
+		}
+	}
+	
+	public static String readWVFromHDFS( String filename ) {
+		Path fileToOpen = new Path (filename);
+		BufferedReader br;
+		try {
+			br = new BufferedReader (new InputStreamReader (fs.open (fileToOpen)));
+			return Toolbox.getWeightVector (br);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return "";
+		}		
+	}
+	
+	public static void writeInitializedVector (Path outFolder) {
+		String vectorContent = readWVFromHDFS (outFolder.toString());
+		BufferedWriter out;
+		try {
+			out = new BufferedWriter (new FileWriter ("initializedVector"));
+			out.write( vectorContent );
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public static void runHadoopJob( Integer currentEpoch, String pathIn, String pathOut ) throws Exception {
 		
+		Integer lastEpoch = currentEpoch - 1;
 		JobConf conf = new JobConf(HadoopTrainPerceptron.class);
-		conf.setJobName("Hadoop Perceptron Training - SoftPro Grp 1");
+				
+		conf.setJobName("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
 	    conf.setOutputKeyClass(Text.class);		// data type for map's output key
 	    conf.setOutputValueClass(DoubleWritable.class);	// data type for map's output value
 	    
@@ -39,20 +90,39 @@ public class HadoopTrainPerceptron {
 		conf.setInputFormat(KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
 	    conf.setOutputFormat(TextOutputFormat.class);		// save result of reducers as text
 
-	    FileInputFormat.setInputPaths(conf, new Path(args[0]));		// first command line argument used as input path
-	    FileOutputFormat.setOutputPath(conf, new Path(args[1]));	// second command line argument used as output path
-
+	    Path inFile = new Path (pathIn);
+	    Path outFile = new Path (pathOut + "_e" + currentEpoch.toString());
+	    
+	    FileInputFormat.setInputPaths(conf, inFile);		// first command line argument used as input path
+	    FileOutputFormat.setOutputPath(conf, outFile);	// second command line argument used as output path
+	    
+	    
 	    //conf.set("test","hallo");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
 	    conf.set("learningRate","0.0001");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
-	    conf.set("initializedWeightVector", "");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
 	    
-	    JobClient.runJob(conf);		// start Hadoop-Job
+	    Path hdfsPath = new Path (weightVectorFile);
+	    String localFile;
+	    
+	    if (fs == null) {
+	    	fs = FileSystem.get (conf);
+	    	localFile = "emptyVector";
+	    }
+	    else {
+	    	localFile = "initializedVector";
+	    }
+	    
+	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);
+	    DistributedCache.addCacheFile(hdfsPath.toUri(), conf);
+	    
+	    RunningJob hadoopTask = JobClient.runJob(conf);		// start Hadoop-Job
+	    hadoopTask.waitForCompletion();
+	    writeInitializedVector (outFile);
 	}
 	
 	
 	
 	
-	public static class Map extends MapReduceBase implements Mapper<Text, Text, Text, Text> {
+	public static class Map extends MapReduceBase implements Mapper<Text, Text, Text, DoubleWritable> {
 		/*
 		 * Implementation of the Hadoop Mapper-Class
 		 * Trains an initialized perceptron on one shard of data
@@ -70,7 +140,35 @@ public class HadoopTrainPerceptron {
 	    	 * important to get data from previously trained perceptrons
 	    	 */
 	        learningRate = Double.parseDouble (job.get ("learningRate"));							// get learning rate specified in JobConf
-	        initializedWeightVector = Toolbox.convertStringToHashmap(job.get("initializedWeightVector"));	// get either an initialized weight vector from previously ran trainings or an empty WV 
+	        
+	        try {
+	            String wvCacheName = new Path (weightVectorFile).getName();
+		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (job);
+		        if (null != cacheFiles && cacheFiles.length > 0) {
+		        	for (Path cachePath : cacheFiles) {
+		        		if (cachePath.getName().equals(wvCacheName)) {
+		        			readWeightVector (cachePath);
+		        			break;
+		        		}
+		        	}
+		        }
+	    	} 
+	    	catch (IOException ioe) {
+	    		System.err.println("IOException reading from distributed cache");
+	    		System.err.println(ioe.toString());
+	    	}
+	    }
+	    
+	    void readWeightVector (Path cachePath) throws IOException {
+	    	BufferedReader reader = new BufferedReader (new FileReader (cachePath.toString()));
+	    	try {
+	    		String line;
+	    		initializedWeightVector = Toolbox.convertStringToHashmap (reader.readLine());
+	    	} 
+	    	finally {
+	    		reader.close();
+	    	}
+	    	
 	    }
 
 	    
@@ -86,6 +184,20 @@ public class HadoopTrainPerceptron {
 	    	
 	    	trainedPerceptron = p.train (trainInstances);
 	    	
+	    	for( String key : trainedPerceptron.keySet()) {
+	    		Double value = trainedPerceptron.get (key);
+
+	    		Text hadoopKey = new Text();
+	    		DoubleWritable hadoopValue = new DoubleWritable(); 
+	    		
+	    		hadoopKey.set (key);
+/*	    		if (value == null) {
+	    			value = 123.456789;
+	    		}*/
+	    		hadoopValue.set (value);
+	    		
+	    		thisMapsOutputCollector.collect (hadoopKey, hadoopValue);
+	    	}
 	    	
 	    	/* NICE TO REMEMBER:
 	    	 *
@@ -99,20 +211,7 @@ public class HadoopTrainPerceptron {
 	    	 * Called when Mapper-Class has finished running and is about to be closed
 	    	 * time to throw collected data back to Hadoop framework / reducers
 	    	 */
-	    	Iterator results = trainedPerceptron.entrySet().iterator();
-	    	while (results.hasNext()) {
-	    		String key = results.next().toString();
-	    		Double value = trainedPerceptron.get (key);
 
-	    		Text hadoopKey = new Text();
-	    		DoubleWritable hadoopValue = new DoubleWritable(); 
-	    		
-	    		hadoopKey.set (key);
-	    		hadoopValue.set (value); 		
-	    		
-	    		thisMapsOutputCollector.collect(key, value);
-	    	}
-	    	
 	    	//thisMapsOutputCollector.collect(word, aFileName);
 	    }
 	}
@@ -120,11 +219,17 @@ public class HadoopTrainPerceptron {
 	
 	
 	
-	public static class Reduce extends MapReduceBase implements Reducer<Text, Text, Text, Text> {
-		public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+	public static class Reduce extends MapReduceBase implements Reducer<Text, DoubleWritable, Text, DoubleWritable> {
+		public void reduce(Text key, Iterator<DoubleWritable> values, OutputCollector<Text, DoubleWritable> output, Reporter reporter) throws IOException {
+			Double sum = 0.0;
+			
 	        while (values.hasNext()) {
-	        	output.collect(key, new Text(values.next().toString()));
+	        	sum += Math.pow (values.next().get(), 2);
 	      	}
+	        
+	        DoubleWritable squareRoot = new DoubleWritable();
+	        squareRoot.set (Math.sqrt (sum));
+	        output.collect (key, squareRoot);
 		}
 	}
 }
