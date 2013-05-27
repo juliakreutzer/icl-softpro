@@ -2,6 +2,7 @@ package de.uniheidelberg.cl.softpro.sentimentclassification;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -13,41 +14,34 @@ import java.util.HashMap;
  *
  */
 public class Toolbox {
-	public static Instance[] convertStringToInstances (String input) {
+	public static ArrayList<Instance> convertStringToInstances (String input) {
 		/*
 		 * Code geklaut aus Julia's SingleTaskTry.java
 		 */
-		int c = 0;
-		String[] splitInput = input.split("<>");	//<> separates reviews -> for each review
+		ArrayList<Instance> instanceArray = new ArrayList<Instance>();
 		
-		Instance[] instances = new Instance [splitInput.length];
-		for (String review : splitInput) {
-			HashMap<String, Integer> m = new HashMap<String, Integer>();
-			int l = 0;
-			String[] entries = review.split(" "); 	// ["is_such:1", "feel:1"]
-			for (String pair : entries){			//pair: "is_such:1"
-				if (pair.startsWith("#")){ 			//if #label#:...
-					String label = pair.split(":")[1];
-					if (label.equals("positive")){
-						l = 1;
-					}
-					else {
-						l = -1;
-					}
-				}
-				else { 								//if feature:count
-					if (pair.split(":").length==2){ //to filter out category at the beginning of each corpus
-						String feature = pair.split(":")[0];
-						int count = Integer.parseInt(pair.split(":")[1]);
-						m.put(feature, count);
-					}
-				}
+		String[] reviews = input.split("<>");
+		reviews[0] = reviews[0].replaceFirst(".*\t", "");
+		
+		for (String review : reviews) {
+			int label = 0;
+			HashMap<String, Integer> hm = new HashMap<String, Integer>();
+			String[] reviewArray = review.split(" ");
+			if (reviewArray[reviewArray.length-1].equals("#label#:negative")) {
+				label = -1;
+			} else if (reviewArray[reviewArray.length-1].equals("#label#:positive")){
+				label = 1;
 			}
-			Instance i = new Instance(m,l);
-			instances[c] = i;
-			c = c+1;
+			for (int i = 0; i <= reviewArray.length-2; i++) {
+				String[] keyvalue = reviewArray[i].split(":");
+				String key = keyvalue[0];
+				int value = Integer.parseInt(keyvalue[1]);
+				hm.put(key, value);
+			}
+			Instance inst = new Instance(hm, label);
+			instanceArray.add(inst);
 		}
-		return instances;
+		return instanceArray;
 	}
 
 	public static HashMap<String, Double> convertStringToHashmap (String input) {
