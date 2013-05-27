@@ -15,22 +15,34 @@ public class WordCount {
 //    private final static IntWritable one = new IntWritable(1);
     private Text word = new Text();
     private Text aFileName = new Text();
-
+    
+    private static String N;
+    private static OutputCollector<Text, Text> outy;
+    
+    public void configure(JobConf job) {
+        N = job.get("test");
+    }
+    
     public void map(Text key, Text value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+      outy = output;
       String line = value.toString();
 
+      
       FileSplit fileSplit = (FileSplit)reporter.getInputSplit();
       String einSchluessel =  key.toString();
-      String fileName = "filename: " + fileSplit.getPath().getName() + " key: " + einSchluessel;
+      String fileName = "filename: " + fileSplit.getPath().getName() + " key: " + einSchluessel + "";
       aFileName.set(fileName);
+      
       
       StringTokenizer tokenizer = new StringTokenizer(line);
       while (tokenizer.hasMoreTokens()) {
     	String sauberesWort = tokenizer.nextToken().toString();
     	sauberesWort = sauberesWort.replaceAll("\\W", "");
         word.set(sauberesWort);
-        output.collect(word, aFileName);
       }
+    }
+    public void close()  throws IOException {
+    	output.collect(word, aFileName);
     }
   }
 
@@ -68,6 +80,8 @@ public class WordCount {
     FileInputFormat.setInputPaths(conf, new Path(args[0]));
     FileOutputFormat.setOutputPath(conf, new Path(args[1]));
 
+    conf.set("test","hallo");
+    
     JobClient.runJob(conf);
   }
 }
