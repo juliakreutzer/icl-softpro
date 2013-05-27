@@ -34,9 +34,11 @@ public class Toolbox {
 			}
 			for (int i = 0; i <= reviewArray.length-2; i++) {
 				String[] keyvalue = reviewArray[i].split(":");
-				String key = keyvalue[0];
-				int value = Integer.parseInt(keyvalue[1]);
-				hm.put(key, value);
+				if (keyvalue.length == 2) {
+					String key = keyvalue[0];
+					int value = Integer.parseInt (keyvalue[1]);
+					hm.put(key, value);
+				}
 			}
 			Instance inst = new Instance(hm, label);
 			instanceArray.add(inst);
@@ -44,6 +46,7 @@ public class Toolbox {
 		return instanceArray;
 	}
 
+	
 	public static HashMap<String, Double> convertStringToHashmap (String input) {
 		HashMap<String, Double> map = new HashMap<String, Double>();
 		try {
@@ -59,7 +62,20 @@ public class Toolbox {
 	}
 
 	public static String convertHashMapToString (HashMap<String, Double> map) {
-		return "";
+		StringBuilder returnString = new StringBuilder();
+		Boolean first = true;
+		for (String key : map.keySet()) {
+			if (first) {
+				first = false;
+			}
+			else {
+				returnString.append ("<>");
+			}
+			returnString.append (key);
+			returnString.append ("=");
+			returnString.append (map.get (key));
+		}
+		return returnString.toString();
 	}
 	
 	public static String getWeightVector( BufferedReader dataSource ) throws IOException {
