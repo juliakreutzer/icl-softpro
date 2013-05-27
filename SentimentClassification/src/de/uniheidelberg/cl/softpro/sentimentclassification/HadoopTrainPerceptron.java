@@ -6,15 +6,12 @@ package de.uniheidelberg.cl.softpro.sentimentclassification;
  */
 
 import java.io.*;
-import java.net.URI;
 import java.util.*;
 
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.*;
-import org.apache.hadoop.conf.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.util.*;
 
 
 
@@ -44,6 +41,15 @@ public class HadoopTrainPerceptron {
 				topKFeatures = Integer.parseInt (args[2]);
 			}
 		}
+		System.out.println( "Started Hadoop MapReduce Perceptron Training");
+		System.out.println( "--------------------------------------------");
+		System.out.println( "Parameters:");
+		System.out.println( "  number of epochs:    " + new Integer(numberOfEpochs).toString());
+		System.out.println( "  top k features:      " + new Integer(topKFeatures).toString());
+		System.out.println( "  name of vector file: " + weightVectorFile);
+		System.out.println( "" );
+		System.out.println( "Lean back and relax!");
+		
 		for ( int e = 0; e < numberOfEpochs; e++ ) {
 			runHadoopJob( e, args[0], args[1]);			
 		}
@@ -63,20 +69,24 @@ public class HadoopTrainPerceptron {
 	
 	public static void writeInitializedVector (Path outFolder) {
 		String vectorContent = readWVFromHDFS (outFolder.toString());
+		FeatureSelector shrinkThings = new FeatureSelector (Toolbox.convertStringToHashmap (vectorContent));
+		
 		BufferedWriter out;
 		try {
 			out = new BufferedWriter (new FileWriter ("initializedVector"));
-			out.write( vectorContent );
+			out.write( Toolbox.convertHashMapToString (shrinkThings.getTopKFeatures (topKFeatures)));
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
 	public static void runHadoopJob( Integer currentEpoch, String pathIn, String pathOut ) throws Exception {
 		
-		Integer lastEpoch = currentEpoch - 1;
+//		Integer lastEpoch = currentEpoch - 1;
+		System.out.println( "#####################################");
+		System.out.println( "Initializing Epoch " + currentEpoch.toString());
+		System.out.println( "#####################################");
 		JobConf conf = new JobConf(HadoopTrainPerceptron.class);
 				
 		conf.setJobName("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
@@ -100,6 +110,8 @@ public class HadoopTrainPerceptron {
 	    //conf.set("test","hallo");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
 	    conf.set("learningRate","0.0001");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
 	    
+	    
+	    
 	    Path hdfsPath = new Path (weightVectorFile);
 	    String localFile;
 	    
@@ -111,9 +123,17 @@ public class HadoopTrainPerceptron {
 	    	localFile = "initializedVector";
 	    }
 	    
+	    System.out.println( "#####################################");
+		System.out.println( "Creating weightVectorFile from " + localFile );
+		System.out.println( "#####################################");
+	    
 	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);
 	    DistributedCache.addCacheFile(hdfsPath.toUri(), conf);
 	    
+	    System.out.println( "#####################################");
+		System.out.println( "I'm about to start the job!" );
+		System.out.println( "#####################################");
+		
 	    RunningJob hadoopTask = JobClient.runJob(conf);		// start Hadoop-Job
 	    hadoopTask.waitForCompletion();
 	    writeInitializedVector (outFile);
@@ -162,7 +182,9 @@ public class HadoopTrainPerceptron {
 	    void readWeightVector (Path cachePath) throws IOException {
 	    	BufferedReader reader = new BufferedReader (new FileReader (cachePath.toString()));
 	    	try {
-	    		String line;
+	    		System.out.println( "#####################################");
+	    		System.out.println( "Getting weight vector from Distributed Cache..." );
+	    		System.out.println( "#####################################");
 	    		initializedWeightVector = Toolbox.convertStringToHashmap (reader.readLine());
 	    	} 
 	    	finally {
@@ -182,6 +204,10 @@ public class HadoopTrainPerceptron {
 	    	
 	    	ArrayList<Instance> trainInstances = Toolbox.convertStringToInstances( rawInput.toString() );	// converts raw input to a datatype that can be used by the perceptron
 	    	
+	    	System.out.println( "#####################################");
+			System.out.println( "Doing some mapping" );
+			System.out.println( "#####################################");
+			
 	    	trainedPerceptron = p.train (trainInstances);
 	    	
 	    	for( String key : trainedPerceptron.keySet()) {
@@ -222,6 +248,9 @@ public class HadoopTrainPerceptron {
 	public static class Reduce extends MapReduceBase implements Reducer<Text, DoubleWritable, Text, DoubleWritable> {
 		public void reduce(Text key, Iterator<DoubleWritable> values, OutputCollector<Text, DoubleWritable> output, Reporter reporter) throws IOException {
 			Double sum = 0.0;
+			System.out.println( "#####################################");
+			System.out.println( "Let's keep things small..." );
+			System.out.println( "#####################################");
 			
 	        while (values.hasNext()) {
 	        	sum += Math.pow (values.next().get(), 2);
