@@ -3,6 +3,7 @@
  */
 package experimentsJulia;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -61,7 +62,7 @@ public class SingleTaskPerceptron{
 	 * @param trainset must be an Array of Instances
 	 * @return the trained weight vector in HashMap<String,Integer> format
 	 */
-	public HashMap<String,Double> train(Instance[] trainset){
+	public HashMap<String,Double> train(ArrayList<Instance> trainset){
 		//for each epoch
 		for (int t=1; t<=this.epochs; t++){
 			//System.out.println("training in epoch "+t);
@@ -112,7 +113,7 @@ public class SingleTaskPerceptron{
 	 * @param testset must be an Array of Instances
 	 * @return
 	 */
-	public double test(Instance[] testset){
+	public double test(ArrayList<Instance> testset){
 		int errors = 0;
 		double errorRate = 0.0;
 		for (Instance i : testset){
@@ -120,7 +121,7 @@ public class SingleTaskPerceptron{
 				errors ++;
 			}
 		}
-		errorRate = errors/(double) testset.length;
+		errorRate = errors/(double) testset.size();
 		return errorRate;
 	}
 	
