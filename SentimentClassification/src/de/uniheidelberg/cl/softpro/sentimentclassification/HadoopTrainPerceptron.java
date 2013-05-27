@@ -180,7 +180,7 @@ public class HadoopTrainPerceptron {
 	    	p = new Perceptron (1, learningRate);
 	    	p.setWeights (initializedWeightVector);
 	    	
-	    	Instance[] trainInstances = Toolbox.convertStringToInstances( rawInput.toString() );	// converts raw input to a datatype that can be used by the perceptron
+	    	ArrayList<Instance> trainInstances = Toolbox.convertStringToInstances( rawInput.toString() );	// converts raw input to a datatype that can be used by the perceptron
 	    	
 	    	trainedPerceptron = p.train (trainInstances);
 	    	
