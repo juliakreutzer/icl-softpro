@@ -2,7 +2,7 @@ import java.io.*;
 import java.util.*;
 
 public class CreateInstances {
-	//1) übergabe: string -> arraylist<instances>
+	//1) übergabe: string (ohne kategorienamen am anfang)-> arraylist<instances>
 	//2) übergabe: filename -> arraylist<instance>
 	
 	/*public static ArrayList<String> readFile2(File f) {
