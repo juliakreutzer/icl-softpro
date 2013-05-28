@@ -67,7 +67,6 @@ public class Perceptron{
 		//for each epoch
 		for (int t=1; t<=this.epochs; t++){
 			//System.out.println("training in epoch "+t);
-			trainset.
 			//for input instance
 			for (Instance i : trainset){
 				//System.out.println("instance "+i.toString());
