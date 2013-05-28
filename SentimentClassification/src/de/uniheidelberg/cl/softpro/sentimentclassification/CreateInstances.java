@@ -51,6 +51,9 @@ public class CreateInstances {
 				hm.put(key, value);
 			}
 			Instance inst = new Instance(hm, label);
+			inst.foldInP(); //folds in p, i.e. adding new dimension !p with count -1
+			inst.foldInLabel(); //fold in label, i.e. new dimension !p is multiplied with label
+			
 			//System.out.println(inst.getFeatureVector());	//test
 			//System.out.println(inst.getLabel());			//test
 			instanceArray.add(inst);
