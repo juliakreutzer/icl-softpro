@@ -1,8 +1,13 @@
 #summary Todo-Liste
 
 = Todo =
+  * learning rate? Recherche, ausprobieren
+  * createInstances -> 2 Methoden, 1)Eingabe String 2)Eingabe File
+  * SingleTaskPerceptron laufen lassen
+  * Multi(Task)Perceptron fertig
 
   * bis Di, 21.Mai (zur Not 28.) Spezifikationsvortragsfolien, dafür v.a.:
     * Aufgabenverteilung
     * Architektur
     * Zeitplan
+  --> DONE!
