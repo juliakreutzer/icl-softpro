@@ -42,18 +42,24 @@ public class Instance {
 	}
 
 	public void setLabel(int label) {
-		this.label = label;
+		if (label == -1 | label == 1){
+			this.label = label;
+			}
+		else{
+			System.err.println("Value for label not allowed. Must be either -1 or 1.");
+		}
 	}
 	
 	public Set<String> getFeatures(){
 		return this.featureVector.keySet();
 	}
 
+	//in case we want to use modified space -
 	public void foldInP(){
-		this.featureVector.put("#p", -1);
+		this.featureVector.put("!p", -1);
 	}
 	
 	public void foldInLabel(){
-		this.featureVector.put("#p",this.featureVector.get("#p")*this.label);
+		this.featureVector.put("!p",this.featureVector.get("!p")*this.label);
 	}
 }

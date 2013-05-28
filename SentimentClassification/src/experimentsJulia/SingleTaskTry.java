@@ -71,17 +71,17 @@ public class SingleTaskTry {
 	 * in one line is the whole corpus
 	 * review looks like that: feature1:count feature2:count ... #label:positive
 	 */
-	public static Instance[] readFromCorpusFile(String InputFileName){
+	public static ArrayList<Instance> readFromCorpusFile(String InputFileName){
 		String line = "";
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(InputFileName));
-			line = in.readLine(); //only neccessary to read one line as whole corpus is saved in this line
+			line = in.readLine(); //only necessary to read one line as whole corpus is saved in this line
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		int c = 0;
-		Instance[] instances = new Instance[line.split("<>").length];
+		ArrayList<Instance> instances = new ArrayList<Instance>();
 		for (String review : line.split("<>")){ //<> separates reviews -> for each review
 			//System.out.println("review: "+review);
 			HashMap<String, Integer> m = new HashMap<String, Integer>();
@@ -110,82 +110,77 @@ public class SingleTaskTry {
 			Instance i = new Instance(m,l);
 			//System.out.println(i.toString());
 			
-			instances[c]=i;
+			instances.add(c, i);
 			//System.out.println(instances.toString());
 			c = c+1;
 		}
-		System.out.println(instances.length);
+		System.out.println(instances.size());
 		return instances;
 	}
 	
 	public static void main(String[] args) {
-		double learningrate = 0.0001;
-		int epochs = 1000;
+		double learningrate = 5;
+		int epochs = 10;
 		
 		System.out.println(epochs+", "+learningrate);
 		
-		//creates new SingleTaskPerceptron instance
+		//creates new SingleTaskPerceptron instances
+		
 		SingleTaskPerceptron p = new SingleTaskPerceptron(epochs, learningrate);
+		SingleTaskPerceptron q = new SingleTaskPerceptron(epochs, learningrate);
+		SingleTaskPerceptron r = new SingleTaskPerceptron(epochs, learningrate);
+		SingleTaskPerceptron s = new SingleTaskPerceptron(epochs, learningrate);
+		SingleTaskPerceptron t = new SingleTaskPerceptron(epochs, learningrate);
 		
-		//reads from file to Array of instances
-		//Instance[] train_instances = readFromFile("test5.review");
-		//System.out.println(train_instances.length+" train_instances read");
+		//reads from file to ArrayList of instances
+		//for training
+		ArrayList<Instance> train_instances_all = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/all.train.corpus");
+		ArrayList<Instance> train_instances_dvd = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/dvd.train.corpus");
+		ArrayList<Instance> train_instances_electronics = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/electronics.train.corpus");
+		ArrayList<Instance> train_instances_kitchen = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/kitchen.train.corpus");
+		ArrayList<Instance> train_instances_books = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/books.train.corpus");
 		
-		//Instance[] test_instances2 = readFromFile("test_test5.review");
-		//System.out.println(test_instances2.length+" test_instances read");
+		//for testing
+		ArrayList<Instance>  test_instances_all = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/all.test.corpus");
+		ArrayList<Instance>  test_instances_books = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/books.test.corpus");
+		ArrayList<Instance>  test_instances_dvd = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/dvd.test.corpus");
+		ArrayList<Instance>  test_instances_electronics = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/electronics.test.corpus");
+		ArrayList<Instance>  test_instances_kitchen = readFromCorpusFile("SentimentClassification/data/processed_acl/corpus/kitchen.test.corpus");
 		
-		//readFromCorpusFile("corpus/books.test.corpus");
-		//readFromCorpusFile("corpus/books.train.corpus");
-		Instance[] train_instances_all = readFromCorpusFile("data/processed_acl/corpus/all.train.corpus");
-		Instance[] test_instances_all = readFromCorpusFile("data/processed_acl/corpus/all.test.corpus");
+		
+		//train perceptrons
+		p.train(train_instances_all);
+		q.train(train_instances_books);
+		r.train(train_instances_dvd);
+		s.train(train_instances_electronics);
+		t.train(train_instances_kitchen);
 
-		Instance[] test_instances_books = readFromCorpusFile("data/processed_acl/corpus/books.test.corpus");
-		Instance[] test_instances_dvd = readFromCorpusFile("data/processed_acl/corpus/dvd.test.corpus");
-		Instance[] test_instances_electronics = readFromCorpusFile("data/processed_acl/corpus/electronics.test.corpus");
-		Instance[] test_instances_kitchen = readFromCorpusFile("data/processed_acl/corpus/kitchen.test.corpus");
+	
+		//test perceptrons	
+		System.out.println("all on all");
+		System.out.println(p.test(test_instances_books));
+		System.out.println("all on all");
+		System.out.println(p.test(test_instances_all));
 		
+		System.out.println("books on books");
+		System.out.println(q.test(test_instances_books));
+		System.out.println("books on all");
+		System.out.println(q.test(test_instances_all));
 		
-		//Instance[] train_instances_all = readFromFile("singleTask_all.reviews");
-		//System.out.println("train_instances_all: "+train_instances_all.length+" train_instances read");
+		System.out.println("dvd on dvd");
+		System.out.println(r.test(test_instances_dvd));
+		System.out.println("dvd on all");
+		System.out.println(r.test(test_instances_all));
 		
-		//Instance[] test_instances_dvd = readFromFile("singleTask_dvd.reviews");
-		//System.out.println("test_instances_dvd: "+test_instances_dvd.length+" train_instances read");
+		System.out.println("electronics on electronics");
+		System.out.println(s.test(test_instances_electronics));
+		System.out.println("electronics on all");
+		System.out.println(s.test(test_instances_all));
 		
-		//Instance[] test_instances_electronics = readFromFile("singleTask_electronics.reviews");
-		//System.out.println("test_instances_electronics: "+test_instances_electronics.length+" train_instances read");
-		
-		//Instance[] test_instances_kitchen = readFromFile("singleTask_kitchen.reviews");
-		//System.out.println("test_instances_kitchen: "+test_instances_kitchen.length+" train_instances read");
-		
-		//Instance[] test_instances_books = readFromFile("singleTask_books.reviews");
-		//System.out.println("test_instances_books: "+test_instances_books.length+" train_instances read");
-		
-		//trains Perceptron on Array of instances
-		/* testing the dotproduct method
-		HashMap<String,Integer> test1 = new HashMap<String,Integer>();
-		test1.put("testword",1);
-		test1.put("notin2",2);
-		test1.put("both", 9);
-		HashMap<String,Double> test2 = new HashMap<String,Double>();
-		test2.put("testword",5.0);
-		test2.put("notin1", 2.3);
-		test2.put("both", 3.0);
-		System.out.println(SingleTaskPerceptron.dotProduct(test1, test2));
-		*/
-		HashMap<String,Double> t = p.train(train_instances_all);
-		//p.printParameters();
-		//System.out.println(t);
-		double r = p.test(test_instances_dvd);
-		System.out.println("dvd :"+r);
-		double s = p.test(test_instances_electronics);
-		System.out.println("electronics: "+s);
-		double o = p.test(test_instances_kitchen);
-		System.out.println("kitchen: "+o);
-		double q = p.test(test_instances_books);
-		System.out.println("books: "+q);
-		double w = p.test(test_instances_all);
-		System.out.println("all: "+w);
-		
+		System.out.println("kitchen on kitchen");
+		System.out.println(t.test(test_instances_kitchen));
+		System.out.println("kitchen on all");
+		System.out.println(t.test(test_instances_all));
 		
 	}
 }

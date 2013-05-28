@@ -15,7 +15,7 @@ public class SingleTaskPerceptron{
 	private HashMap<String,Double> weights = new HashMap<String,Double>();
 	private int epochs;
 	private double learningRate;
-	private double p = 0.0; //don't know whether this is needed here...
+	//private double p = 0.0; //don't know whether this is needed here...
 	
 	/**
 	 * Constructor: creates new SingleTaskPerceptron instance 
@@ -47,7 +47,8 @@ public class SingleTaskPerceptron{
 	}
 	
 	public boolean misclassified(Instance i){
-		if ((dotProduct(i.getFeatureVector(),this.weights)+this.p)*i.getLabel()<=0){
+		//if ((dotProduct(i.getFeatureVector(),this.weights)+this.p)*i.getLabel()<=0){
+		if ((dotProduct(i.getFeatureVector(),this.weights))*i.getLabel()<=0){ //for modified space
 			//System.out.println("misclassified");
 			return true;
 		}
@@ -93,7 +94,7 @@ public class SingleTaskPerceptron{
 						//update weight
 						this.weights.put(feature, featureValue+(this.learningRate*i.getFeatureVector().get(feature)*i.getLabel()));
 						//update p
-						this.p = this.p + this.learningRate * i.getLabel();
+						//this.p = this.p + this.learningRate * i.getLabel(); //not needed for modified space
 					}
 					//System.out.println("weight vector updated: "+this.weights.toString());
 					//System.out.println(this.weights.size());
@@ -141,7 +142,7 @@ public class SingleTaskPerceptron{
 		System.out.println("weights: "+this.weights.toString());
 		System.out.println("epochs: "+this.epochs);
 		System.out.println("learning rate: "+this.learningRate);
-		System.out.println("p "+this.p);
+		//System.out.println("p "+this.p); //not needed for modified space
 	}
 	
 	
