@@ -15,7 +15,7 @@ public class Perceptron{
 	private HashMap<String,Double> weights = new HashMap<String,Double>();
 	private int epochs;
 	private double learningRate;
-	private double p = 0.0; //don't know whether this is needed here...
+	//private double p = 0.0; //not needed for modified space
 	
 	/**
 	 * Constructor: creates new SingleTaskPerceptron instance 
@@ -47,7 +47,8 @@ public class Perceptron{
 	}
 	
 	public boolean misclassified(Instance i){
-		if ((dotProduct(i.getFeatureVector(),this.weights)+this.p)*i.getLabel()<=0){
+		//if ((dotProduct(i.getFeatureVector(),this.weights)+this.p)*i.getLabel()<=0){
+		if ((dotProduct(i.getFeatureVector(),this.weights))*i.getLabel()<=0){ //p not needed for modified space
 			//System.out.println("misclassified");
 			return true;
 		}
@@ -66,18 +67,11 @@ public class Perceptron{
 		//for each epoch
 		for (int t=1; t<=this.epochs; t++){
 			//System.out.println("training in epoch "+t);
-			
+			trainset.
 			//for input instance
 			for (Instance i : trainset){
 				//System.out.println("instance "+i.toString());
 				//System.out.println("weight vector "+this.weights.toString());
-				//fold p into instance vectors
-				//i.foldInP();
-				//System.out.println("p folded in: "+i.getFeatureVector().toString());
-				
-				//fold label into instance vector
-				//i.foldInLabel();
-				//System.out.println("label folded in: "+i.getFeatureVector().toString());
 				
 				//if misclassified, update with gradient
 				if (this.misclassified(i)){
@@ -93,7 +87,7 @@ public class Perceptron{
 						//update weight
 						this.weights.put(feature, featureValue+(this.learningRate*i.getFeatureVector().get(feature)*i.getLabel()));
 						//update p
-						this.p = this.p + this.learningRate * i.getLabel();
+						//this.p = this.p + this.learningRate * i.getLabel(); //not needed for modified space
 					}
 					//System.out.println("weight vector updated: "+this.weights.toString());
 					//System.out.println(this.weights.size());
@@ -141,7 +135,7 @@ public class Perceptron{
 		System.out.println("weights: "+this.weights.toString());
 		System.out.println("epochs: "+this.epochs);
 		System.out.println("learning rate: "+this.learningRate);
-		System.out.println("p "+this.p);
+		//System.out.println("p "+this.p); //not needed for modified space
 	}
 	
 	

@@ -14,6 +14,8 @@ import java.util.HashMap;
  *
  */
 public class Toolbox {
+	
+	//Julia: diese Methode sollte durch CreateInstances abgedeckt werden
 	public static ArrayList<Instance> convertStringToInstances (String input) {
 		/*
 		 * Code geklaut aus Julia's SingleTaskTry.java
