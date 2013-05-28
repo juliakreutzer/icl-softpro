@@ -1,1 +1,1 @@
-dvd	das:2 ist:1 ein:1 test:1 #label#:negative NEWLINE zum:1 ausprobieren:1 und:1 testen:1 #label#:positive
+dvd	das:2 ist:1 ein:1 test:1 #label#:negative<>zum:1 ausprobieren:1 und:1 testen:1 #label#:positive
