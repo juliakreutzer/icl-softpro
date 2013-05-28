@@ -2,6 +2,8 @@ import java.io.*;
 import java.util.*;
 
 public class CreateInstances {
+	//1) übergabe: string -> arraylist<instances>
+	//2) übergabe: filename -> arraylist<instance>
 	
 	/*public static ArrayList<String> readFile2(File f) {
 		ArrayList<String> kategorienInArrayList = new ArrayList<String>();
