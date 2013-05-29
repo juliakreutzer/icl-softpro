@@ -6,6 +6,7 @@ package de.uniheidelberg.cl.softpro.sentimentclassification;
  */
 
 import java.io.*;
+import java.net.URI;
 import java.util.*;
 
 import org.apache.hadoop.filecache.DistributedCache;
@@ -68,7 +69,10 @@ public class HadoopTrainPerceptron {
 	}
 	
 	public static void writeInitializedVector (Path outFolder) {
-		String vectorContent = readWVFromHDFS (outFolder.toString());
+		String vectorContent = readWVFromHDFS (outFolder.toString() + "/part-00000");
+		System.out.println( "#####################################");
+		System.out.println( "Write vector:");
+		System.out.println( vectorContent );
 		FeatureSelector shrinkThings = new FeatureSelector (Toolbox.convertStringToHashmap (vectorContent));
 		
 		BufferedWriter out;
@@ -129,7 +133,9 @@ public class HadoopTrainPerceptron {
 	    
 	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);
 	    DistributedCache.addCacheFile(hdfsPath.toUri(), conf);
-	    
+	    for( URI cacheFile : DistributedCache.getCacheFiles(conf) ) {
+	    	System.out.println( "  Cache file: " + cacheFile.toString() );
+	    }
 	    System.out.println( "#####################################");
 		System.out.println( "I'm about to start the job!" );
 		System.out.println( "#####################################");
@@ -158,15 +164,31 @@ public class HadoopTrainPerceptron {
 	    	/*
 	    	 * used to read parameters from JobConf
 	    	 * important to get data from previously trained perceptrons
-	    	 */
+	    	 */ 
 	        learningRate = Double.parseDouble (job.get ("learningRate"));							// get learning rate specified in JobConf
-	        
+	        System.out.println( "#####################################");
+    		System.out.println( "Configure..." );
+    		System.out.println( "#####################################");
+    		try {
+				for( Path cacheFile : DistributedCache.getLocalCacheFiles(job) ) {
+					System.out.println( "  Cache file: " + cacheFile.getName().toString() );
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 	        try {
-	            String wvCacheName = new Path (weightVectorFile).getName();
+	            String wvCacheName = new Path ("file" + weightVectorFile).getName();
 		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (job);
 		        if (null != cacheFiles && cacheFiles.length > 0) {
+		        	System.out.println( "#####################################");
+		    		System.out.println( "Search in DC..." );
+		    		System.out.println( "#####################################");
 		        	for (Path cachePath : cacheFiles) {
 		        		if (cachePath.getName().equals(wvCacheName)) {
+		        			System.out.println( "#####################################");
+		    	    		System.out.println( "Found in DC!" );
+		    	    		System.out.println( "#####################################");
 		        			readWeightVector (cachePath);
 		        			break;
 		        		}
@@ -237,7 +259,9 @@ public class HadoopTrainPerceptron {
 	    	 * Called when Mapper-Class has finished running and is about to be closed
 	    	 * time to throw collected data back to Hadoop framework / reducers
 	    	 */
-
+	    	System.out.println( "#####################################");
+			System.out.println( "Closed a mapper!" );
+			System.out.println( "#####################################");
 	    	//thisMapsOutputCollector.collect(word, aFileName);
 	    }
 	}

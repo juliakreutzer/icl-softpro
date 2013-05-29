@@ -20,6 +20,7 @@ public class FeatureSelector {
 		
 		List <Double> orderableValues = new ArrayList <Double> (this.unorderedMap.values());
 		Collections.sort (orderableValues, Collections.reverseOrder());
+//		Collections.sort (orderableValues);
 		Double minimum = orderableValues.get (k);
 		
 		for ( String key : this.unorderedMap.keySet()) {
