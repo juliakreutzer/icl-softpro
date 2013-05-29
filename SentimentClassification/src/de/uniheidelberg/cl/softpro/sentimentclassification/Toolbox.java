@@ -52,16 +52,26 @@ public class Toolbox {
 	public static HashMap<String, Double> convertStringToHashmap (String input) {
 		HashMap<String, Double> map = new HashMap<String, Double>();
 		try {
+			System.out.println ("Initialisiere WV...");
+			System.out.println (input);
 			for (String pair : input.split ("<>")) {
-				String[] splitPair = pair.split (" *= *", 2); 
-				map.put (splitPair[0], splitPair.length == 1 ? 0.0 : Double.parseDouble (splitPair[1]));
+				System.out.println("string: " + pair);
+				String[] splitPair = pair.split (" *= *", 2);
+				System.out.println("key: " + splitPair[0]);
+				System.out.println("value: " + splitPair[1]);
+				map.put (splitPair[0], splitPair.length == 1 ? 1.234 : Double.parseDouble (splitPair[1]));
+
 			}
 		}
 		catch (NullPointerException e) {
 			System.err.println ("NullPointerException: convertStringToHashmap");
+			System.err.println ("input = '" + input + "'");
+			return map;
 		}
 		return map;
 	}
+	
+	
 
 	public static String convertHashMapToString (HashMap<String, Double> map) {
 		StringBuilder returnString = new StringBuilder();
@@ -85,9 +95,15 @@ public class Toolbox {
         String line;
         line = dataSource.readLine();
         while (line != null) {
+//        	System.out.println ("Read line:");
+//        	System.out.println (line);
+        	String[] splitLine = line.split("\t");
+//        	System.out.println ("1: " + splitLine[0] + " - 2: " + new Double(splitLine[1]).toString());
         	StringBuilder singleWeight = new StringBuilder();
+        	singleWeight.append (splitLine [0]);
+        	singleWeight.append ("=");
+        	singleWeight.append (splitLine [1]);
         	singleWeight.append ("<>");
-        	singleWeight.append (line);
         	weightVector.append (singleWeight.toString());
         	line = dataSource.readLine();
         }
