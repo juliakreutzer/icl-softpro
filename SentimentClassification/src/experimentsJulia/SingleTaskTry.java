@@ -158,8 +158,6 @@ public class SingleTaskTry {
 	
 		//test perceptrons	
 		System.out.println("all on all");
-		System.out.println(p.test(test_instances_books));
-		System.out.println("all on all");
 		System.out.println(p.test(test_instances_all));
 		
 		System.out.println("books on books");

@@ -17,7 +17,7 @@ public class TrainSinglePerceptron {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		double learningrate = 5;
+		double learningrate = 0.0001;
 		int epochs = 10;
 		
 		System.out.println(epochs+", "+learningrate);
@@ -53,28 +53,23 @@ public class TrainSinglePerceptron {
 		t.train(train_instances_kitchen);
 	
 		//test perceptrons	
-		System.out.println("all on all");
-		System.out.println(p.test(test_instances_all));
+		System.out.println("all on all: "+p.test(test_instances_all));
+		System.out.println("all on books: "+p.test(test_instances_books));
+		System.out.println("all on dvd: "+p.test(test_instances_dvd));
+		System.out.println("all on electronics: "+p.test(test_instances_electronics));
+		System.out.println("all on kitchen: "+p.test(test_instances_kitchen));
 		
-		System.out.println("books on books");
-		System.out.println(q.test(test_instances_books));
-		System.out.println("books on all");
-		System.out.println(q.test(test_instances_all));
+		System.out.println("books on books: "+q.test(test_instances_books));
+		System.out.println("books on all: "+q.test(test_instances_all));
 		
-		System.out.println("dvd on dvd");
-		System.out.println(r.test(test_instances_dvd));
-		System.out.println("dvd on all");
-		System.out.println(r.test(test_instances_all));
+		System.out.println("dvd on dvd: "+r.test(test_instances_dvd));
+		System.out.println("dvd on all: "+r.test(test_instances_all));
 		
-		System.out.println("electronics on electronics");
-		System.out.println(s.test(test_instances_electronics));
-		System.out.println("electronics on all");
-		System.out.println(s.test(test_instances_all));
+		System.out.println("electronics on electronics: "+s.test(test_instances_electronics));
+		System.out.println("electronics on all "+s.test(test_instances_all));
 		
-		System.out.println("kitchen on kitchen");
-		System.out.println(t.test(test_instances_kitchen));
-		System.out.println("kitchen on all");
-		System.out.println(t.test(test_instances_all));
+		System.out.println("kitchen on kitchen: "+t.test(test_instances_kitchen));
+		System.out.println("kitchen on all: "+t.test(test_instances_all));
 
 	}
 }
