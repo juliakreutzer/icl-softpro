@@ -1,155 +1,59 @@
-20, 0.1
-corpus/all.train.corpus: 4800
-corpus/dvd.train.corpus: 1200
-corpus/electronics.train.corpus: 1200
-corpus/kitchen.train.corpus: 1200
-corpus/books.train.corpus: 1200
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-books on books
-0.02375
-books on all
-0.0334375
-dvd on dvd
-0.00375
-dvd on all
-0.00375
-electronics on electronics
-0.00875
-electronics on all
-0.004375
-kitchen on kitchen
-0.00375
-kitchen on all
-0.0040625
+10, 5.0
+all on all: 0.1209375
+all on books: 0.1075
+all on dvd: 0.1275
+all on electronics: 0.12125
+all on kitchen: 0.1275
+books on books: 0.05375
+books on all: 0.0665625
+dvd on dvd: 0.04625
+dvd on all: 0.0453125
+electronics on electronics: 0.09875
+electronics on all 0.1025
+kitchen on kitchen: 0.05875
+kitchen on all: 0.0921875
 
+10, 0.5
+all on all: 0.1209375
+all on books: 0.1075
+all on dvd: 0.1275
+all on electronics: 0.12125
+all on kitchen: 0.1275
+books on books: 0.05375
+books on all: 0.0665625
+dvd on dvd: 0.04625
+dvd on all: 0.0453125
+electronics on electronics: 0.09875
+electronics on all 0.1025
+kitchen on kitchen: 0.05875
+kitchen on all: 0.0921875
 
-
-1000, 1.0E-4
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-138667
-dvd :0.5175
-electronics: 0.44625
-kitchen: 0.4925
-books: 0.4875
-all: 0.4859375
-
-1000, 0.001
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-141536
-dvd :0.45
-electronics: 0.37125
-kitchen: 0.42125
-books: 0.45125
-all: 0.4234375
+10, 10.0
+all on all: 0.1209375
+all on books: 0.1075
+all on dvd: 0.1275
+all on electronics: 0.12125
+all on kitchen: 0.1275
+books on books: 0.05375
+books on all: 0.0665625
+dvd on dvd: 0.04625
+dvd on all: 0.0453125
+electronics on electronics: 0.09875
+electronics on all 0.1025
+kitchen on kitchen: 0.05875
+kitchen on all: 0.0921875
 
 10, 1.0E-4
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-30487
-dvd :0.0
-electronics: 0.0
-kitchen: 0.0
-books: 0.0
-all: 0.0
-
-10, 0.1
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-30493
-dvd :0.0
-electronics: 0.0
-kitchen: 0.0
-books: 0.0
-all: 0.0
-
-1, 1.0E-4
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-3532
-dvd :0.0125
-electronics: 0.015
-kitchen: 0.0075
-books: 0.00125
-all: 0.0090625
-
-10, 5.0
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-31593
-dvd :0.005
-electronics: 0.0075
-kitchen: 0.005
-books: 0.005
-all: 0.005625
-
-100, 10.0
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-129825
-dvd :0.28375
-electronics: 0.26
-kitchen: 0.295
-books: 0.25625
-all: 0.27375
-
-100, 0.001
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-131519
-dvd :0.28875
-electronics: 0.24375
-kitchen: 0.27125
-books: 0.22875
-all: 0.258125
-
-10, 1.0
-corpus/all.train.corpus: 4800
-corpus/all.test.corpus: 3200
-corpus/books.test.corpus: 800
-corpus/dvd.test.corpus: 800
-corpus/electronics.test.corpus: 800
-corpus/kitchen.test.corpus: 800
-31593
-dvd :0.005
-electronics: 0.0075
-kitchen: 0.005
-books: 0.005
-all: 0.005625
+all on all: 0.0675
+all on books: 0.055
+all on dvd: 0.08
+all on electronics: 0.0575
+all on kitchen: 0.0775
+books on books: 0.02875
+books on all: 0.0478125
+dvd on dvd: 0.03
+dvd on all: 0.0321875
+electronics on electronics: 0.07875
+electronics on all 0.0765625
+kitchen on kitchen: 0.06375
+kitchen on all: 0.0821875
