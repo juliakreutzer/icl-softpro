@@ -1,13 +1,12 @@
 /**
  * 
  */
-package de.uniheidelberg.cl.softpro.sentimentclassification;
+package src.de.uniheidelberg.cl.softpro.sentimentclassification;
 
 import java.io.File;
 import java.util.ArrayList;
 /**
  * Trains a single task perceptron on training data
- * TODO: def train/test dataset, write output?
  * @author julia
  */
 
@@ -17,7 +16,7 @@ public class TrainSinglePerceptron {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		double learningrate = 0.0001;
+		double learningrate = 1;
 		int epochs = 10;
 		
 		System.out.println(epochs+", "+learningrate);
@@ -46,11 +45,11 @@ public class TrainSinglePerceptron {
 		ArrayList<Instance>  test_instances_kitchen = CreateInstances.createInstancesFromFile(new File("SentimentClassification/data/processed_acl/corpus/kitchen.test.corpus"));
 		
 		//train perceptrons
-		p.train(train_instances_all);
-		q.train(train_instances_books);
-		r.train(train_instances_dvd);
-		s.train(train_instances_electronics);
-		t.train(train_instances_kitchen);
+		p.trainSingle(train_instances_all);
+		q.trainSingle(train_instances_books);
+		r.trainSingle(train_instances_dvd);
+		s.trainSingle(train_instances_electronics);
+		t.trainSingle(train_instances_kitchen);
 	
 		//test perceptrons	
 		System.out.println("all on all: "+p.test(test_instances_all));
