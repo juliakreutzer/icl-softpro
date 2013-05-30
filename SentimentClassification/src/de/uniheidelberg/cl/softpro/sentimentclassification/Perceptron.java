@@ -1,4 +1,4 @@
-package de.uniheidelberg.cl.softpro.sentimentclassification;
+package src.de.uniheidelberg.cl.softpro.sentimentclassification;
 
 
 import java.util.ArrayList;
@@ -59,15 +59,20 @@ public class Perceptron{
 	
 	
 	/**
-	 * trains the SingleTaskPerceptron instance on a given training set
+	 * trains the SingleTaskPerceptron instance on a given training set for all epochs
 	 * @param trainset must be an Array of Instances
 	 * @return the trained weight vector in HashMap<String,Integer> format
 	 */
-	public HashMap<String,Double> train(ArrayList<Instance> trainset){
+	public HashMap<String,Double> trainSingle(ArrayList<Instance> trainset){
 		//for each epoch
 		for (int t=1; t<=this.epochs; t++){
 			//System.out.println("training in epoch "+t);
 			//for input instance
+			
+			//double newLearningRate = 1/(1+t/trainset.size()); //Riezler-Paper (5)
+			double newLearningRate = 1/t;
+			
+			this.setLearningRate(newLearningRate);
 			for (Instance i : trainset){
 				//System.out.println("instance "+i.toString());
 				//System.out.println("weight vector "+this.weights.toString());
@@ -96,10 +101,48 @@ public class Perceptron{
 		return this.weights;
 	}
 	
+	public double getLearningRate() {
+		return learningRate;
+	}
+
+	public void setLearningRate(double newlearningRate) {
+		this.learningRate = newlearningRate;
+	}
+
+	//trains only for one epoch
+	public HashMap<String,Double> trainMulti(ArrayList<Instance> trainset){
+		for (Instance i : trainset){
+			//System.out.println("instance "+i.toString());
+			//System.out.println("weight vector "+this.weights.toString());
+			
+			//if misclassified, update with gradient
+			if (this.misclassified(i)){
+				//update weights
+				//HashMap<String,Double> newWeights = new HashMap<String,Double>();
+				for (String feature : i.getFeatures()){
+					Double featureValue = new Double("0.0");
+					//if feature can be found in current weights
+					if (this.weights.containsKey(feature)){
+						featureValue = this.weights.get(feature);
+					}
+					//System.out.println(featureValue);
+					//update weight
+					this.weights.put(feature, featureValue+(this.learningRate*i.getFeatureVector().get(feature)*i.getLabel()));
+					//update p
+					//this.p = this.p + this.learningRate * i.getLabel(); //not needed for modified space
+				}
+				//System.out.println("weight vector updated: "+this.weights.toString());
+				//System.out.println(this.weights.size());
+			}
+		}
+		return this.weights;
+	}
+	
 	
 	public void setWeights(HashMap<String, Double> newWeights) {
 		this.weights = newWeights;
 	}
+	
 
 	/**
 	 * tests the SingleTaskPerceptron instance on a given test set
