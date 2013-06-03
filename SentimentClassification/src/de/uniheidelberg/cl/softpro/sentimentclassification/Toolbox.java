@@ -16,37 +16,37 @@ import java.util.HashMap;
 public class Toolbox {
 	
 	//Julia: diese Methode sollte durch CreateInstances abgedeckt werden
-	public static ArrayList<Instance> convertStringToInstances (String input) {
-		/*
-		 * Code geklaut aus Julia's SingleTaskTry.java
-		 */
-		ArrayList<Instance> instanceArray = new ArrayList<Instance>();
-		
-		String[] reviews = input.split("<>");
-		reviews[0] = reviews[0].replaceFirst(".*\t", "");
-		
-		for (String review : reviews) {
-			int label = 0;
-			HashMap<String, Integer> hm = new HashMap<String, Integer>();
-			String[] reviewArray = review.split(" ");
-			if (reviewArray[reviewArray.length-1].equals("#label#:negative")) {
-				label = -1;
-			} else if (reviewArray[reviewArray.length-1].equals("#label#:positive")){
-				label = 1;
-			}
-			for (int i = 0; i <= reviewArray.length-2; i++) {
-				String[] keyvalue = reviewArray[i].split(":");
-				if (keyvalue.length == 2) {
-					String key = keyvalue[0];
-					int value = Integer.parseInt (keyvalue[1]);
-					hm.put(key, value);
-				}
-			}
-			Instance inst = new Instance(hm, label);
-			instanceArray.add(inst);
-		}
-		return instanceArray;
-	}
+//	public static ArrayList<Instance> convertStringToInstances (String input) {
+//		/*
+//		 * Code geklaut aus Julia's SingleTaskTry.java
+//		 */
+//		ArrayList<Instance> instanceArray = new ArrayList<Instance>();
+//		
+//		String[] reviews = input.split("<>");
+//		reviews[0] = reviews[0].replaceFirst(".*\t", "");
+//		
+//		for (String review : reviews) {
+//			int label = 0;
+//			HashMap<String, Integer> hm = new HashMap<String, Integer>();
+//			String[] reviewArray = review.split(" ");
+//			if (reviewArray[reviewArray.length-1].equals("#label#:negative")) {
+//				label = -1;
+//			} else if (reviewArray[reviewArray.length-1].equals("#label#:positive")){
+//				label = 1;
+//			}
+//			for (int i = 0; i <= reviewArray.length-2; i++) {
+//				String[] keyvalue = reviewArray[i].split(":");
+//				if (keyvalue.length == 2) {
+//					String key = keyvalue[0];
+//					int value = Integer.parseInt (keyvalue[1]);
+//					hm.put(key, value);
+//				}
+//			}
+//			Instance inst = new Instance(hm, label);
+//			instanceArray.add(inst);
+//		}
+//		return instanceArray;
+//	}
 
 	
 	public static HashMap<String, Double> convertStringToHashmap (String input) {

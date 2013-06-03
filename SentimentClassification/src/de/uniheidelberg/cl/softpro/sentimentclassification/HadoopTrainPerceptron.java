@@ -224,13 +224,13 @@ public class HadoopTrainPerceptron {
 	    	p = new Perceptron (1, learningRate);
 	    	p.setWeights (initializedWeightVector);
 	    	
-	    	ArrayList<Instance> trainInstances = Toolbox.convertStringToInstances( rawInput.toString() );	// converts raw input to a datatype that can be used by the perceptron
+	    	ArrayList<Instance> trainInstances = CreateInstances.createInstancesFromString( rawInput.toString() );	// converts raw input to a datatype that can be used by the perceptron
 	    	
 	    	System.out.println( "#####################################");
 			System.out.println( "Doing some mapping" );
 			System.out.println( "#####################################");
 			
-	    	trainedPerceptron = p.train (trainInstances);
+	    	trainedPerceptron = p.trainMulti (trainInstances);
 	    	
 	    	for( String key : trainedPerceptron.keySet()) {
 	    		Double value = trainedPerceptron.get (key);
