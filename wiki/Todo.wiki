@@ -2,12 +2,16 @@
 
 = Todo =
   * learning rate? Recherche, ausprobieren
-  * createInstances -> 2 Methoden, 1)Eingabe String 2)Eingabe File
-  * SingleTaskPerceptron laufen lassen
-  * Multi(Task)Perceptron fertig
-
-  * bis Di, 21.Mai (zur Not 28.) Spezifikationsvortragsfolien, dafür v.a.:
-    * Aufgabenverteilung
-    * Architektur
-    * Zeitplan
-  --> DONE!
+  * MultiPerceptron in die Tonne
+  * Random Corpus erzeugen (Python)
+  * HadoopPerceptron Aufruf dokumentieren
+  * Evaluationsklasse erzeugen
+    * mit trainiertem Vektor bestimmte Instanzen überprüfen
+    * weightVectorFromFile
+    *
+  * Namenskonvention für trainierte WeightVectorFiles:
+    * ST (SingleTask): (Kategoriename) | All
+    * MT (MultiTask): Kat | Random
+    * gefolgt von: Zahl der Epochen, learning rate, bei MT: Zahl der Top Features 
+    * z.B. ST_books_10_0.0001.wv
+    * z.B. MT_Random_100_0.0001_100.wv
