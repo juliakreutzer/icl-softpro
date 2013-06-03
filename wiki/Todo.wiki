@@ -8,7 +8,7 @@
   * Evaluationsklasse erzeugen
     * mit trainiertem Vektor bestimmte Instanzen überprüfen
     * weightVectorFromFile
-    *
+ 
   * Namenskonvention für trainierte WeightVectorFiles:
     * ST (SingleTask): (Kategoriename) | All
     * MT (MultiTask): Kat | Random
