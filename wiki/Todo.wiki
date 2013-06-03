@@ -15,3 +15,5 @@
     * gefolgt von: Zahl der Epochen, learning rate, bei MT: Zahl der Top Features 
     * z.B. ST_books_10_0.0001.wv
     * z.B. MT_Random_100_0.0001_100.wv
+
+  * Toolbox loswerden, nach Sinn in eigene Klassen stecken
