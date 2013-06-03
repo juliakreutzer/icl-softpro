@@ -17,7 +17,6 @@ public class FeatureSelector {
 	
 	public HashMap <String, Double> getTopKFeatures (int k) {
 		HashMap <String, Double> topFeatures = new HashMap<String, Double>();
-		System.out.println("Sorting...");
 		Integer i = 0;
 		
 		for (Map.Entry <String, Double> TopKEntry : entriesSortedByValues(this.unorderedMap)) {

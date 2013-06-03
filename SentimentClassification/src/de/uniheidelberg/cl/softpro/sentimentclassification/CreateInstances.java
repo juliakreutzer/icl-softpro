@@ -19,12 +19,9 @@ public class CreateInstances {
 		}
 		String[] reviews = line.split("<>");
 		reviews[0] = reviews[0].replaceFirst(".*\t", "");
-		ArrayList<String> al = new ArrayList<String>();
-		for (String review : reviews) {
-			al.add(review);
-		}
+		
 		ArrayList<Instance> instanceArray = new ArrayList<Instance>();
-		for (String review : al) {
+		for (String review : reviews) {
 			int label = 0;
 			HashMap<String, Integer> hm = new HashMap<String, Integer>();
 			String[] reviewArray = review.split(" ");
@@ -51,13 +48,9 @@ public class CreateInstances {
 	
 	public static ArrayList<Instance> createInstancesFromString(String s) {
 		String[] reviews = s.split("<>");
-		reviews[0] = reviews[0].replaceFirst(".*\t", "");
-		ArrayList<String> al = new ArrayList<String>();
-		for (String review : reviews) {
-			al.add(review);
-		}
+		
 		ArrayList<Instance> instanceArray = new ArrayList<Instance>();
-		for (String review : al) {
+		for (String review : reviews) {
 			int label = 0;
 			HashMap<String, Integer> hm = new HashMap<String, Integer>();
 			String[] reviewArray = review.split(" ");
