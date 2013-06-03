@@ -1,13 +1,14 @@
 #summary Todo-Liste
 
 = Todo =
-  * learning rate? Recherche, ausprobieren
-  * MultiPerceptron in die Tonne
-  * Random Corpus erzeugen (Python)
-  * HadoopPerceptron Aufruf dokumentieren
-  * Evaluationsklasse erzeugen
+  * learning rate? Recherche, ausprobieren jj
+  * MultiPerceptron in die Tonne m
+  * Random Corpus erzeugen (Python) ju
+  * HadoopPerceptron Aufruf dokumentieren m
+  * WeightVector Dateiformat nach preprocessed corpus richten (in Toolbox) m
+  * Evaluationsklasse erzeugen ja
     * mit trainiertem Vektor bestimmte Instanzen überprüfen
-    * weightVectorFromFile
+    * weightVectorFromFile -> Klassenmethode (Format: feature:value f:v...)
  
   * Namenskonvention für trainierte WeightVectorFiles:
     * ST (SingleTask): (Kategoriename) | All
@@ -17,3 +18,7 @@
     * z.B. MT_Random_100_0.0001_100.wv
 
   * Toolbox loswerden, nach Sinn in eigene Klassen stecken
+
+  * Output vom Reducer muss geändert werden: m
+    * key = feature
+    * value = "l2 \t Mittelwert"
