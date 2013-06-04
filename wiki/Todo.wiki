@@ -5,7 +5,7 @@
   * MultiPerceptron in die Tonne m
   * Random Corpus erzeugen (Python) ju
   * HadoopPerceptron Aufruf dokumentieren m
-  * WeightVector Dateiformat nach preprocessed corpus richten (in Toolbox) m
+  * WeightVector Dateiformat nach preprocessed corpus richten (in Toolbox) - done
   * Evaluationsklasse erzeugen ja
     * mit trainiertem Vektor bestimmte Instanzen überprüfen
     * weightVectorFromFile -> Klassenmethode (Format: feature:value f:v...)
