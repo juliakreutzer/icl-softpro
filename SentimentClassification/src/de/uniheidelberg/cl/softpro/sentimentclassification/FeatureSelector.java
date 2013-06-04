@@ -9,19 +9,22 @@ import java.util.*;
  */
 
 public class FeatureSelector {
-	HashMap <String, Double> unorderedMap;
+	HashMap <String, Double> mapWeights;
+	HashMap <String, Double> mapL2;
 	
-	public FeatureSelector (HashMap <String, Double> newMap) {
-		this.unorderedMap = newMap;
+	public FeatureSelector (HashMap <String, Double> weights, HashMap <String, Double> l2) {
+		this.mapWeights = weights;
+		this.mapL2 = l2;
 	}
 	
 	public HashMap <String, Double> getTopKFeatures (int k) {
 		HashMap <String, Double> topFeatures = new HashMap<String, Double>();
 		Integer i = 0;
 		
-		for (Map.Entry <String, Double> TopKEntry : entriesSortedByValues(this.unorderedMap)) {
-			if (i < k) {
-				topFeatures.put(TopKEntry.getKey(), TopKEntry.getValue());
+		for (Map.Entry <String, Double> TopKEntry : entriesSortedByValues(this.mapL2)) {
+			if (i <= k) {
+				topFeatures.put (TopKEntry.getKey(), mapWeights.get (TopKEntry.getKey()));
+				i++;
 			}
 			else {
 				break;
