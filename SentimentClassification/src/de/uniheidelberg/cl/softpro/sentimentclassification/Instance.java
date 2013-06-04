@@ -1,7 +1,7 @@
 /**
  * 
  */
-package src.de.uniheidelberg.cl.softpro.sentimentclassification;
+package de.uniheidelberg.cl.softpro.sentimentclassification;
 
 import java.util.HashMap;
 import java.util.Set;
