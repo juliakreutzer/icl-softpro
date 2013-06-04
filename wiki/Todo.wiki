@@ -1,6 +1,10 @@
 #summary Todo-Liste
 
 = Todo =
+  * Hadoop Map/Reduce umgestalten -> beliebig viele Mapper etc. m
+  * Korpus umbauen -> in jeder Zeile steht Kategorie\tReview ja
+  * Development Korpus fehlt -> neue Splits 60:20:20 - done
+
   * learning rate? Recherche, ausprobieren jj
   * MultiPerceptron in die Tonne m
   * Random Corpus erzeugen (Python) ju
