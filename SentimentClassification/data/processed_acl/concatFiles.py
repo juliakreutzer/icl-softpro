@@ -1,4 +1,6 @@
 #-*- coding: utf-8 -*-
+#author: Julia
+
 import sys
 
 #e.g. python concatFiles.py ../../corpus/books.train.corpus ../../corpus/dvd.train.corpus ../../corpus/electronics.train.corpus ../../corpus/kitchen.train.corpus ../../corpus/all.train.corpus
