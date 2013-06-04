@@ -19,10 +19,31 @@ public class Perceptron{
 	
 	/**
 	 * Constructor: creates new SingleTaskPerceptron instance 
+	 * @param epochs number of training epochs
+	 * @param learningRate learningRate for training
 	 */
 	public Perceptron(int epochs, double learningRate){
 		this.epochs = epochs;
 		this.learningRate = learningRate;
+	}
+	
+	/**
+	 * contructor with learningRate parameter
+	 * epochs are set to 1
+	 * @param learningRate
+	 */
+	public Perceptron(double learningRate){
+		this.epochs = 1;
+		this.learningRate = learningRate;
+	}
+	
+	/**
+	 * default constructor
+	 * epochs are set to 1, learningRate to 0.0001
+	 */
+	public Perceptron(){
+		this.epochs = 1;
+		this.learningRate = 0.0001;
 	}
 	
 	/**
