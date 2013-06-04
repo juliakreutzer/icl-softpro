@@ -19,6 +19,6 @@
 
   * Toolbox loswerden, nach Sinn in eigene Klassen stecken
 
-  * Output vom Reducer muss geändert werden: m
+  * Output vom Reducer muss geändert werden:  - done
     * key = feature
     * value = "l2 \t Mittelwert"
