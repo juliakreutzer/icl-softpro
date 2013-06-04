@@ -5,12 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Stolen from:
+ * class that represents an Perceptron for testing and training
  * @author julia
- * (need some playground for hadoop... O:-)
  */
-//class for SingleTaskPerceptron
-
 public class Perceptron{
 	private HashMap<String,Double> weights = new HashMap<String,Double>();
 	private int epochs;
@@ -28,13 +25,21 @@ public class Perceptron{
 	}
 	
 	/**
-	 * contructor with learningRate parameter
+	 * constructor with learningRate parameter
 	 * epochs are set to 1
 	 * @param learningRate
 	 */
 	public Perceptron(double learningRate){
-		this.epochs = 1;
-		this.learningRate = learningRate;
+		this(1,learningRate);
+	}
+	
+	/**
+	 * constructor for perceptron with given weights
+	 * used for testing and evaluation
+	 * @param weights, HashMap of Strings (features) and Doubles (counts)
+	 */
+	public Perceptron(HashMap<String, Double> weights){
+		this.weights = weights;
 	}
 	
 	/**
@@ -42,15 +47,14 @@ public class Perceptron{
 	 * epochs are set to 1, learningRate to 0.0001
 	 */
 	public Perceptron(){
-		this.epochs = 1;
-		this.learningRate = 0.0001;
+		this(1, 0.0001);
 	}
 	
 	/**
 	 * calculates the dot product of two sparse vectors (HashMap<String,Integer>)
 	 * @param m1 training instance vector
 	 * @param m2 perceptron weight vector
-	 * @return dot product 
+	 * @return dot product (double)
 	 */
 	public static double dotProduct(HashMap<String,Integer> m1, HashMap<String,Double> m2){
 		double dotproduct = 0.0; 
@@ -67,6 +71,11 @@ public class Perceptron{
 		return dotproduct;
 	}
 	
+	/**
+	 * checks whether an instance is misclassified by trained Perceptron or not
+	 * @param i test instance
+	 * @return true or false
+	 */
 	public boolean misclassified(Instance i){
 		//if ((dotProduct(i.getFeatureVector(),this.weights)+this.p)*i.getLabel()<=0){
 		if ((dotProduct(i.getFeatureVector(),this.weights))*i.getLabel()<=0){ //p not needed for modified space
@@ -130,7 +139,11 @@ public class Perceptron{
 		this.learningRate = newlearningRate;
 	}
 
-	//trains only for one epoch
+	/**
+	 * trains the Perceptron on a given set of instances, but only for one epoch
+	 * @param trainset ArrayList of instances which contain training samples
+	 * @return error rate (double), i.e. #correctly_classified_samples / #all_samples
+	 */
 	public HashMap<String,Double> trainMulti(ArrayList<Instance> trainset){
 		for (Instance i : trainset){
 			//System.out.println("instance "+i.toString());
@@ -192,7 +205,8 @@ public class Perceptron{
 	
 	
 	/**
-	 * prints the parameters for one SingleTaskPerceptron instance
+	 * prints the parameters for one SingleTaskPerceptron instance:
+	 * epochs, weights and learning rate
 	 */
 	public void printParameters(){
 		System.out.println("weights: "+this.weights.toString());
