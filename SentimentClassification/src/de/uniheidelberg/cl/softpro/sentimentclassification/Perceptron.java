@@ -99,10 +99,11 @@ public class Perceptron{
 			//System.out.println("training in epoch "+t);
 			//for input instance
 			
-			//double newLearningRate = 1/(1+t/trainset.size()); //Riezler-Paper (5)
-			double newLearningRate = 1/t;
+			//here you can test various learning rates
+		//	double newLearningRate = 1/(1+t/trainset.size()); //"decreasing" from Paper 3.3 (5)
+			//double newLearningRate = 1/t;
+			//this.setLearningRate(newLearningRate);
 			
-			this.setLearningRate(newLearningRate);
 			for (Instance i : trainset){
 				//System.out.println("instance "+i.toString());
 				//System.out.println("weight vector "+this.weights.toString());
@@ -201,18 +202,27 @@ public class Perceptron{
 	 */
 	public HashMap<String,Double> getWeights(){
 		return this.weights;
-	}
-	
+	}	
 	
 	/**
-	 * prints the parameters for one SingleTaskPerceptron instance:
-	 * epochs, weights and learning rate
+	 * prints parameters for one SingleTaskPerceptron instance:
+	 * epochs and learning rate
 	 */
 	public void printParameters(){
-		System.out.println("weights: "+this.weights.toString());
 		System.out.println("epochs: "+this.epochs);
 		System.out.println("learning rate: "+this.learningRate);
 		//System.out.println("p "+this.p); //not needed for modified space
+	}
+	
+	/**
+	 * prints the weightVector in a readable way:
+	 * one feature-weight pair each line
+	 */
+	public void printWeights(){
+		for (String key : this.weights.keySet()){
+			System.out.append(key+" : "+this.weights.get(key).toString()+"\n");
+		}
+		System.out.flush();
 	}
 	
 	
