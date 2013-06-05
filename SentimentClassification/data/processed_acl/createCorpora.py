@@ -39,8 +39,26 @@ if __name__ == "__main__":
 	random.shuffle(test)
 	random.shuffle(dev)
 
+	
 	open(cat+".train.corpus.final","w").write(cat+"\t"+" <> ".join(train).replace("\n",""))
 	open(cat+".test.corpus.final","w").write(cat+"\t"+" <> ".join(test).replace("\n",""))
 	open(cat+".dev.corpus.final","w").write(cat+"\t"+" <> ".join(dev).replace("\n",""))
+	
+	o = open(cat+".train.corpus.final.formatted","w")
+	for i in train:
+		o.write(cat+"\t"+i)
+	o.close()
+
+	p = open(cat+".test.corpus.final.formatted","w")
+	for i in test:
+		p.write(cat+"\t"+i)
+	p.close()
+
+	q = open(cat+".dev.corpus.final.formatted","w")
+	for i in dev:
+		q.write(cat+"\t"+i)
+	q.close()
+	
+	
 	
 
