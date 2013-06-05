@@ -2,12 +2,12 @@
 
 = Todo =
   * Hadoop Map/Reduce umgestalten -> beliebig viele Mapper etc. m
-  * Korpus umbauen -> in jeder Zeile steht Kategorie\tReview ja
+  * Korpus umbauen -> in jeder Zeile steht Kategorie\tReview - done
   * Development Korpus fehlt -> neue Splits 60:20:20 - done
 
   * learning rate? Recherche, ausprobieren jj
   * MultiPerceptron in die Tonne m
-  * Random Corpus erzeugen (Python) ju
+  * Random Corpus erzeugen (Python) ju ?? <-ist das noch nötig?
   * HadoopPerceptron Aufruf dokumentieren m
   * WeightVector Dateiformat nach preprocessed corpus richten (in Toolbox) - done
   * Evaluationsklasse erzeugen ja
@@ -21,7 +21,7 @@
     * z.B. ST_books_10_0.0001.wv
     * z.B. MT_Random_100_0.0001_100.wv
 
-  * Toolbox loswerden, nach Sinn in eigene Klassen stecken
+  * Toolbox loswerden, nach Sinn in eigene Klassen stecken - done
 
   * Output vom Reducer muss geändert werden:  - done
     * key = feature
