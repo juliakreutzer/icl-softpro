@@ -1,6 +1,10 @@
 package de.uniheidelberg.cl.softpro.sentimentclassification;
 
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -223,6 +227,32 @@ public class Perceptron{
 			System.out.append(key+" : "+this.weights.get(key).toString()+"\n");
 		}
 		System.out.flush();
+	}
+	
+	/**
+	 * stores the weight vector in the given file
+	 * note the name conventions:     
+	 * ST (SingleTask?): (Kategoriename) | All
+	 * MT (MultiTask?): Kat | Random
+	 * Followed by: number of epochs, learning rate, for MT: Number of Top Features
+	 * file ending: .wv
+	 * e.g. ST_books_10_0.0001.wv
+	 * e.g. MT_Random_100_0.0001_100.wv 
+	 * @param outFile
+	 */
+	public void writeWeightsToFile(File outFile){
+		
+		BufferedWriter out;
+		try {
+			out = new BufferedWriter (new FileWriter (outFile));
+			for (String key : this.weights.keySet()){
+				out.append(key+":"+this.weights.get(key).toString()+" ");
+			}
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
