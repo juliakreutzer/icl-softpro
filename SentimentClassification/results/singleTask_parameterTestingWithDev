@@ -1,0 +1,44 @@
+1/t, 10 epochs
+all on all: 0.19125
+all on books: 0.2175
+all on dvd: 0.22
+all on electronics: 0.1625
+all on kitchen: 0.165
+books on books: 0.3
+books on all: 0.345
+dvd on dvd: 0.26
+dvd on all: 0.321875
+electronics on electronics: 0.2025
+electronics on all 0.275625
+kitchen on kitchen: 0.195
+kitchen on all: 0.2775
+
+"decreasing", 10 epochs
+all on all: 0.165
+all on books: 0.215
+all on dvd: 0.1875
+all on electronics: 0.1275
+all on kitchen: 0.13
+books on books: 0.245
+books on all: 0.281875
+dvd on dvd: 0.195
+dvd on all: 0.25
+electronics on electronics: 0.1575
+electronics on all 0.246875
+kitchen on kitchen: 0.1475
+kitchen on all: 0.25
+
+1.0E-4, 10 epochs
+all on all: 0.16125
+all on books: 0.205
+all on dvd: 0.19
+all on electronics: 0.13
+all on kitchen: 0.12
+books on books: 0.235
+books on all: 0.266875
+dvd on dvd: 0.19
+dvd on all: 0.248125
+electronics on electronics: 0.165
+electronics on all 0.2475
+kitchen on kitchen: 0.13
+kitchen on all: 0.2375
