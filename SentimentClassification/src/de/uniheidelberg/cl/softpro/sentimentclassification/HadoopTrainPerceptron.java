@@ -6,7 +6,6 @@ package de.uniheidelberg.cl.softpro.sentimentclassification;
  */
 
 import java.io.*;
-import java.net.URI;
 import java.util.*;
 
 import org.apache.hadoop.filecache.DistributedCache;
@@ -117,7 +116,7 @@ public class HadoopTrainPerceptron {
 	 * @param map A HashMap to be converted 
 	 * @return String in the format "key:value key:value key:value ..."
 	 */
-	private static String convertHashMapToString (HashMap<String, Double> map) {
+	public static String convertHashMapToString (HashMap<String, Double> map) {
 		StringBuilder returnString = new StringBuilder();
 		Boolean first = true;
 		for (String key : map.keySet()) {
@@ -357,10 +356,7 @@ public class HadoopTrainPerceptron {
 			}
 			return map;
 		}
-		
-
 	}
-	
 	
 	
 	/**
