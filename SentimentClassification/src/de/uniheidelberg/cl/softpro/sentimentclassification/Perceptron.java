@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.lang.Math;
 
 /**
  * class that represents an Perceptron for testing and training
@@ -104,8 +105,10 @@ public class Perceptron{
 			//for input instance
 			
 			//here you can test various learning rates
-		//	double newLearningRate = 1/(1+t/trainset.size()); //"decreasing" from Paper 3.3 (5)
+			//double newLearningRate = 1/(1+t/trainset.size()); //"decreasing" from Paper 3.3 (5)
+			//double newLearningRate = 1*Math.pow(1,-1/trainset.size()); //"exponential" from Paper 3.3 (6)
 			//double newLearningRate = 1/t;
+			
 			//this.setLearningRate(newLearningRate);
 			
 			for (Instance i : trainset){
