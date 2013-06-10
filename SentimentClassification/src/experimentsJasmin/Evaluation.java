@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Evaluation {
 
-	// ist Gewichtsvektor in einer Zeile????
+	// wandelt Datei mit Gewichtsvektor in eine HashMap<String, Double> um
 	public static HashMap<String, Double> weightVectorFromFile(File f) {
 		String line = new String();
 		try {
@@ -30,9 +30,9 @@ public class Evaluation {
 	
 	public static void main(String[] args) {
 		//System.out.println(weightVectorFromFile(new File("/home/jasmin/workspace/Test/src/testDatei.txt")));
-		HashMap<String, Double> weightVector = weightVectorFromFile(new File ("/home/jasmin/workspace/Test/src/testDatei.txt"));
+		/*HashMap<String, Double> weightVector = weightVectorFromFile(new File ("/home/jasmin/workspace/Test/src/testDatei.txt"));
 		Perceptron perceptronTest = new Perceptron(weightVector);
 		ArrayList<Instance> testset = //.....
-		perceptronTest.test(testset);
+		perceptronTest.test(testset);*/
 	}
 }
