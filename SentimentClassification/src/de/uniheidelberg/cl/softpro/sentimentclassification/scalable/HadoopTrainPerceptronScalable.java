@@ -288,6 +288,7 @@ public class HadoopTrainPerceptronScalable {
 			Text labelOfCategory = new Text ("#category!#");
 			Double numberOfShards;
 			
+			
 			// l2-norm = sqrt (sum ((feature's value)^2)) 
 			Double sum_pow = 0.0; 
 			Double sum = 0.0;
