@@ -1,0 +1,78 @@
+with margin -> misclassified if <=1
+
+1/t, 10 epochs
+all on all: 0.194375
+all on books: 0.2725
+all on dvd: 0.2075
+all on electronics: 0.15
+all on kitchen: 0.1475
+books on books: 0.29
+books on all: 0.31375
+dvd on dvd: 0.2175
+dvd on all: 0.303125
+electronics on electronics: 0.275
+electronics on all 0.324375
+kitchen on kitchen: 0.2175
+kitchen on all: 0.279375
+
+"decreasing", 10 epochs, n0=1
+all on all: 0.161875
+all on books: 0.2125
+all on dvd: 0.18
+all on electronics: 0.1125
+all on kitchen: 0.1425
+books on books: 0.2575
+books on all: 0.290625
+dvd on dvd: 0.205
+dvd on all: 0.275625
+electronics on electronics: 0.1875
+electronics on all 0.24375
+kitchen on kitchen: 0.1575
+kitchen on all: 0.25125
+
+"exponential", 10 epochs,n0=1, a=0.85
+all on all: 0.161875
+all on books: 0.2125
+all on dvd: 0.18
+all on electronics: 0.1125
+all on kitchen: 0.1425
+books on books: 0.2575
+books on all: 0.290625
+dvd on dvd: 0.205
+dvd on all: 0.275625
+electronics on electronics: 0.1875
+electronics on all 0.24375
+kitchen on kitchen: 0.1575
+kitchen on all: 0.25125
+
+"exponential", 10 epochs,n0=1, a=1
+all on all: 0.161875
+all on books: 0.2125
+all on dvd: 0.18
+all on electronics: 0.1125
+all on kitchen: 0.1425
+books on books: 0.2575
+books on all: 0.290625
+dvd on dvd: 0.205
+dvd on all: 0.275625
+electronics on electronics: 0.1875
+electronics on all 0.24375
+kitchen on kitchen: 0.1575
+kitchen on all: 0.25125
+
+
+1.0E-4, 10 epochs
+all on all: 0.76
+all on books: 0.8075
+all on dvd: 0.79
+all on electronics: 0.715
+all on kitchen: 0.7275
+books on books: 0.945
+books on all: 0.948125
+dvd on dvd: 0.9375
+dvd on all: 0.96875
+electronics on electronics: 0.895
+electronics on all 0.93625
+kitchen on kitchen: 0.9025
+kitchen on all: 0.925
+
