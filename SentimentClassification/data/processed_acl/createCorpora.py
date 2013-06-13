@@ -44,6 +44,7 @@ if __name__ == "__main__":
 	open(cat+".test.corpus.final","w").write(cat+"\t"+" <> ".join(test).replace("\n",""))
 	open(cat+".dev.corpus.final","w").write(cat+"\t"+" <> ".join(dev).replace("\n",""))
 	
+	'''
 	o = open(cat+".train.corpus.final.formatted","w")
 	for i in train:
 		o.write(cat+"\t"+i)
@@ -58,7 +59,10 @@ if __name__ == "__main__":
 	for i in dev:
 		q.write(cat+"\t"+i)
 	q.close()
+	'''
 	
-	
-	
+	t = open(cat+".dev.corpus.final.formatted","w")
+	for i in dev:
+		t.write(cat+"\t"+i)
+	t.close()
 
