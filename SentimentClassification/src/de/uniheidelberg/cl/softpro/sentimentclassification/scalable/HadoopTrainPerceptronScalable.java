@@ -1,16 +1,17 @@
 package de.uniheidelberg.cl.softpro.sentimentclassification.scalable;
 
 import java.io.*;
-import java.security.KeyStore.Entry;
 import java.util.*;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapred.*;
-import org.apache.hadoop.mapred.lib.ChainMapper;
-import org.apache.hadoop.mapred.lib.ChainReducer;
-
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import de.uniheidelberg.cl.softpro.sentimentclassification.CreateInstances;
 import de.uniheidelberg.cl.softpro.sentimentclassification.HadoopTrainPerceptron;
@@ -71,15 +72,8 @@ public class HadoopTrainPerceptronScalable {
 		System.out.println( "Initializing Epoch " + currentEpoch.toString());
 		System.out.println( "#####################################");
 
-		JobConf conf = new JobConf(HadoopTrainPerceptron.class);
-				
-		conf.setJobName("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
-	    conf.setOutputKeyClass(Text.class);		// data type for map's output key
-	    conf.setOutputValueClass(DoubleWritable.class);	// data type for map's output value
-	    	    
-	    conf.setInputFormat(KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
-	    conf.setOutputFormat(TextOutputFormat.class);		// save result of reducers as text
-
+		Configuration confOne = new Configuration();
+		
 	    Path inFile = new Path (pathIn);
 	    Path outFile = new Path (pathOut + "_e" + currentEpoch.toString());
 
@@ -87,7 +81,7 @@ public class HadoopTrainPerceptronScalable {
 	    String localFile;
 	    
 	    if (fs == null) {	// if fs == null it's the first epoch
-	    	fs = FileSystem.get (conf);	// creates fs-object
+	    	fs = FileSystem.get (confOne);	// creates fs-object
 	    	localFile = "emptyVector";	// first epoch: weight vector has to be initialized with zeros
 	    }
 	    else {
@@ -99,49 +93,45 @@ public class HadoopTrainPerceptronScalable {
 	    	numberOfShards = HadoopTrainPerceptron.getNumberOfLinesInFolder (inFile);	// Must be run AFTER fs was instanciated!
 	    }
 	    
-	    conf.set ("learningRate","1.0E-4");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
-	    conf.set ("numberOfShards", numberOfShards.toString());
-	    
-	    FileInputFormat.setInputPaths(conf, inFile);		// first command line argument used as input path
-	    FileOutputFormat.setOutputPath(conf, outFile);	// second command line argument used as output path
-	    	    
+	    confOne.set ("learningRate","1.0E-4");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
+	    confOne.set ("numberOfShards", numberOfShards.toString());
+	      	    
 	    
 	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);	// copy existing weight vector file from local filesystem to hdfs
-	    DistributedCache.addCacheFile(hdfsPath.toUri(), conf);	// add file to distributed cache
+	    DistributedCache.addCacheFile(hdfsPath.toUri(), confOne);	// add file to distributed cache
+		
+	    Job jobOne = new Job (confOne);
+		
+		jobOne.setJobName("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
+		jobOne.setOutputKeyClass(Text.class);		// data type for map's output key
+		jobOne.setOutputValueClass(DoubleWritable.class);	// data type for map's output value
+	    	    
+		jobOne.setInputFormatClass(KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
+		jobOne.setOutputFormatClass(TextOutputFormat.class);		// save result of reducers as text
+
+		FileInputFormat.setInputPaths (jobOne, inFile);
+		FileOutputFormat.setOutputPath (jobOne, outFile);
 		
 	    
-	    JobConf mapTrainSmallPerceptronsConf = new JobConf (false);
-		ChainMapper.addMapper (conf, mapTrainSmallPerceptrons.class, Text.class, Text.class, Text.class, MapWritable.class, true, mapTrainSmallPerceptronsConf);
-		
-		JobConf reduceUnitePerceptronsConf = new JobConf (false);
-		ChainReducer.setReducer(conf, reduceUnitePerceptrons.class, Text.class, MapWritable.class, Text.class, MapWritable.class, true, reduceUnitePerceptronsConf);
-		
-		JobConf mapCalculateThingsConf = new JobConf (false);
-		ChainReducer.addMapper (conf, mapCalculateThings.class, Text.class, MapWritable.class, Text.class, MapWritable.class, true, mapCalculateThingsConf);
-		
-		JobConf mapSelectTopKConf = new JobConf (false);
-		ChainReducer.addMapper (conf, mapSelectTopK.class, Text.class, MapWritable.class, Text.class, Text.class, true, mapSelectTopKConf);
-	    
-	    RunningJob hadoopTask = JobClient.runJob(conf);		// start Hadoop-Job
-	    hadoopTask.waitForCompletion();	// wait until all jobs completed
 	    HadoopTrainPerceptron.writeInitializedVector (outFile);	// save the new weight vector to a file in the local file system
 	}
 
-	public static class mapTrainSmallPerceptrons extends MapReduceBase implements Mapper<Text, Text, Text, MapWritable> {
+	public static class mapTrainSmallPerceptrons extends Mapper<Text, Text, Text, MapWritable> {
 		private HashMap <String, Perceptron> perceptrons = new HashMap <String, Perceptron> ();
 		private static double learningRate;	// value set in configure(), used to store passed data
 		
 		private static HashMap <String, Double> initializedWeightVector;
-		private OutputCollector <Text, MapWritable> output;
 		
-		public void configure (JobConf job) {
+		public void setup (Context context) {
 	    	/*
 	    	 * used to read parameters from JobConf
 	    	 * important to get data from previously trained perceptrons
-	    	 */ 
-	        learningRate = Double.parseDouble (job.get ("learningRate"));							// get learning rate specified in JobConf
+	    	 */
+			Configuration config = context.getConfiguration();
+			
+	        learningRate = Double.parseDouble (config.get ("learningRate"));							// get learning rate specified in JobConf
     		try {
-				for( Path cacheFile : DistributedCache.getLocalCacheFiles(job) ) {
+				for( Path cacheFile : DistributedCache.getLocalCacheFiles (config) ) {
 					System.out.println( "  Cache file: " + cacheFile.getName().toString() );
 				}
 			} catch (IOException e) {
@@ -149,7 +139,7 @@ public class HadoopTrainPerceptronScalable {
 			}
 	        try {
 	            String wvCacheName = new Path (weightVectorFile).getName();
-		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (job);
+		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (config);
 		        if (null != cacheFiles && cacheFiles.length > 0) {
 		        	for (Path cachePath : cacheFiles) {
 		        		if (cachePath.getName().endsWith(wvCacheName)) {
@@ -180,11 +170,8 @@ public class HadoopTrainPerceptronScalable {
 	    	
 	    }
 	    
-	    
-		public void map(Text key, Text value, OutputCollector<Text, MapWritable> output, Reporter reporter) throws IOException {
-			if (this.output == null) {
-				this.output = output;
-			}
+		public void map(Text key, Text value, Context context) throws IOException {
+
 			if (!this.perceptrons.containsKey(key.toString())) {
 				Perceptron newPerceptron = new Perceptron (learningRate);
 				newPerceptron.setWeights (initializedWeightVector);
