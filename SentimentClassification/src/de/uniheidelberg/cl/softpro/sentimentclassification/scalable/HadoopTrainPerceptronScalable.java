@@ -11,6 +11,7 @@ import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 import de.uniheidelberg.cl.softpro.sentimentclassification.CreateInstances;
@@ -184,13 +185,13 @@ public class HadoopTrainPerceptronScalable {
 			this.perceptrons.put (key.toString(), currentPerceptron);
 		}
 		
-		public void close() throws IOException {
+		public void cleanup (Context context) throws IOException, InterruptedException {
 			for (String key : this.perceptrons.keySet()) {
 				MapWritable map = new MapWritable();
 				for ( Map.Entry <String, Double> eintrag : this.perceptrons.get(key).getWeights().entrySet()) {
 					map.put (new Text (eintrag.getKey()), new DoubleWritable (eintrag.getValue()));
 				}
-				this.output.collect (new Text (key), map);
+				context.write (new Text (key), map);
 			}
 		}
 		
@@ -217,13 +218,13 @@ public class HadoopTrainPerceptronScalable {
 		}
 	}
 	
-	public static class reduceUnitePerceptrons extends MapReduceBase implements Reducer<Text, MapWritable, Text, MapWritable> {
-		public void reduce(Text key, Iterator<MapWritable> values, OutputCollector<Text, MapWritable> output, Reporter reporter) throws IOException {
+	public static class reduceUnitePerceptrons extends Reducer <Text, MapWritable, Text, DoubleWritable> {
+		public void reduce(Text key, Iterable<MapWritable> values, Context context) throws IOException, InterruptedException {
+			MultipleOutputs mos = new MultipleOutputs (context);
 			MapWritable unitedWeightVector = new MapWritable();
 			Integer numberOfPerceptrons = 0;
-			while (values.hasNext()) {
+			for ( MapWritable partResult : values) {
 				++numberOfPerceptrons;
-				MapWritable partResult = values.next();
 				for ( Map.Entry <Writable, Writable> entry : partResult.entrySet()) {
 					Writable currentKey = entry.getKey();
 					Writable currentValue = entry.getValue();
@@ -245,28 +246,15 @@ public class HadoopTrainPerceptronScalable {
 				DoubleWritable newValue = new DoubleWritable (Double.parseDouble (currentValue.toString()) / numberOfPerceptrons);
 				unitedWeightVector.put (currentKey, newValue);
 			}
-			
-			DoubleWritable noPerceptrons = new DoubleWritable (numberOfPerceptrons);
-			Text labelOfNumberOfShards = new Text ("#totalNumberOfShards!#");
-			Text labelOfKey = new Text ("#key!#");
-			Text labelOfValue = new Text ("#value!#");
-			Text labelOfCategory = new Text ("#category!#");
-			
+						
 			for ( Map.Entry <Writable, Writable> entry : unitedWeightVector.entrySet()) {
-				Writable currentKey = entry.getKey();
-				Writable currentValue = entry.getValue();
-				MapWritable returnMap = new MapWritable();
-				
-				returnMap.put (labelOfKey, currentKey);
-				returnMap.put (labelOfValue, currentValue);
-				returnMap.put (labelOfNumberOfShards, noPerceptrons);
-				returnMap.put (labelOfCategory, key);
-				
-				output.collect ( new Text (currentKey.toString()) , returnMap);
+				Text currentKey = (Text)entry.getKey();
+				DoubleWritable currentValue = (DoubleWritable)entry.getValue();
+				mos.write (currentKey, currentValue, key.toString());
 			}
 		}
 	}
-	
+	/*
 	public static class mapCalculateThings extends MapReduceBase implements Mapper<Text, MapWritable, Text, MapWritable> {
 		public void map(Text key, MapWritable value, OutputCollector<Text, MapWritable> output, Reporter reporter) throws IOException {
 			Text labelOfNumberOfShards = new Text ("#totalNumberOfShards!#");
@@ -307,4 +295,5 @@ public class HadoopTrainPerceptronScalable {
 		public void map(Text key, MapWritable value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
 		}
 	}
+	*/
 }
