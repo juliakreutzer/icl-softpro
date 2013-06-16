@@ -12,7 +12,7 @@
   * WeightVector Dateiformat nach preprocessed corpus richten (in Toolbox) - done
   * Evaluationsklasse erzeugen ja
     * mit trainiertem Vektor bestimmte Instanzen überprüfen
-    * weightVectorFromFile -> Klassenmethode (Format: feature:value f:v...)
+    * weightVectorFromFile -> Klassenmethode (Format: feature:value f:v...) - done
  
   * Namenskonvention für trainierte WeightVectorFiles:
     * ST (SingleTask): (Kategoriename) | All
