@@ -91,7 +91,8 @@ public class CreateInstances {
 		}
 		return instanceArray;
 	}
-	
+	//liest String ein in Format: feature:count feature:count #label#:positive<>feature:count ....
+	// gibt eine ArrayList mit je einer Instance pro review aus
 	public static ArrayList<Instance> createInstancesFromString(String s) {
 		String[] reviews = s.split("<>");
 		
