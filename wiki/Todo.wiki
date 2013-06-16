@@ -1,7 +1,7 @@
 #summary Todo-Liste
 
 = Todo =
-  * Hadoop Map/Reduce umgestalten -> beliebig viele Mapper etc. m
+  * Hadoop Map/Reduce umgestalten -> neue mapreduce (statt alter mapred) API, 2 Hadoop Jobs
   * Korpus umbauen -> in jeder Zeile steht Kategorie\tReview - done
   * Development Korpus fehlt -> neue Splits 60:20:20 - done
 
