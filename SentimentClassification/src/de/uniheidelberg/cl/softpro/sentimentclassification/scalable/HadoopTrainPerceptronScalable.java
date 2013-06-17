@@ -2,6 +2,7 @@ package de.uniheidelberg.cl.softpro.sentimentclassification.scalable;
 
 import java.io.*;
 import java.util.*;
+import java.util.Map.Entry;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
@@ -9,7 +10,10 @@ import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.jobcontrol.ControlledJob;
+import org.apache.hadoop.mapreduce.lib.jobcontrol.JobControl;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -77,7 +81,8 @@ public class HadoopTrainPerceptronScalable {
 		
 	    Path inFile = new Path (pathIn);
 	    Path outFile = new Path (pathOut + "_e" + currentEpoch.toString());
-
+	    Path out2File = new Path (pathOut + "2_e" + currentEpoch.toString());
+	    
 	    Path hdfsPath = new Path (weightVectorFile);
 	    String localFile;
 	    
@@ -91,7 +96,8 @@ public class HadoopTrainPerceptronScalable {
 	    
 	    
 	    if (numberOfShards == null) {	// it's enough to count the number of shards once
-	    	numberOfShards = HadoopTrainPerceptron.getNumberOfLinesInFolder (inFile);	// Must be run AFTER fs was instanciated!
+	    	//numberOfShards = HadoopTrainPerceptron.getNumberOfLinesInFolder (inFile, fs);	// Must be run AFTER fs was instanciated!
+	    	numberOfShards = 4;
 	    }
 	    
 	    confOne.set ("learningRate","1.0E-4");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
@@ -99,22 +105,52 @@ public class HadoopTrainPerceptronScalable {
 	      	    
 	    
 	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);	// copy existing weight vector file from local filesystem to hdfs
-	    DistributedCache.addCacheFile(hdfsPath.toUri(), confOne);	// add file to distributed cache
+	    DistributedCache.addCacheFile (hdfsPath.toUri(), confOne);	// add file to distributed cache
 		
 	    Job jobOne = new Job (confOne);
 		
-		jobOne.setJobName("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
-		jobOne.setOutputKeyClass(Text.class);		// data type for map's output key
-		jobOne.setOutputValueClass(DoubleWritable.class);	// data type for map's output value
+		jobOne.setJobName ("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
+		jobOne.setOutputKeyClass (Text.class);		// data type for map's output key
+		jobOne.setOutputValueClass (MapWritable.class);	// data type for map's output value
 	    	    
-		jobOne.setInputFormatClass(KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
-		jobOne.setOutputFormatClass(TextOutputFormat.class);		// save result of reducers as text
+		jobOne.setInputFormatClass (KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
+		jobOne.setOutputFormatClass (TextOutputFormat.class);		// save result of reducers as text
 
+		jobOne.setMapperClass(mapTrainSmallPerceptrons.class);
+		jobOne.setReducerClass(reduceUnitePerceptrons.class);
+		
 		FileInputFormat.setInputPaths (jobOne, inFile);
 		FileOutputFormat.setOutputPath (jobOne, outFile);
 		
+		MultipleOutputs.addNamedOutput(jobOne, "dvd", TextOutputFormat.class, Text.class, DoubleWritable.class);
+		MultipleOutputs.addNamedOutput(jobOne, "books", TextOutputFormat.class, Text.class, DoubleWritable.class);
+		MultipleOutputs.addNamedOutput(jobOne, "electronics", TextOutputFormat.class, Text.class, DoubleWritable.class);
+		MultipleOutputs.addNamedOutput(jobOne, "kitchen", TextOutputFormat.class, Text.class, DoubleWritable.class);
+		
+		
+		Configuration confTwo = new Configuration();
+		confTwo.set ("learningRate", confOne.get ("learningRate"));	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
+		confTwo.set ("numberOfShards", confOne.get ("numberOfShards"));
+
+		Job jobTwo = new Job (confTwo);
+		
+		jobTwo.setJobName ("Hadoop Perceptron Training Phase 2 - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
+		jobTwo.setOutputKeyClass (Text.class);		// data type for map's output key
+		jobTwo.setOutputValueClass (MapWritable.class);	// data type for map's output value
+	    	    
+		jobTwo.setInputFormatClass (KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
+		jobTwo.setOutputFormatClass (TextOutputFormat.class);		// save result of reducers as text
+
+		jobTwo.setMapperClass(mapOrderThings.class);
+		jobTwo.setReducerClass(reduceCalculateThings.class);
+		
+		FileInputFormat.setInputPaths (jobTwo, outFile);
+		FileOutputFormat.setOutputPath (jobTwo, out2File);
+		
+		jobOne.waitForCompletion (true);
+		jobTwo.waitForCompletion (true);
 	    
-	    HadoopTrainPerceptron.writeInitializedVector (outFile);	// save the new weight vector to a file in the local file system
+	    HadoopTrainPerceptron.writeInitializedVector (out2File, fs);	// save the new weight vector to a file in the local file system
 	}
 
 	public static class mapTrainSmallPerceptrons extends Mapper<Text, Text, Text, MapWritable> {
@@ -143,7 +179,7 @@ public class HadoopTrainPerceptronScalable {
 		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (config);
 		        if (null != cacheFiles && cacheFiles.length > 0) {
 		        	for (Path cachePath : cacheFiles) {
-		        		if (cachePath.getName().endsWith(wvCacheName)) {
+		        		if (cachePath.getName().endsWith (wvCacheName)) {
 		        			readWeightVector (cachePath);
 		        			break;
 		        		}
@@ -220,63 +256,74 @@ public class HadoopTrainPerceptronScalable {
 	
 	public static class reduceUnitePerceptrons extends Reducer <Text, MapWritable, Text, DoubleWritable> {
 		public void reduce(Text key, Iterable<MapWritable> values, Context context) throws IOException, InterruptedException {
-			MultipleOutputs mos = new MultipleOutputs (context);
-			MapWritable unitedWeightVector = new MapWritable();
+			MultipleOutputs <Text, DoubleWritable> mos = new MultipleOutputs (context);
+			HashMap <Text, DoubleWritable> unitedWeightVector = new HashMap <Text, DoubleWritable>();
 			Integer numberOfPerceptrons = 0;
 			for ( MapWritable partResult : values) {
 				++numberOfPerceptrons;
+				
+				// Adds up all perceptrons' values:
 				for ( Map.Entry <Writable, Writable> entry : partResult.entrySet()) {
 					Writable currentKey = entry.getKey();
 					Writable currentValue = entry.getValue();
 					
 					if (unitedWeightVector.keySet().contains (currentKey)) {
 						DoubleWritable newValue = new DoubleWritable (Double.parseDouble (unitedWeightVector.get (currentKey).toString()) + Double.parseDouble (currentValue.toString()));
-						unitedWeightVector.put (currentKey, newValue);
+						unitedWeightVector.put ( (Text)currentKey, newValue);
 					}
 					else {
 						DoubleWritable newValue = new DoubleWritable (Double.parseDouble (currentValue.toString()));
-						unitedWeightVector.put (currentKey, newValue);
+						unitedWeightVector.put ( (Text)currentKey, newValue);
 					}
 				}
 			}
 			
-			for ( Map.Entry <Writable, Writable> entry : unitedWeightVector.entrySet()) {
-				Writable currentKey = entry.getKey();
-				Writable currentValue = entry.getValue();
+			// Calculates the mean of the perceptrons by dividing the added values by the number of perceptrons
+			for ( Entry<Text, DoubleWritable> entry : unitedWeightVector.entrySet()) {
+				Text currentKey = entry.getKey();
+				DoubleWritable currentValue = entry.getValue();
 				DoubleWritable newValue = new DoubleWritable (Double.parseDouble (currentValue.toString()) / numberOfPerceptrons);
 				unitedWeightVector.put (currentKey, newValue);
 			}
 						
-			for ( Map.Entry <Writable, Writable> entry : unitedWeightVector.entrySet()) {
+			for ( Entry<Text, DoubleWritable> entry : unitedWeightVector.entrySet()) {
 				Text currentKey = (Text)entry.getKey();
 				DoubleWritable currentValue = (DoubleWritable)entry.getValue();
 				mos.write (currentKey, currentValue, key.toString());
 			}
+			mos.close();
 		}
 	}
-	/*
-	public static class mapCalculateThings extends MapReduceBase implements Mapper<Text, MapWritable, Text, MapWritable> {
-		public void map(Text key, MapWritable value, OutputCollector<Text, MapWritable> output, Reporter reporter) throws IOException {
-			Text labelOfNumberOfShards = new Text ("#totalNumberOfShards!#");
-			Text labelOfKey = new Text ("#key!#");
-			Text labelOfValue = new Text ("#value!#");
-			Text labelOfCategory = new Text ("#category!#");
-			Double numberOfShards;
+	
+	
+	public static Text categoryLabel = new Text ("cat");
+	public static Text valueLabel = new Text ("val");
+	
+	public static class mapOrderThings extends Mapper <Text, DoubleWritable, Text, MapWritable> {
+		public void map (Text key, DoubleWritable value, Context context) throws IOException, InterruptedException {
+			MapWritable output = new MapWritable();
+			FileSplit fileSplit = (FileSplit) context.getInputSplit();
+			String fileName = fileSplit.getPath().getName().toString();
+			Text category = new Text (fileName.split ("-")[0]);
 			
+			output.put (categoryLabel, category);
+			output.put (valueLabel, new Text (value.toString()));
+			
+			context.write (key, output);
+		}
+	}
+	
+	public static class reduceCalculateThings extends Reducer <Text, MapWritable, Text, Text> {
+		public void reduce(Text key, Iterable<MapWritable> values, Context context) throws IOException, InterruptedException {
+			Configuration conf = context.getConfiguration();
+			Double numberOfShards = Double.parseDouble (conf.get ("numberOfShards"));
 			
 			// l2-norm = sqrt (sum ((feature's value)^2)) 
 			Double sum_pow = 0.0; 
 			Double sum = 0.0;
 			
-			for ( Map.Entry <Writable, Writable> entry : unitedWeightVector.entrySet()) {
-				MapWritable values = (MapWritable) entry.getValue();
-				
-				if (numberOfShards == null) {
-					numberOfShards = Double.parseDouble ();
-				}
-			}
-	        while (values.hasNext()) {
-	        	Double aValue = values.next().get();
+	        for ( MapWritable value : values ) {
+	        	Double aValue = Double.parseDouble (value.get (valueLabel).toString());
 	        	sum_pow += Math.pow (aValue, 2); // sum ((feature's value)^2)
 	        	sum += aValue;
 	      	}
@@ -287,13 +334,8 @@ public class HadoopTrainPerceptronScalable {
 	        
 	        // convert to hadoop data type
 	        Text returnValue = new Text( new String( l2.toString() + "	" + mean.toString()));
-	        output.collect (key, returnValue);
+	        context.write (key, returnValue);
 		}
+		
 	}
-
-	public static class mapSelectTopK extends MapReduceBase implements Mapper<Text, MapWritable, Text, Text> {
-		public void map(Text key, MapWritable value, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
-		}
-	}
-	*/
 }
