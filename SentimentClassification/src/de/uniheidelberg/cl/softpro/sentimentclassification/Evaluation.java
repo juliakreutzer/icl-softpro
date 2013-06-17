@@ -45,7 +45,7 @@ public class Evaluation {
 		
 		//Training und weigthVectorFile erstellen
 		int epochs = 50;				//Epochen
-		double learningRate = 1;	//Lernrate
+		String learningRate = "1";	//Lernrate
 		System.out.println("Epochen: " + epochs + ", Lernrate: " + learningRate);
 		
 		Perceptron p_all = new Perceptron(epochs, learningRate);
