@@ -2,27 +2,14 @@
 
 = Todo =
   * Hadoop Map/Reduce umgestalten -> neue mapreduce (statt alter mapred) API, 2 Hadoop Jobs
-  * Korpus umbauen -> in jeder Zeile steht Kategorie\tReview - done
-  * Development Korpus fehlt -> neue Splits 60:20:20 - done
-
-  * learning rate? Recherche, ausprobieren jj
-  * MultiPerceptron in die Tonne m
-  * Random Corpus erzeugen (Python) ju ?? <-ist das noch nötig?
   * HadoopPerceptron Aufruf dokumentieren m
-  * WeightVector Dateiformat nach preprocessed corpus richten (in Toolbox) - done
-  * Evaluationsklasse erzeugen ja
-    * mit trainiertem Vektor bestimmte Instanzen überprüfen
-    * weightVectorFromFile -> Klassenmethode (Format: feature:value f:v...) - done
- 
+  * Development-Klasse jj
+  * Parameter SingleTask testen jj
+  * dafür VW-Files erstellen jj
   * Namenskonvention für trainierte WeightVectorFiles:
-    * ST (SingleTask): (Kategoriename) | All
-    * MT (MultiTask): Kat | Random
-    * gefolgt von: Zahl der Epochen, learning rate, bei MT: Zahl der Top Features 
-    * z.B. ST_books_10_0.0001.wv
-    * z.B. MT_Random_100_0.0001_100.wv
-
-  * Toolbox loswerden, nach Sinn in eigene Klassen stecken - done
-
-  * Output vom Reducer muss geändert werden:  - done
-    * key = feature
-    * value = "l2 \t Mittelwert"
+    * ST (SingleTask): (Kategoriename) | all | small
+    * MT (MultiTask): cat | random
+    * Followed by: number of epochs, learning rate, for MT: Number of Top Features
+    * learning rates: if constant -> power of 10: 1/1000 => "-4", 1 => "0", 10 => "1"; "dec", "1divt", "exp"   
+    * file ending: .wv
+    * e.g. ST_books_10_-4.wv
