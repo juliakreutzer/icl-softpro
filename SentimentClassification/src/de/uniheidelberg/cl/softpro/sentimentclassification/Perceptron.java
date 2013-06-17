@@ -16,15 +16,13 @@ import java.lang.Math;
 public class Perceptron{
 	private HashMap<String,Double> weights = new HashMap<String,Double>();
 	private int epochs;
-	private double learningRate;
-	//private double p = 0.0; //not needed for modified space
-	
+	private String learningRate; //global learning rate is string	
 	/**
 	 * Constructor: creates new SingleTaskPerceptron instance 
 	 * @param epochs number of training epochs
 	 * @param learningRate learningRate for training
 	 */
-	public Perceptron(int epochs, double learningRate){
+	public Perceptron(int epochs, String learningRate){
 		this.epochs = epochs;
 		this.learningRate = learningRate;
 	}
@@ -34,7 +32,7 @@ public class Perceptron{
 	 * epochs are set to 1
 	 * @param learningRate
 	 */
-	public Perceptron(double learningRate){
+	public Perceptron(String learningRate){
 		this(1,learningRate);
 	}
 	
@@ -52,7 +50,7 @@ public class Perceptron{
 	 * epochs are set to 1, learningRate to 0.0001
 	 */
 	public Perceptron(){
-		this(1, 0.0001);
+		this(1, "0.0001");
 	}
 	
 	/**
@@ -82,9 +80,8 @@ public class Perceptron{
 	 * @return true or false
 	 */
 	public boolean misclassified(Instance i){
-		//if ((dotProduct(i.getFeatureVector(),this.weights)+this.p)*i.getLabel()<=0){
-		if ((dotProduct(i.getFeatureVector(),this.weights))*i.getLabel()<=0){ //p not needed for modified space
-			//System.out.println("misclassified");
+		//	if ((dotProduct(i.getFeatureVector(),this.weights))*i.getLabel()<=1){ //with margin
+		if ((dotProduct(i.getFeatureVector(),this.weights))*i.getLabel()<=0){
 			return true;
 		}
 		else{
@@ -100,51 +97,49 @@ public class Perceptron{
 	 */
 	public HashMap<String,Double> trainSingle(ArrayList<Instance> trainset){
 		//for each epoch
-		for (int t=1; t<=this.epochs; t++){
-			//System.out.println("training in epoch "+t);
-			//for input instance
+		for (int t=1; t<=this.epochs; t++){			
+			//various learning rates
+			double currentLearningRate = 0; //local learning rate is double
 			
-			//here you can test various learning rates
-			//double newLearningRate = 1/(1+t/trainset.size()); //"decreasing" from Paper 3.3 (5)
-			//double newLearningRate = 1*Math.pow(1,-1/trainset.size()); //"exponential" from Paper 3.3 (6)
-			//double newLearningRate = 1/t;
-			
-			//this.setLearningRate(newLearningRate);
-			
+			if (this.learningRate.equals("exp")){
+				currentLearningRate = 1*Math.pow(0.85,-1/trainset.size());
+			}
+			else if (this.learningRate.equals("dec")){
+				currentLearningRate = 1/(1+t/trainset.size());
+			}
+			else if (this.learningRate.equals("1divt")){
+				currentLearningRate = 1/t;
+			}
+			else if (Double.parseDouble(this.learningRate)>0){
+				currentLearningRate = Double.parseDouble(this.learningRate);
+			}
+						
 			for (Instance i : trainset){
-				//System.out.println("instance "+i.toString());
-				//System.out.println("weight vector "+this.weights.toString());
-				
+
 				//if misclassified, update with gradient
 				if (this.misclassified(i)){
 					//update weights
-					//HashMap<String,Double> newWeights = new HashMap<String,Double>();
 					for (String feature : i.getFeatures()){
 						Double featureValue = new Double("0.0");
 						//if feature can be found in current weights
 						if (this.weights.containsKey(feature)){
 							featureValue = this.weights.get(feature);
 						}
-						//System.out.println(featureValue);
 						//update weight
-						this.weights.put(feature, featureValue+(this.learningRate*i.getFeatureVector().get(feature)*i.getLabel()));
-						//update p
-						//this.p = this.p + this.learningRate * i.getLabel(); //not needed for modified space
+						this.weights.put(feature, featureValue+(currentLearningRate*i.getFeatureVector().get(feature)*i.getLabel()));
 					}
-					//System.out.println("weight vector updated: "+this.weights.toString());
-					//System.out.println(this.weights.size());
 				}
 			}
 		}
 		return this.weights;
 	}
 	
-	public double getLearningRate() {
+	public String getLearningRate() {
 		return learningRate;
 	}
 
-	public void setLearningRate(double newlearningRate) {
-		this.learningRate = newlearningRate;
+	public void setLearningRate(double newLearningRate){ 
+		this.learningRate = new Double(newLearningRate).toString();
 	}
 
 	/**
@@ -152,29 +147,37 @@ public class Perceptron{
 	 * @param trainset ArrayList of instances which contain training samples
 	 * @return error rate (double), i.e. #correctly_classified_samples / #all_samples
 	 */
-	public HashMap<String,Double> trainMulti(ArrayList<Instance> trainset){
+	public HashMap<String,Double> trainMulti(ArrayList<Instance> trainset, int currentEpoch){
 		for (Instance i : trainset){
-			//System.out.println("instance "+i.toString());
-			//System.out.println("weight vector "+this.weights.toString());
 			
+			//various learning rates
+			double currentLearningRate = 0; //local learning rate is double
+			
+			if (this.learningRate.equals("exp")){
+				currentLearningRate = 1*Math.pow(0.85,-1/trainset.size());
+			}
+			else if (this.learningRate.equals("dec")){
+				currentLearningRate = 1/(1+currentEpoch/trainset.size());
+			}
+			else if (this.learningRate.equals("1divt")){
+				currentLearningRate = 1/currentEpoch;
+			}
+			else if (Double.parseDouble(this.learningRate)>0){
+				currentLearningRate = Double.parseDouble(this.learningRate);
+			}
+						
 			//if misclassified, update with gradient
 			if (this.misclassified(i)){
 				//update weights
-				//HashMap<String,Double> newWeights = new HashMap<String,Double>();
 				for (String feature : i.getFeatures()){
 					Double featureValue = new Double("0.0");
 					//if feature can be found in current weights
 					if (this.weights.containsKey(feature)){
 						featureValue = this.weights.get(feature);
 					}
-					//System.out.println(featureValue);
 					//update weight
-					this.weights.put(feature, featureValue+(this.learningRate*i.getFeatureVector().get(feature)*i.getLabel()));
-					//update p
-					//this.p = this.p + this.learningRate * i.getLabel(); //not needed for modified space
+					this.weights.put(feature, featureValue+(currentLearningRate*i.getFeatureVector().get(feature)*i.getLabel()));
 				}
-				//System.out.println("weight vector updated: "+this.weights.toString());
-				//System.out.println(this.weights.size());
 			}
 		}
 		return this.weights;
@@ -235,12 +238,13 @@ public class Perceptron{
 	/**
 	 * stores the weight vector in the given file
 	 * note the name conventions:     
-	 * ST (SingleTask?): (Kategoriename) | All
-	 * MT (MultiTask?): Kat | Random
+	 * ST (SingleTask?): (Kategoriename) | all | small
+	 * MT (MultiTask?): cat | random
 	 * Followed by: number of epochs, learning rate, for MT: Number of Top Features
+	 * learning rates: if constant -> power of 10: 1/1000 => "-4", 1 => "0", 10 => "1"; "dec", "1divt", "exp"   
 	 * file ending: .wv
-	 * e.g. ST_books_10_0.0001.wv
-	 * e.g. MT_Random_100_0.0001_100.wv 
+	 * e.g. ST_books_10_-4.wv
+	 * e.g. MT_Random_100_-4_100.wv 
 	 * @param outFile
 	 */
 	public void writeWeightsToFile(File outFile){

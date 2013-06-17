@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.uniheidelberg.cl.softpro.sentimentclassification;
 
 import java.util.HashMap;
