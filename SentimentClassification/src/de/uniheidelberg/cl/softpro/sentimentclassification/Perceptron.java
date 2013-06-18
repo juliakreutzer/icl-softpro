@@ -110,8 +110,8 @@ public class Perceptron{
 			else if (this.learningRate.equals("1divt")){
 				currentLearningRate = 1/t;
 			}
-			else if (Double.parseDouble(this.learningRate)>0){
-				currentLearningRate = Double.parseDouble(this.learningRate);
+			else if (Double.parseDouble(this.learningRate)>=-10 || Double.parseDouble(this.learningRate)<=10   ){
+				currentLearningRate = Math.pow(10,Double.parseDouble(this.learningRate));
 			}
 						
 			for (Instance i : trainset){
