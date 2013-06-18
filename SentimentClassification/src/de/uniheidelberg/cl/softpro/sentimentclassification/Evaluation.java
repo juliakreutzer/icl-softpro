@@ -3,34 +3,11 @@ import java.io.*;
 import java.util.*;
 
 public class Evaluation {
-
-	// wandelt Datei mit Gewichtsvektor (Format: feature:count feature:count ...) in eine HashMap<String, Double> um
-	public static HashMap<String, Double> weightVectorFromFile(File f) {
-		String line = new String();
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(f));
-			line = br.readLine();
-			br.close();
-		} catch (FileNotFoundException e) {
-			System.err.println("File not found");
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		HashMap<String, Double> weightVector = new HashMap<String, Double>();
-		String[] arrayWithFeatures = line.split(" ");
-		for (String feature : arrayWithFeatures) {
-			String[] featureAndValue = feature.split(":");
-			String key = featureAndValue[0];
-			Double value = Double.parseDouble(featureAndValue[1]);
-			weightVector.put(key, value);
-		}
-		return weightVector;
-	}
 	
 	public static void main(String[] args) {
+		//steht jetzt alles in Development!!!
 		//Trainingsdateien einlesen
-		ArrayList<Instance> train_instances_all = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/all.train.corpus.final.formatted"));
+		/*ArrayList<Instance> train_instances_all = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/all.train.corpus.final.formatted"));
 		ArrayList<Instance> train_instances_books = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/books.train.corpus.final.formatted"));
 		ArrayList<Instance> train_instances_dvd = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/dvd.train.corpus.final.formatted"));
 		ArrayList<Instance> train_instances_kitchen = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/kitchen.train.corpus.final.formatted"));
@@ -97,5 +74,7 @@ public class Evaluation {
 		
 		double errorRate_electronics = perceptronTest_electronics.test(dev_instances_electronics);
 		System.out.println("Electronics on Electronics: " + errorRate_electronics);
+		*/
 	}
+	
 }
