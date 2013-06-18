@@ -39,7 +39,7 @@ public class Development {
 					Perceptron p = new Perceptron(weightVector);
 					
 					for (String devSetName : setNames) {
-										
+						//reads devset from file				
 						File devSetFile = new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted",devSetName));
 						
 						//loads reviews of development set
@@ -55,7 +55,7 @@ public class Development {
 			}
 		File resultsFile = new File("SentimentClassification/results/singleTaskResults/"+e);
 		}		
-		//reads devset from file
+		
 	//	String outFileName = String.format("SentimentClassification/results/singleTaskResults/ST_%s_%s_%s.wv",trainSetName, e, learningRate);	
 
 		//reads weight vector from file
