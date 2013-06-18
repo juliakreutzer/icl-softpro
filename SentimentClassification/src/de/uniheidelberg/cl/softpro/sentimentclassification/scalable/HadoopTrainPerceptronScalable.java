@@ -37,6 +37,8 @@ public class HadoopTrainPerceptronScalable {
 
 	
 	public static void main(String[] args) throws Exception {
+		System.out.println ("SN 20130617-01");
+		System.out.println ( "-------------------------------------------------------------");
 		System.out.println ( "de.uni-heidelberg.cl.softpro.sentimentclassification.scalable");
 		System.out.println ( "-------------------------------------------------------------");
 		System.out.println ( " Copyright (C) Jasmin Schröck, Julia Kreutzer, Mirko Hering");
@@ -74,9 +76,8 @@ public class HadoopTrainPerceptronScalable {
 	public static void runHadoopJob( Integer currentEpoch, String pathIn, String pathOut ) throws Exception {
 		
 		System.out.println( "#####################################");
-		System.out.println( "Initializing Epoch " + currentEpoch.toString());
+		System.out.println( "    Phase 1 (Epoch " + currentEpoch.toString() + ")");
 		System.out.println( "#####################################");
-
 		Configuration confOne = new Configuration();
 		
 	    Path inFile = new Path (pathIn);
@@ -148,6 +149,11 @@ public class HadoopTrainPerceptronScalable {
 		FileOutputFormat.setOutputPath (jobTwo, out2File);
 		
 		jobOne.waitForCompletion (true);
+		
+		System.out.println( "#####################################");
+		System.out.println( "    Phase 2 (Epoch " + currentEpoch.toString() + ")");
+		System.out.println( "#####################################");
+
 		jobTwo.waitForCompletion (true);
 	    
 	    HadoopTrainPerceptron.writeInitializedVector (out2File, fs);	// save the new weight vector to a file in the local file system
@@ -155,18 +161,26 @@ public class HadoopTrainPerceptronScalable {
 
 	public static class mapTrainSmallPerceptrons extends Mapper<Text, Text, Text, MapWritable> {
 		private HashMap <String, Perceptron> perceptrons = new HashMap <String, Perceptron> ();
-		private static double learningRate;	// value set in configure(), used to store passed data
+		private double learningRate;	// value set in configure(), used to store passed data
 		
-		private static HashMap <String, Double> initializedWeightVector;
+		private HashMap <String, Double> initializedWeightVector;
 		
-		public void setup (Context context) {
+		public void run (Context context) throws IOException, InterruptedException {
+			setup(context);
+			while (context.nextKeyValue()) {
+				map (context.getCurrentKey(), context.getCurrentValue(), context);
+			}
+			cleanup (context);
+		}
+		
+		protected void setup (Context context) {
 	    	/*
 	    	 * used to read parameters from JobConf
 	    	 * important to get data from previously trained perceptrons
 	    	 */
 			Configuration config = context.getConfiguration();
 			
-	        learningRate = Double.parseDouble (config.get ("learningRate"));							// get learning rate specified in JobConf
+	        this.learningRate = Double.parseDouble (config.get ("learningRate"));							// get learning rate specified in JobConf
     		try {
 				for( Path cacheFile : DistributedCache.getLocalCacheFiles (config) ) {
 					System.out.println( "  Cache file: " + cacheFile.getName().toString() );
@@ -199,7 +213,7 @@ public class HadoopTrainPerceptronScalable {
 	    void readWeightVector (Path cachePath) throws IOException {
 	    	BufferedReader reader = new BufferedReader (new FileReader (cachePath.toString()));
 	    	try {
-	    		initializedWeightVector = convertStringToHashmap (reader.readLine());
+	    		this.initializedWeightVector = convertStringToHashmap (reader.readLine());
 	    	} 
 	    	finally {
 	    		reader.close();
@@ -207,11 +221,11 @@ public class HadoopTrainPerceptronScalable {
 	    	
 	    }
 	    
-		public void map(Text key, Text value, Context context) throws IOException {
+	    protected void map(Text key, Text value, Context context) throws IOException {
 
 			if (!this.perceptrons.containsKey(key.toString())) {
-				Perceptron newPerceptron = new Perceptron (learningRate);
-				newPerceptron.setWeights (initializedWeightVector);
+				Perceptron newPerceptron = new Perceptron (this.learningRate);
+				newPerceptron.setWeights (this.initializedWeightVector);
 				this.perceptrons.put (key.toString(), newPerceptron);
 			}
 			Perceptron currentPerceptron = this.perceptrons.get (key.toString());
@@ -221,7 +235,7 @@ public class HadoopTrainPerceptronScalable {
 			this.perceptrons.put (key.toString(), currentPerceptron);
 		}
 		
-		public void cleanup (Context context) throws IOException, InterruptedException {
+		protected void cleanup (Context context) throws IOException, InterruptedException {
 			for (String key : this.perceptrons.keySet()) {
 				MapWritable map = new MapWritable();
 				for ( Map.Entry <String, Double> eintrag : this.perceptrons.get(key).getWeights().entrySet()) {
@@ -236,7 +250,7 @@ public class HadoopTrainPerceptronScalable {
 		 * @param input String in the format "key:value key:value key:value ..."
 		 * @return HashMap containing the features and their values to be used by Perceptron.setWeights()
 		 */
-		private static HashMap<String, Double> convertStringToHashmap (String input) {
+		private HashMap<String, Double> convertStringToHashmap (String input) {
 			HashMap<String, Double> map = new HashMap<String, Double>();
 			try {
 				for (String pair : input.split (" ")) {
@@ -256,7 +270,7 @@ public class HadoopTrainPerceptronScalable {
 	
 	public static class reduceUnitePerceptrons extends Reducer <Text, MapWritable, Text, DoubleWritable> {
 		public void reduce(Text key, Iterable<MapWritable> values, Context context) throws IOException, InterruptedException {
-			MultipleOutputs <Text, DoubleWritable> mos = new MultipleOutputs (context);
+			MultipleOutputs <Text, DoubleWritable> mos = new MultipleOutputs<Text, DoubleWritable> (context);
 			HashMap <Text, DoubleWritable> unitedWeightVector = new HashMap <Text, DoubleWritable>();
 			Integer numberOfPerceptrons = 0;
 			for ( MapWritable partResult : values) {
@@ -295,20 +309,18 @@ public class HadoopTrainPerceptronScalable {
 		}
 	}
 	
-	
 	public static Text categoryLabel = new Text ("cat");
 	public static Text valueLabel = new Text ("val");
 	
-	public static class mapOrderThings extends Mapper <Text, DoubleWritable, Text, MapWritable> {
-		public void map (Text key, DoubleWritable value, Context context) throws IOException, InterruptedException {
+	public static class mapOrderThings extends Mapper <Text, Text, Text, MapWritable> {
+		public void map (Text key, Text value, Context context) throws IOException, InterruptedException {
 			MapWritable output = new MapWritable();
 			FileSplit fileSplit = (FileSplit) context.getInputSplit();
 			String fileName = fileSplit.getPath().getName().toString();
 			Text category = new Text (fileName.split ("-")[0]);
 			
 			output.put (categoryLabel, category);
-			output.put (valueLabel, new Text (value.toString()));
-			
+			output.put (valueLabel, value);
 			context.write (key, output);
 		}
 	}
