@@ -44,55 +44,55 @@ public class Development {
 	//trains all relevant parameter combinations and saves resulting weight vectors to files
 	public static void singleTrain(){
 		//alle 6 Trainingsdateien einlesen
-		ArrayList<Instance> train_instances_all = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/all.train.corpus.final.formatted"));
+		/*ArrayList<Instance> train_instances_all = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/all.train.corpus.final.formatted"));
 		ArrayList<Instance> train_instances_small = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/small.all.train.corpus.final.formatted"));
 		ArrayList<Instance> train_instances_books = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/books.train.corpus.final.formatted"));
 		ArrayList<Instance> train_instances_dvd = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/dvd.train.corpus.final.formatted"));
 		ArrayList<Instance> train_instances_electronics = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/electronics.train.corpus.final.formatted"));
 		ArrayList<Instance> train_instances_kitchen = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/kitchen.train.corpus.final.formatted"));
-		
+		*/
 		//Training und weightVectorFiles erstellen
-		for (String epoch : epochs) {
-			int epochInt = Integer.parseInt(epoch);
-			for (String learningRate : learningRates) {
+		for (String name : setNames) {
+			ArrayList<Instance> trainset = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/"+name+".train.corpus.final.formatted"));
+			for (String epoch : epochs) {
+				int epochInt = Integer.parseInt(epoch);
+				for (String learningRate : learningRates) {
+					
+					Perceptron p = new Perceptron(epochInt, learningRate);
+					p.trainSingle(trainset);
+					p.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_"+name+"_"+epoch+"_"+learningRate+".wv"));
+					
+					/*Perceptron p_all = new Perceptron(epochInt, learningRate);
+					p_all.trainSingle(train_instances_all);
+					p_all.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_all_"+epoch+"_"+learningRate+".wv"));
 				
-				Perceptron p_all = new Perceptron(epochInt, learningRate);
-				p_all.trainSingle(train_instances_all);
-				p_all.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_all_"+epoch+"_"+learningRate+".wv"));
+					Perceptron p_small = new Perceptron(epochInt, learningRate);
+					p_small.trainSingle(train_instances_small);
+					p_small.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_small_"+epoch+"_"+learningRate+".wv"));
 				
-				Perceptron p_small = new Perceptron(epochInt, learningRate);
-				p_small.trainSingle(train_instances_small);
-				p_small.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_small_"+epoch+"_"+learningRate+".wv"));
+					Perceptron p_books = new Perceptron(epochInt, learningRate);
+					p_books.trainSingle(train_instances_books);
+					p_books.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_books_"+epoch+"_"+learningRate+".wv"));
 				
-				Perceptron p_books = new Perceptron(epochInt, learningRate);
-				p_books.trainSingle(train_instances_books);
-				p_books.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_books_"+epoch+"_"+learningRate+".wv"));
+					Perceptron p_dvd = new Perceptron(epochInt, learningRate);
+					p_dvd.trainSingle(train_instances_dvd);
+					p_dvd.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_dvd_"+epoch+"_"+learningRate+".wv"));
 				
-				Perceptron p_dvd = new Perceptron(epochInt, learningRate);
-				p_dvd.trainSingle(train_instances_dvd);
-				p_dvd.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_dvd_"+epoch+"_"+learningRate+".wv"));
+					Perceptron p_kitchen = new Perceptron(epochInt, learningRate);
+					p_kitchen.trainSingle(train_instances_kitchen);
+					p_kitchen.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_kitchen_"+epoch+"_"+learningRate+".wv"));
 				
-				Perceptron p_kitchen = new Perceptron(epochInt, learningRate);
-				p_kitchen.trainSingle(train_instances_kitchen);
-				p_kitchen.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_kitchen_"+epoch+"_"+learningRate+".wv"));
-				
-				Perceptron p_electronics = new Perceptron(epochInt, learningRate);
-				p_electronics.trainSingle(train_instances_electronics);
-				p_electronics.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_electronics_"+epoch+"_"+learningRate+".wv"));
+					Perceptron p_electronics = new Perceptron(epochInt, learningRate);
+					p_electronics.trainSingle(train_instances_electronics);
+					p_electronics.writeWeightsToFile(new File("SentimentClassification/weightVectors/ST_electronics_"+epoch+"_"+learningRate+".wv"));
+				*/
+				}
 			}
 		}
 	}
 	
 	public static void singleTest(){
 		//tests all relevant parameter combinations and saves resulting error rates to files
-		
-		//devset einlesen
-		ArrayList<Instance> dev_instances_all = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/all.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_small = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/small.all.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_books = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/books.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_dvd = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/dvd.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_kitchen = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/kitchen.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_electronics = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/electronics.dev.corpus.final.formatted"));
 
 		for (String e : epochs){
 			for (String learningRate : learningRates){
@@ -137,8 +137,8 @@ public class Development {
 	}
 	
 	public static void main(String[] args){
-	//	singleTrain();
-		singleTest();
+		singleTrain();
+	//	singleTest();
 	}
 	
 }
