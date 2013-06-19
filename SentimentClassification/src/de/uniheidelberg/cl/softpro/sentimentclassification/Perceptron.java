@@ -1,4 +1,4 @@
-package src.de.uniheidelberg.cl.softpro.sentimentclassification;
+package de.uniheidelberg.cl.softpro.sentimentclassification;
 
 
 import java.io.BufferedWriter;
@@ -50,7 +50,7 @@ public class Perceptron{
 	 * epochs are set to 1, learningRate to 0.0001
 	 */
 	public Perceptron(){
-		this(1, "0.0001");
+		this(1, "-4");
 	}
 	
 	/**
@@ -89,6 +89,22 @@ public class Perceptron{
 		}
 	}
 	
+	/* switch:
+	 * int monthNumber = 0;
+
+        if (month == null) {
+            return monthNumber;
+        }
+
+        switch (month.toLowerCase()) {
+            case "january":
+                monthNumber = 1;
+                break;
+            case "february":
+                monthNumber = 2;
+                break;
+	 */
+	
 	
 	/**
 	 * trains the SingleTaskPerceptron instance on a given training set for all epochs
@@ -101,17 +117,19 @@ public class Perceptron{
 			//various learning rates
 			double currentLearningRate = 0; //local learning rate is double
 			
-			if (this.learningRate.equals("exp")){
+			switch(this.learningRate){
+			case "exp":
 				currentLearningRate = 1*Math.pow(0.85,-1/trainset.size());
-			}
-			else if (this.learningRate.equals("dec")){
+				break;
+			case "dec":
 				currentLearningRate = 1/(1+t/trainset.size());
-			}
-			else if (this.learningRate.equals("1divt")){
+				break;
+			case "1divt":
 				currentLearningRate = 1/t;
-			}
-			else if (Double.parseDouble(this.learningRate)>=-10 || Double.parseDouble(this.learningRate)<=10   ){
+				break;
+			default:
 				currentLearningRate = Math.pow(10,Double.parseDouble(this.learningRate));
+				break;
 			}
 						
 			for (Instance i : trainset){
@@ -153,17 +171,19 @@ public class Perceptron{
 			//various learning rates
 			double currentLearningRate = 0; //local learning rate is double
 			
-			if (this.learningRate.equals("exp")){
+			switch(this.learningRate){
+			case "exp":
 				currentLearningRate = 1*Math.pow(0.85,-1/trainset.size());
-			}
-			else if (this.learningRate.equals("dec")){
+				break;
+			case "dec":
 				currentLearningRate = 1/(1+currentEpoch/trainset.size());
-			}
-			else if (this.learningRate.equals("1divt")){
+				break;
+			case "1divt":
 				currentLearningRate = 1/currentEpoch;
-			}
-			else if (Double.parseDouble(this.learningRate)>0){
-				currentLearningRate = Double.parseDouble(this.learningRate);
+				break;
+			default:
+				currentLearningRate = Math.pow(10,Double.parseDouble(this.learningRate));
+				break;
 			}
 						
 			//if misclassified, update with gradient
@@ -183,7 +203,10 @@ public class Perceptron{
 		return this.weights;
 	}
 	
-	
+	/**
+	 * sets the weights of a Perceptron
+	 * @param newWeights must be a HashMap<String, Double>
+	 */
 	public void setWeights(HashMap<String, Double> newWeights) {
 		this.weights = newWeights;
 	}
