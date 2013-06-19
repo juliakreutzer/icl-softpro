@@ -37,7 +37,7 @@ public class HadoopTrainPerceptronScalable {
 
 	
 	public static void main(String[] args) throws Exception {
-		System.out.println ("SN 20130617-01");
+		System.out.println ("SN 20130617-05");
 		System.out.println ( "-------------------------------------------------------------");
 		System.out.println ( "de.uni-heidelberg.cl.softpro.sentimentclassification.scalable");
 		System.out.println ( "-------------------------------------------------------------");
@@ -110,6 +110,7 @@ public class HadoopTrainPerceptronScalable {
 		
 	    Job jobOne = new Job (confOne);
 		
+	    jobOne.setJarByClass (HadoopTrainPerceptronScalable.class);
 		jobOne.setJobName ("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
 		jobOne.setOutputKeyClass (Text.class);		// data type for map's output key
 		jobOne.setOutputValueClass (MapWritable.class);	// data type for map's output value
@@ -128,6 +129,7 @@ public class HadoopTrainPerceptronScalable {
 		MultipleOutputs.addNamedOutput(jobOne, "electronics", TextOutputFormat.class, Text.class, DoubleWritable.class);
 		MultipleOutputs.addNamedOutput(jobOne, "kitchen", TextOutputFormat.class, Text.class, DoubleWritable.class);
 		
+		jobOne.waitForCompletion (true);
 		
 		Configuration confTwo = new Configuration();
 		confTwo.set ("learningRate", confOne.get ("learningRate"));	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
@@ -135,6 +137,7 @@ public class HadoopTrainPerceptronScalable {
 
 		Job jobTwo = new Job (confTwo);
 		
+		jobTwo.setJarByClass (HadoopTrainPerceptronScalable.class);
 		jobTwo.setJobName ("Hadoop Perceptron Training Phase 2 - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
 		jobTwo.setOutputKeyClass (Text.class);		// data type for map's output key
 		jobTwo.setOutputValueClass (MapWritable.class);	// data type for map's output value
@@ -145,10 +148,17 @@ public class HadoopTrainPerceptronScalable {
 		jobTwo.setMapperClass(mapOrderThings.class);
 		jobTwo.setReducerClass(reduceCalculateThings.class);
 		
-		FileInputFormat.setInputPaths (jobTwo, outFile);
-		FileOutputFormat.setOutputPath (jobTwo, out2File);
+		RemoteIterator<LocatedFileStatus> fileList = fs.listFiles(outFile, false);
 		
-		jobOne.waitForCompletion (true);
+		while (fileList.hasNext()) {
+			Path currentFile = fileList.next().getPath();
+			String currentFilename = currentFile.getName();
+			if (!currentFilename.startsWith("_") && !currentFilename.startsWith(".") && !currentFilename.startsWith("part")) {
+				FileInputFormat.addInputPath(jobTwo, currentFile);
+			}
+		}
+		
+		FileOutputFormat.setOutputPath (jobTwo, out2File);
 		
 		System.out.println( "#####################################");
 		System.out.println( "    Phase 2 (Epoch " + currentEpoch.toString() + ")");
@@ -260,7 +270,7 @@ public class HadoopTrainPerceptronScalable {
 				}
 			}
 			catch (NullPointerException e) {
-				System.err.println ("NullPointerException: convertStringToHashmap");
+				System.err.println ("NullPointerException: convertStringToHashmap (this may happen during first run)");
 				System.err.println ("input = '" + input + "'");
 				return map;
 			}
@@ -329,6 +339,8 @@ public class HadoopTrainPerceptronScalable {
 		public void reduce(Text key, Iterable<MapWritable> values, Context context) throws IOException, InterruptedException {
 			Configuration conf = context.getConfiguration();
 			Double numberOfShards = Double.parseDouble (conf.get ("numberOfShards"));
+			
+			System.out.println ("Calculating stuff for feature: " + key.toString());
 			
 			// l2-norm = sqrt (sum ((feature's value)^2)) 
 			Double sum_pow = 0.0; 
