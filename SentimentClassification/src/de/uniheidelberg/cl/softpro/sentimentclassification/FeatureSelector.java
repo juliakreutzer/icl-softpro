@@ -1,5 +1,6 @@
 package de.uniheidelberg.cl.softpro.sentimentclassification;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -18,6 +19,14 @@ public class FeatureSelector {
 	 * @param l2 Hashmap <String, Double> containing the calculated l2 values
 	 */
 	public FeatureSelector (HashMap <String, Double> weights, HashMap <String, Double> l2) {
+		if (weights == null) {
+			weights = new HashMap <String, Double>();
+			System.out.println ("!!! WARNING: weights hashmap not initialized");
+		}
+		if (l2 == null) {
+			l2 = new HashMap <String, Double>();
+			System.out.println ("!!! WARNING: l2 hashmap not initialized");
+		}
 		this.mapWeights = weights;
 		this.mapL2 = l2;
 	}
@@ -49,16 +58,17 @@ public class FeatureSelector {
 	 * @param map
 	 * @return
 	 */
-	static <K,V extends Comparable<? super V>> SortedSet<Map.Entry<K,V>> entriesSortedByValues(Map<K,V> map) {
-		SortedSet<Map.Entry<K,V>> sortedEntries = new TreeSet<Map.Entry<K,V>> (new Comparator<Map.Entry<K,V>>() {
-	            @Override public int compare(Map.Entry<K,V> e1, Map.Entry<K,V> e2) {
-	                return e1.getValue().compareTo(e2.getValue());
-	            }
-	        }
-	    );
-	    sortedEntries.addAll(map.entrySet());
+	static <K,V extends Comparable<? super V>> SortedSet <Map.Entry<K,V>> entriesSortedByValues (Map <K,V> map) {
+		SortedSet <Map.Entry <K,V>> sortedEntries;
+		sortedEntries = new TreeSet <Map.Entry<K,V>> (new Comparator <Map.Entry<K,V>>() {
+		        @Override public int compare(Map.Entry<K,V> e1, Map.Entry<K,V> e2) {
+		            return e1.getValue().compareTo (e2.getValue());
+		        }
+		    }
+		);
+		sortedEntries.addAll (map.entrySet());
+			
 	    return sortedEntries;
 	}
-	
 }
 
