@@ -12,6 +12,7 @@ import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 
 
 
@@ -72,17 +73,31 @@ public class HadoopTrainPerceptron {
 	 * Reads a file from HDFS and converts it to a weight vector hashmap 
 	 * @param filename File in HDFS that contains a weight vector
 	 * @return HashMap containing the weight vector
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public static HashMap <String, HashMap<String, Double>> readWVFileFromHDFS( String filename ) {
-		Path fileToOpen = new Path (filename);
-		BufferedReader br;
-		try {
-			br = new BufferedReader (new InputStreamReader (fs.open (fileToOpen)));
-			return getHashMap (br);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}		
+	public static HashMap <String, HashMap<String, Double>> readWVFileFromHDFS (String filename, FileSystem fileSys ) throws FileNotFoundException, IOException {
+		List <Path> paths = new ArrayList <Path>();
+		HashMap <String, HashMap <String, Double>> returnMap = new HashMap <String, HashMap <String, Double>>();
+
+		RemoteIterator<LocatedFileStatus> fileList = fileSys.listFiles (new Path (filename), false);
+
+		while (fileList.hasNext()) {
+			Path currentFile = fileList.next().getPath();
+			String currentFilename = currentFile.getName();
+			if (currentFilename.startsWith ("part")) {
+				paths.add (currentFile);
+			}
+		}
+		for (Path aFile : paths) {
+			BufferedReader br = new BufferedReader (new InputStreamReader (fileSys.open (aFile)));
+			returnMap.putAll (getHashMap (br));
+		}
+		return returnMap;
+	}
+	
+	public static HashMap <String, HashMap<String, Double>> readWVFileFromHDFS( String filename ) throws FileNotFoundException, IOException {
+		return readWVFileFromHDFS (filename, fs);		
 	}
 	
 	/**
@@ -137,15 +152,17 @@ public class HadoopTrainPerceptron {
 	 * 
 	 * @param HDFSPath Path in HDFS that contains text files
 	 * @return Number of lines in all files
+	 * @throws FileNotFoundException 
 	 * @throws IOException
 	 */
-	public static Integer getNumberOfLinesInFolder( Path HDFSPath ) throws IOException {
+	
+	public static Integer getNumberOfLinesInFolder (Path HDFSPath, FileSystem fileSys) throws FileNotFoundException, IOException {
 		Integer count = 0;
 		String line = "";
-		RemoteIterator<LocatedFileStatus> folderContent = fs.listFiles (HDFSPath, false);
+		RemoteIterator<LocatedFileStatus> folderContent = fileSys.listFiles (HDFSPath, false);
 		
 		while (folderContent.hasNext()) {
-			FSDataInputStream HDFSFileStream = fs.open (folderContent.next().getPath());	// opens file stream from HDFS
+			FSDataInputStream HDFSFileStream = fileSys.open (folderContent.next().getPath());	// opens file stream from HDFS
 			BufferedReader br = new BufferedReader (new InputStreamReader (HDFSFileStream));	// does the actual reading
 
 			while ( (line = br.readLine()) != null) {
@@ -158,12 +175,18 @@ public class HadoopTrainPerceptron {
 		return count;
 	}
 	
+	public static Integer getNumberOfLinesInFolder( Path HDFSPath ) throws IOException {
+		return getNumberOfLinesInFolder (HDFSPath, fs);
+	}
+	
 	/**
 	 * Fetches the latest weight vector from HDFS and saves it to the local file system 
 	 * @param outFolder output folder of the JobConf.OutputPath, must contain part-00000 file with reducers' results
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void writeInitializedVector (Path outFolder) {
-		HashMap <String, HashMap<String, Double>> epocheData = readWVFileFromHDFS (outFolder.toString() + "/part-00000");
+	public static void writeInitializedVector (Path outFolder, FileSystem fileSys) throws FileNotFoundException, IOException {
+		HashMap <String, HashMap<String, Double>> epocheData = readWVFileFromHDFS (outFolder.toString(), fileSys);
 		
 		FeatureSelector shrinkThings = new FeatureSelector (epocheData.get ("weights"), epocheData.get ("l2"));	// Saves only top k features
 		
@@ -175,6 +198,9 @@ public class HadoopTrainPerceptron {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	public static void writeInitializedVector (Path outFolder) throws FileNotFoundException, IOException {
+		writeInitializedVector (outFolder, fs);
 	}
 	
 	/**
@@ -224,7 +250,7 @@ public class HadoopTrainPerceptron {
 	    conf.set ("learningRate","1.0E-4");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
 	    conf.set ("numberOfShards", numberOfShards.toString());
 	    
-	    FileInputFormat.setInputPaths(conf, inFile);		// first command line argument used as input path
+	    FileInputFormat.addInputPath(conf, inFile);		// first command line argument used as input path
 	    FileOutputFormat.setOutputPath(conf, outFile);	// second command line argument used as output path
 	    	    
 	    
@@ -340,7 +366,7 @@ public class HadoopTrainPerceptron {
 		 * @param input String in the format "key:value key:value key:value ..."
 		 * @return HashMap containing the features and their values to be used by Perceptron.setWeights()
 		 */
-		private static HashMap<String, Double> convertStringToHashmap (String input) {
+		public static HashMap<String, Double> convertStringToHashmap (String input) {
 			HashMap<String, Double> map = new HashMap<String, Double>();
 			try {
 				for (String pair : input.split (" ")) {
