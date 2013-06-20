@@ -1,0 +1,145 @@
+1 epochs
+
+-----------------------------------
+learning rate: exp
+
+all on all:	0.195
+small on small:	0.3075
+books on books:	0.27
+dvd on dvd:	0.245
+electronics on electronics:	0.1975
+kitchen on kitchen:	0.1725
+cat on cat:	0.22125
+all on cat:	0.195
+small on cat:	0.32375
+
+-----------------------------------
+learning rate: dec
+
+all on all:	0.2125
+small on small:	0.315
+books on books:	0.25
+dvd on dvd:	0.2325
+electronics on electronics:	0.265
+kitchen on kitchen:	0.1675
+cat on cat:	0.22875
+all on cat:	0.2125
+small on cat:	0.33749999999999997
+
+-----------------------------------
+learning rate: 1divt
+
+all on all:	0.2025
+small on small:	0.335
+books on books:	0.26
+dvd on dvd:	0.2225
+electronics on electronics:	0.2625
+kitchen on kitchen:	0.185
+cat on cat:	0.23250000000000004
+all on cat:	0.2025
+small on cat:	0.350625
+
+-----------------------------------
+learning rate: -6
+
+all on all:	0.209375
+small on small:	0.2925
+books on books:	0.29
+dvd on dvd:	0.2375
+electronics on electronics:	0.255
+kitchen on kitchen:	0.23
+cat on cat:	0.253125
+all on cat:	0.209375
+small on cat:	0.321875
+
+-----------------------------------
+learning rate: -5
+
+all on all:	0.20625
+small on small:	0.3175
+books on books:	0.3
+dvd on dvd:	0.2225
+electronics on electronics:	0.2475
+kitchen on kitchen:	0.1875
+cat on cat:	0.239375
+all on cat:	0.20625000000000002
+small on cat:	0.33749999999999997
+
+-----------------------------------
+learning rate: -4
+
+all on all:	0.203125
+small on small:	0.3475
+books on books:	0.2575
+dvd on dvd:	0.22
+electronics on electronics:	0.255
+kitchen on kitchen:	0.165
+cat on cat:	0.22437500000000002
+all on cat:	0.20312499999999997
+small on cat:	0.363125
+
+-----------------------------------
+learning rate: -3
+
+all on all:	0.194375
+small on small:	0.3025
+books on books:	0.2875
+dvd on dvd:	0.235
+electronics on electronics:	0.2625
+kitchen on kitchen:	0.17
+cat on cat:	0.23875
+all on cat:	0.19437500000000002
+small on cat:	0.33499999999999996
+
+-----------------------------------
+learning rate: -2
+
+all on all:	0.193125
+small on small:	0.2675
+books on books:	0.2675
+dvd on dvd:	0.2425
+electronics on electronics:	0.1975
+kitchen on kitchen:	0.165
+cat on cat:	0.218125
+all on cat:	0.19312500000000002
+small on cat:	0.2825
+
+-----------------------------------
+learning rate: -1
+
+all on all:	0.21125
+small on small:	0.2775
+books on books:	0.2825
+dvd on dvd:	0.22
+electronics on electronics:	0.275
+kitchen on kitchen:	0.1525
+cat on cat:	0.23249999999999998
+all on cat:	0.21125
+small on cat:	0.2875
+
+-----------------------------------
+learning rate: 0
+
+all on all:	0.2025
+small on small:	0.335
+books on books:	0.26
+dvd on dvd:	0.2225
+electronics on electronics:	0.2625
+kitchen on kitchen:	0.185
+cat on cat:	0.23250000000000004
+all on cat:	0.2025
+small on cat:	0.350625
+
+-----------------------------------
+learning rate: 1
+
+all on all:	0.2025
+small on small:	0.335
+books on books:	0.26
+dvd on dvd:	0.2225
+electronics on electronics:	0.2625
+kitchen on kitchen:	0.185
+cat on cat:	0.23250000000000004
+all on cat:	0.2025
+small on cat:	0.350625
+
