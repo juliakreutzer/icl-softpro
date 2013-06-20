@@ -32,6 +32,7 @@ public class HadoopTrainPerceptronScalable {
 	private static FileSystem fs;
 	private static int numberOfEpochs = 10;
 	private static int topKFeatures = 10;
+	private static String newLearningRate = "-4";
 	private static String weightVectorFile = "weightVector.txt";
 	private static Integer numberOfShards; 
 
@@ -45,30 +46,37 @@ public class HadoopTrainPerceptronScalable {
 		System.out.println ( "");
 		
 		if (args.length == 0) {
-			System.out.println ( "hadoop jar scalable.jar [input folder] [output folder] [number of epochs] [number of top features]");
+			System.out.println ( "hadoop jar scalable.jar [input folder] [output folder] [number of epochs] [number of top features] [learningRate]");
 			System.exit(0);
 		}
 		if (args.length > 2) {
 			if ( args[2] != null) {
 				numberOfEpochs = Integer.parseInt (args[2]);
 			}
-		if (args.length > 3) {
 		}
+		if (args.length > 3) {
 			if ( args[3] != null) {
-				topKFeatures = Integer.parseInt (args[2]);
+				topKFeatures = Integer.parseInt (args[3]);
 			}
 		}
+		if (args.length > 4) {
+			if ( args[4] != null) {
+				newLearningRate =  args[4];
+			}
+		}
+
 		System.out.println ( "    Started Hadoop MapReduce Scalable Perceptron Training    ");
 		System.out.println ( "-------------------------------------------------------------");
 		System.out.println ( "	Parameters:");
 		System.out.println ( "		number of epochs:    " + new Integer(numberOfEpochs).toString());
 		System.out.println ( "		top k features:      " + new Integer(topKFeatures).toString());
+		System.out.println ( "		learning rate:      " + newLearningRate);
 		System.out.println ( "		name of vector file: " + weightVectorFile);
 		System.out.println ( "" );
 		System.out.println ( "	Sit back and relax!");
 		
 		for ( int e = 0; e < numberOfEpochs; e++ ) {
-			runHadoopJob( e, args[0], args[1]);			
+			runHadoopJob (e, args[0], args[1]);			
 		}
 	}
 
@@ -101,9 +109,9 @@ public class HadoopTrainPerceptronScalable {
 	    	numberOfShards = 4;
 	    }
 	    
-	    confOne.set ("learningRate","1.0E-4");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
+	    confOne.set ("learningRate", newLearningRate);	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
 	    confOne.set ("numberOfShards", numberOfShards.toString());
-	      	    
+	    confOne.set ("currentEpoch", currentEpoch.toString());   
 	    
 	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);	// copy existing weight vector file from local filesystem to hdfs
 	    DistributedCache.addCacheFile (hdfsPath.toUri(), confOne);	// add file to distributed cache
@@ -171,7 +179,8 @@ public class HadoopTrainPerceptronScalable {
 
 	public static class mapTrainSmallPerceptrons extends Mapper<Text, Text, Text, MapWritable> {
 		private HashMap <String, Perceptron> perceptrons = new HashMap <String, Perceptron> ();
-		private double learningRate;	// value set in configure(), used to store passed data
+		private String learningRate;	// value set in configure(), used to store passed data
+		private String currentEpoch;
 		
 		private HashMap <String, Double> initializedWeightVector;
 		
@@ -190,7 +199,8 @@ public class HadoopTrainPerceptronScalable {
 	    	 */
 			Configuration config = context.getConfiguration();
 			
-	        this.learningRate = Double.parseDouble (config.get ("learningRate"));							// get learning rate specified in JobConf
+	        this.learningRate = config.get ("learningRate");							// get learning rate specified in JobConf
+	        this.currentEpoch = config.get ("currentEpoch");
     		try {
 				for( Path cacheFile : DistributedCache.getLocalCacheFiles (config) ) {
 					System.out.println( "  Cache file: " + cacheFile.getName().toString() );
@@ -239,9 +249,9 @@ public class HadoopTrainPerceptronScalable {
 				this.perceptrons.put (key.toString(), newPerceptron);
 			}
 			Perceptron currentPerceptron = this.perceptrons.get (key.toString());
-			ArrayList<Instance> trainInstance = CreateInstances.createInstancesFromString( value.toString() );	// converts raw input to a datatype that can be used by the perceptron
+			ArrayList<Instance> trainInstance = CreateInstances.createInstancesFromString (value.toString());	// converts raw input to a datatype that can be used by the perceptron
 			
-			currentPerceptron.setWeights(currentPerceptron.trainMulti (trainInstance));
+			currentPerceptron.setWeights (currentPerceptron.trainMulti (trainInstance, Integer.parseInt (currentEpoch)));
 			this.perceptrons.put (key.toString(), currentPerceptron);
 		}
 		
@@ -339,8 +349,6 @@ public class HadoopTrainPerceptronScalable {
 		public void reduce(Text key, Iterable<MapWritable> values, Context context) throws IOException, InterruptedException {
 			Configuration conf = context.getConfiguration();
 			Double numberOfShards = Double.parseDouble (conf.get ("numberOfShards"));
-			
-			System.out.println ("Calculating stuff for feature: " + key.toString());
 			
 			// l2-norm = sqrt (sum ((feature's value)^2)) 
 			Double sum_pow = 0.0; 
