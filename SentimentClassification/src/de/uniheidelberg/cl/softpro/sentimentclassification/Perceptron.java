@@ -88,24 +88,7 @@ public class Perceptron{
 			return false;
 		}
 	}
-	
-	/* switch:
-	 * int monthNumber = 0;
-
-        if (month == null) {
-            return monthNumber;
-        }
-
-        switch (month.toLowerCase()) {
-            case "january":
-                monthNumber = 1;
-                break;
-            case "february":
-                monthNumber = 2;
-                break;
-	 */
-	
-	
+		
 	/**
 	 * trains the SingleTaskPerceptron instance on a given training set for all epochs
 	 * @param trainset must be an Array of Instances
@@ -114,22 +97,21 @@ public class Perceptron{
 	public HashMap<String,Double> trainSingle(ArrayList<Instance> trainset){
 		//for each epoch
 		for (int t=1; t<=this.epochs; t++){			
+			
 			//various learning rates
 			double currentLearningRate = 0; //local learning rate is double
 			
-			switch(this.learningRate){
-			case "exp":
-				currentLearningRate = 1*Math.pow(0.85,-1/trainset.size());
-				break;
-			case "dec":
-				currentLearningRate = 1/(1+t/trainset.size());
-				break;
-			case "1divt":
-				currentLearningRate = 1/t;
-				break;
-			default:
+			if (this.learningRate.equals("exp")){
+				currentLearningRate = 1*Math.pow(0.85,-1/new Double(trainset.size()));
+			}
+			else if (this.learningRate.equals("dec")){
+				currentLearningRate = 1/(1+new Double(t)/new Double(trainset.size()));
+			}
+			else if (this.learningRate.equals("1divt")){
+				currentLearningRate = 1/new Double(t);
+			}
+			else if (Double.parseDouble(this.learningRate)>=-10 || Double.parseDouble(this.learningRate)<=10   ){
 				currentLearningRate = Math.pow(10,Double.parseDouble(this.learningRate));
-				break;
 			}
 						
 			for (Instance i : trainset){
@@ -171,19 +153,17 @@ public class Perceptron{
 			//various learning rates
 			double currentLearningRate = 0; //local learning rate is double
 			
-			switch(this.learningRate){
-			case "exp":
-				currentLearningRate = 1*Math.pow(0.85,-1/trainset.size());
-				break;
-			case "dec":
-				currentLearningRate = 1/(1+currentEpoch/trainset.size());
-				break;
-			case "1divt":
-				currentLearningRate = 1/currentEpoch;
-				break;
-			default:
+			if (this.learningRate.equals("exp")){
+				currentLearningRate = 1*Math.pow(0.85,-1/new Double(trainset.size()));
+			}
+			else if (this.learningRate.equals("dec")){
+				currentLearningRate = 1/(1+new Double(currentEpoch)/new Double(trainset.size()));
+			}
+			else if (this.learningRate.equals("1divt")){
+				currentLearningRate = 1/new Double(currentEpoch);
+			}
+			else if (Double.parseDouble(this.learningRate)>=-10 || Double.parseDouble(this.learningRate)<=10   ){
 				currentLearningRate = Math.pow(10,Double.parseDouble(this.learningRate));
-				break;
 			}
 						
 			//if misclassified, update with gradient
