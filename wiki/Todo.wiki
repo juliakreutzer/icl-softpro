@@ -1,11 +1,9 @@
 #summary Todo-Liste
 
 = Todo =
-  * Hadoop Map/Reduce umgestalten -> neue mapreduce (statt alter mapred) API, 2 Hadoop Jobs
+  * Random shards?!?!?!? 
   * HadoopPerceptron Aufruf dokumentieren m
-  * Development-Klasse jj
-  * Parameter SingleTask testen jj
-  * dafür VW-Files erstellen jj
+  * Development-Klasse -> testMulti jj
   * Namenskonvention für trainierte WeightVectorFiles:
     * ST (SingleTask): (Kategoriename) | all | small
     * MT (MultiTask): cat | random
