@@ -7,6 +7,8 @@ import java.util.*;
 
 public class CreateInstances {
 	
+	
+	//ONLY USED FOR "OLD" HADOOP PERCEPTRON -> REMOVE IF NOT NEEDED ANYMORE
 	//liest Datei ein in Format: kat (tab) review<>review .... (alles in einer Zeile)
 	// gibt eine ArrayList mit je einer Instance pro review aus
 	public static ArrayList<Instance> createInstancesFromFile(File f) {
@@ -50,8 +52,12 @@ public class CreateInstances {
 		return instanceArray;
 	}
 	
-	//liest Datei ein in Format: kat (tab) feature:count feature:count #label#:positive (neue Zeile) kat ....
-	// gibt eine ArrayList mit je einer Instance pro review aus
+	/**
+	 * liest Datei ein in Format: kat (tab) feature:count feature:count #label#:positive (neue Zeile) kat ....
+	 * gibt eine ArrayList mit je einer Instance pro review aus
+	 * @param f
+	 * @return
+	 */
 	public static ArrayList<Instance> createInstancesFromFileNewFormat(File f) {
 		String line = new String();
 		ArrayList<Instance> instanceArray = new ArrayList<Instance>();
@@ -93,6 +99,7 @@ public class CreateInstances {
 	}
 	//liest String ein in Format: feature:count feature:count #label#:positive<>feature:count ....
 	// gibt eine ArrayList mit je einer Instance pro review aus
+	//used in HadoopTrainPerceptronScalable and HadoopTrainPerceptron
 	public static ArrayList<Instance> createInstancesFromString(String s) {
 		String[] reviews = s.split("<>");
 		

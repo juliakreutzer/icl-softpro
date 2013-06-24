@@ -1,0 +1,25 @@
+included WordNet synsets:
+
+10, 1/t
+books on books:0.4
+
+100, 1/t
+books on books:0.4
+
+10, 1.0E-4
+books on books:0.285
+
+100, 1.0E-4
+books on books:0.28
+
+10, exponential
+books on books:0.255
+
+100, exponential
+books on books:0.2775
+
+10, decreasing
+books on books:0.255
+
+100, decreasing
+books on books:0.2775
