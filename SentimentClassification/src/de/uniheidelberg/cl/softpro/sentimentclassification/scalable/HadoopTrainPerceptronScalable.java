@@ -38,7 +38,6 @@ public class HadoopTrainPerceptronScalable {
 
 	
 	public static void main(String[] args) throws Exception {
-		System.out.println ("SN 20130617-05");
 		System.out.println ( "-------------------------------------------------------------");
 		System.out.println ( "de.uni-heidelberg.cl.softpro.sentimentclassification.scalable");
 		System.out.println ( "-------------------------------------------------------------");
@@ -80,8 +79,11 @@ public class HadoopTrainPerceptronScalable {
 		}
 	}
 
+	public static void createRandomShards (String pathIn, String pathOut) {
+		
+	}
 	
-	public static void runHadoopJob( Integer currentEpoch, String pathIn, String pathOut ) throws Exception {
+	public static void runHadoopJob (Integer currentEpoch, String pathIn, String pathOut ) throws Exception {
 		
 		System.out.println( "#####################################");
 		System.out.println( "    Phase 1 (Epoch " + currentEpoch.toString() + ")");
@@ -119,7 +121,7 @@ public class HadoopTrainPerceptronScalable {
 	    Job jobOne = new Job (confOne);
 		
 	    jobOne.setJarByClass (HadoopTrainPerceptronScalable.class);
-		jobOne.setJobName ("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
+		jobOne.setJobName ("SWP Grp 1 - E" + currentEpoch.toString() + " P1");
 		jobOne.setOutputKeyClass (Text.class);		// data type for map's output key
 		jobOne.setOutputValueClass (MapWritable.class);	// data type for map's output value
 	    	    
@@ -136,17 +138,22 @@ public class HadoopTrainPerceptronScalable {
 		MultipleOutputs.addNamedOutput(jobOne, "books", TextOutputFormat.class, Text.class, DoubleWritable.class);
 		MultipleOutputs.addNamedOutput(jobOne, "electronics", TextOutputFormat.class, Text.class, DoubleWritable.class);
 		MultipleOutputs.addNamedOutput(jobOne, "kitchen", TextOutputFormat.class, Text.class, DoubleWritable.class);
-		
+
+		long startTime = System.currentTimeMillis();
 		jobOne.waitForCompletion (true);
+		long stopTime = System.currentTimeMillis();
+		long totalTime = stopTime - startTime;
+		System.out.println ("Took " + totalTime + "ms");
 		
 		Configuration confTwo = new Configuration();
 		confTwo.set ("learningRate", confOne.get ("learningRate"));	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
 		confTwo.set ("numberOfShards", confOne.get ("numberOfShards"));
 
+		
 		Job jobTwo = new Job (confTwo);
 		
 		jobTwo.setJarByClass (HadoopTrainPerceptronScalable.class);
-		jobTwo.setJobName ("Hadoop Perceptron Training Phase 2 - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
+		jobTwo.setJobName ("SWP Grp 1 - E" + currentEpoch.toString() + " P2");
 		jobTwo.setOutputKeyClass (Text.class);		// data type for map's output key
 		jobTwo.setOutputValueClass (MapWritable.class);	// data type for map's output value
 	    	    
@@ -171,10 +178,13 @@ public class HadoopTrainPerceptronScalable {
 		System.out.println( "#####################################");
 		System.out.println( "    Phase 2 (Epoch " + currentEpoch.toString() + ")");
 		System.out.println( "#####################################");
-
+		long startTime2 = System.currentTimeMillis();
 		jobTwo.waitForCompletion (true);
-	    
-	    HadoopTrainPerceptron.writeInitializedVector (out2File, fs);	// save the new weight vector to a file in the local file system
+		long stopTime2 = System.currentTimeMillis();
+		long totalTime2 = stopTime2 - startTime2;
+		System.out.println ("Took " + totalTime2 + "ms");
+		
+	    HadoopTrainPerceptron.writeInitializedVector (out2File, fs, topKFeatures);	// save the new weight vector to a file in the local file system
 	}
 
 	public static class mapTrainSmallPerceptrons extends Mapper<Text, Text, Text, MapWritable> {
