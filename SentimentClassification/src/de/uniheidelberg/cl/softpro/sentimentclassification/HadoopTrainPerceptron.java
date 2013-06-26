@@ -185,7 +185,7 @@ public class HadoopTrainPerceptron {
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	public static void writeInitializedVector (Path outFolder, FileSystem fileSys) throws FileNotFoundException, IOException {
+	public static void writeInitializedVector (Path outFolder, FileSystem fileSys, int NumberOfFeatures) throws FileNotFoundException, IOException {
 		HashMap <String, HashMap<String, Double>> epocheData = readWVFileFromHDFS (outFolder.toString(), fileSys);
 		
 		FeatureSelector shrinkThings = new FeatureSelector (epocheData.get ("weights"), epocheData.get ("l2"));	// Saves only top k features
@@ -193,14 +193,14 @@ public class HadoopTrainPerceptron {
 		BufferedWriter out;
 		try {
 			out = new BufferedWriter (new FileWriter ("initializedVector"));
-			out.write( convertHashMapToString (shrinkThings.getTopKFeatures (topKFeatures)));
+			out.write( convertHashMapToString (shrinkThings.getTopKFeatures (NumberOfFeatures)));
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	public static void writeInitializedVector (Path outFolder) throws FileNotFoundException, IOException {
-		writeInitializedVector (outFolder, fs);
+		writeInitializedVector (outFolder, fs, topKFeatures);
 	}
 	
 	/**

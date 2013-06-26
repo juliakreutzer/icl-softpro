@@ -2,6 +2,7 @@ package de.uniheidelberg.cl.softpro.sentimentclassification;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Selects top k features of a weight vector
@@ -12,6 +13,7 @@ import java.util.*;
 public class FeatureSelector {
 	HashMap <String, Double> mapWeights;
 	HashMap <String, Double> mapL2;
+	TreeMap <Double, ArrayList<String>> sortedL2;
 	
 	/**
 	 * 
@@ -27,8 +29,28 @@ public class FeatureSelector {
 			l2 = new HashMap <String, Double>();
 			System.out.println ("!!! WARNING: l2 hashmap not initialized");
 		}
+		System.out.println ("Got a hashmap with " + Integer.toString (weights.size()) + "/" + Integer.toString (l2.size()) +  " features");
 		this.mapWeights = weights;
 		this.mapL2 = l2;
+		this.sortedL2 = this.getSortedMap (this.mapL2);
+	}
+	
+	private TreeMap <Double, ArrayList<String>> getSortedMap (HashMap <String, Double> input) {
+		TreeMap <Double, ArrayList<String>> newMap = new TreeMap <Double, ArrayList<String>>();
+		for (String key : input.keySet()) {
+			Double value = input.get (key);
+			if (newMap.containsKey (value)) {
+				ArrayList <String> currentList = newMap.get (value);
+				currentList.add (key);
+				newMap.put (value,  currentList);
+			}
+			else {
+				ArrayList <String> currentList = new ArrayList <String>();
+				currentList.add (key);
+				newMap.put (value,  currentList);
+			}
+		}
+		return newMap;
 	}
 	
 	/**
@@ -38,37 +60,21 @@ public class FeatureSelector {
 	 */
 	public HashMap <String, Double> getTopKFeatures (int k) {
 		HashMap <String, Double> topFeatures = new HashMap<String, Double>();
-		Integer i = 0;
-		
-		for (Map.Entry <String, Double> TopKEntry : entriesSortedByValues(this.mapL2)) {
-			if (i <= k) {
-				topFeatures.put (TopKEntry.getKey(), mapWeights.get (TopKEntry.getKey()));
-				i++;
-			}
-			else {
-				break;
+		int counter = 0;
+
+		while ( counter < k ) {
+			for (Entry<Double, ArrayList<String>> set : this.sortedL2.descendingMap().entrySet()) {
+				ArrayList <String> currentList = set.getValue();
+				for (String feature : currentList) {
+					if (counter < k) {
+						topFeatures.put (feature, this.mapWeights.get (feature));
+						counter = counter + 1;
+					}
+				}
 			}
 		}
-		
+		System.out.println (" Returning " + Integer.toString (topFeatures.size()) + " of " + Integer.toString (k));
 		return topFeatures;
-	}
-	
-	/**
-	 * 
-	 * @param map
-	 * @return
-	 */
-	static <K,V extends Comparable<? super V>> SortedSet <Map.Entry<K,V>> entriesSortedByValues (Map <K,V> map) {
-		SortedSet <Map.Entry <K,V>> sortedEntries;
-		sortedEntries = new TreeSet <Map.Entry<K,V>> (new Comparator <Map.Entry<K,V>>() {
-		        @Override public int compare(Map.Entry<K,V> e1, Map.Entry<K,V> e2) {
-		            return e1.getValue().compareTo (e2.getValue());
-		        }
-		    }
-		);
-		sortedEntries.addAll (map.entrySet());
-			
-	    return sortedEntries;
 	}
 }
 
