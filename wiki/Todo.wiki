@@ -1,9 +1,7 @@
 #summary Todo-Liste
 
 = Todo =
-  * Random shards?!?!?!? 
   * HadoopPerceptron Aufruf dokumentieren m
-  * Development-Klasse -> testMulti jj
   * Namenskonvention für trainierte WeightVectorFiles:
     * ST (SingleTask): (Kategoriename) | all | small
     * MT (MultiTask): cat | random
