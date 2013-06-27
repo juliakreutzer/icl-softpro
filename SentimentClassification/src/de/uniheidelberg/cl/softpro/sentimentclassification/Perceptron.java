@@ -88,7 +88,59 @@ public class Perceptron{
 			return false;
 		}
 	}
+
+	/* eventuell (hoffentlich) überflüssig
+	/**
+	 * trains the SingleTaskPerceptron instance on a given training set for all epochs
+	 * returns the AVERAGE of updated vectors for all epochs
+	 * @param trainset must be an Array of Instances
+	 * @return the trained weight vector in HashMap<String,Integer> format
+	 
+	public HashMap<String,Double> trainSingleAverage(ArrayList<Instance> trainset){
+		//for each epoch
+		@SuppressWarnings("unchecked")
+		HashMap<String,Double>[] allWeightVectors = new HashMap[this.epochs];
 		
+		for (int t=1; t<=this.epochs; t++){			
+			
+			//various learning rates
+			double currentLearningRate = 0; //local learning rate is double
+			
+			if (this.learningRate.equals("exp")){
+				currentLearningRate = 1*Math.pow(0.85,-1/new Double(trainset.size()));
+			}
+			else if (this.learningRate.equals("dec")){
+				currentLearningRate = 1/(1+new Double(t)/new Double(trainset.size()));
+			}
+			else if (this.learningRate.equals("1divt")){
+				currentLearningRate = 1/new Double(t);
+			}
+			else if (Double.parseDouble(this.learningRate)>=-10 || Double.parseDouble(this.learningRate)<=10   ){
+				currentLearningRate = Math.pow(10,Double.parseDouble(this.learningRate));
+			}
+						
+			for (Instance i : trainset){
+
+				//if misclassified, update with gradient
+				if (this.misclassified(i)){
+					//update weights
+					for (String feature : i.getFeatures()){
+						Double featureValue = new Double("0.0");
+						//if feature can be found in current weights
+						if (this.weights.containsKey(feature)){
+							featureValue = this.weights.get(feature);
+						}
+						//update weight
+						this.weights.put(feature, featureValue+(currentLearningRate*i.getFeatureVector().get(feature)*i.getLabel()));
+					}
+				}
+			}
+			allWeightVectors[t-1]= this.weights;
+		}
+		allWeightVectors.		
+	}	
+	*/
+	
 	/**
 	 * trains the SingleTaskPerceptron instance on a given training set for all epochs
 	 * @param trainset must be an Array of Instances

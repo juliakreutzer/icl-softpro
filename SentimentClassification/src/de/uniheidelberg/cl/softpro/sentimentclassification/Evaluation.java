@@ -5,6 +5,12 @@ import java.util.*;
 public class Evaluation {
 	
 	public static void main(String[] args) {
+		
+		//hier wollen wir nach Parameter-Optimierung einmalig die entsprechenden Gewichtsvektoren laden und sie auf dem TestSet testen
+		//das funktioniert für single genauso wie für multi -> Auswahl der Gewichtsvektoren
+		//Ergebnisse müssen irgendwie gespeichert werden
+		
+		
 		//steht jetzt alles in Development!!!
 		//Trainingsdateien einlesen
 		/*ArrayList<Instance> train_instances_all = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/all.train.corpus.final.formatted"));
