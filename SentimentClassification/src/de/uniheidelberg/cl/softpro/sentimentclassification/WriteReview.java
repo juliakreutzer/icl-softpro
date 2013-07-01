@@ -1,4 +1,4 @@
-package de.uniheidelberg.cl.softpro.sentimentclassification;
+package src.de.uniheidelberg.cl.softpro.sentimentclassification;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -30,8 +30,10 @@ public class WriteReview {
 		int label = 0;
 		if (Perceptron.dotProduct(review, weightVector) > 0) {
 			label = 1;
-		} else {
+		} else if (Perceptron.dotProduct(review, weightVector) < 0) {
 			label = -1;
+		} else {
+			label = 0;
 		}
 		return label;
 	}
