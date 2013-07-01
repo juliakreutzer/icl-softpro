@@ -1,4 +1,4 @@
-package de.uniheidelberg.cl.softpro.sentimentclassification;
+package src.de.uniheidelberg.cl.softpro.sentimentclassification;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
