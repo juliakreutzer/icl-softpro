@@ -9,6 +9,7 @@
   * top k über 1000 ja
   * (average perceptron????)
   * Vortrag! ab 08.07.13
+  * Korpus erstellen ju
 
   * HadoopPerceptron Aufruf dokumentieren m
   * Namenskonvention für trainierte WeightVectorFiles:
