@@ -1,13 +1,14 @@
 #summary Todo-Liste
 
 = Todo =
-  * random trainieren
-  * Evaluation: beste Parameter festlegen, 10 Epochen, Testset
-  * Kommentieren
-  * java docs
-  * multi task 1divt nochmal starten
-  * top k über 1000
-  * average perceptron????
+  * random trainieren hadoop! --> Tabelle ju
+  * Evaluation: beste Parameter festlegen, 10 Epochen, Testset --> nächste Woche 08.07.13
+  * (Kommentieren jjm)
+  * (java docs)
+  * multi task 1divt nochmal starten m
+  * top k über 1000 ja
+  * (average perceptron????)
+  * Vortrag! ab 08.07.13
 
   * HadoopPerceptron Aufruf dokumentieren m
   * Namenskonvention für trainierte WeightVectorFiles:
