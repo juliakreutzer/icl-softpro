@@ -1,8 +1,9 @@
-package src.de.uniheidelberg.cl.softpro.sentimentclassification;
+package de.uniheidelberg.cl.softpro.sentimentclassification;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
 
+//vielleicht könnte das für uns interessant sein: http://www.esuli.it/fossil/repo/amazonReviewsDownloader/home
 
 public class WriteReview {
 
@@ -37,6 +38,8 @@ public class WriteReview {
 	
 	public static void main(String[] args) {
 	//	System.out.println(convertReviewToHashMap());
-		System.out.println(evaluateReview());
+		while(true){
+			System.out.println(evaluateReview());
+		}
 	}
 }
