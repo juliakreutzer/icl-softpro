@@ -1,10 +1,13 @@
 #-*- coding: utf-8 -*-
 import sys
 
-#extracts reviews from given corpus (par 1) in csv format and converts it to our format:
+#extracts reviews from given corpus (par 2) in csv format and converts it to our format:
 #category\tfeature:count f2:count2 ... #label#:negative
 #features are only unigrams
-#output in par2 file
+#output in par3 file
+#category in par1
+#e.g.
+#
 
 #extracts reviews from a given file, returns a list
 def extractReviews(filein):
@@ -36,10 +39,10 @@ def countFeaturesInList(reviewList):
         #split into unigrams
         unigramsWithPunct = reviewtext.split(" ")
        # print "%d unigrams"%(len(unigramsWithPunct))
-        #remove punctuation , ; . ? !
+        #remove punctuation , ; . ? ! and convert to lower case
         unigrams = []
         for wordPunct in unigramsWithPunct:
-            unigrams.append(wordPunct.replace("!","").replace(".","").replace(",","").replace(";","").replace("?",""))
+            unigrams.append(wordPunct.replace("!","").replace("(","").replace(")","").replace(".","").replace(",","").replace(";","").replace("?","").lower())
         #count features
         for word in unigrams:
             count = unigrams.count(word)
@@ -56,19 +59,21 @@ def printReviewsToFile(reviewList, outfile):
         #get label from number of stars (3 stars are not used here)
         stars = int(float(review[1]))
         if stars<3:
-            label = -1
+            label = "negative"
         elif stars>3:
-            label = +1 
+            label = "positive"
         elif stars==3:
             continue
-        print >>out, "snacks\t%s #label#:%d"%(" ".join(review[0]), label)
+        print >>out, "%s\t%s #label#:%s"%(cat," ".join(review[0]), label)
         
 
 if __name__ == "__main__":
+	#category
+    cat = sys.argv[1]
     #input file
-    filein = sys.argv[1]
+    filein = sys.argv[2]
     #output file
-    fileout = sys.argv[2]
+    fileout = sys.argv[3]
     #list of reviews
     reviewList = extractReviews(filein)
     reviewFeatureCounts = countFeaturesInList(reviewList)
