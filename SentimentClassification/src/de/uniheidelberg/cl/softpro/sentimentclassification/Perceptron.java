@@ -1,4 +1,4 @@
-package src.de.uniheidelberg.cl.softpro.sentimentclassification;
+package de.uniheidelberg.cl.softpro.sentimentclassification;
 
 
 import java.io.BufferedWriter;
@@ -204,6 +204,12 @@ public class Perceptron{
 			
 			//various learning rates
 			double currentLearningRate = 0; //local learning rate is double
+			
+			//learning has to start with epoch no. 1, not 0!
+			if (currentEpoch==0){
+				System.err.print("Counting of epochs should start at 1. Never start at 0!");
+				System.exit(1);
+			}
 			
 			if (this.learningRate.equals("exp")){
 				currentLearningRate = 1*Math.pow(0.85,-1/new Double(trainset.size()));
