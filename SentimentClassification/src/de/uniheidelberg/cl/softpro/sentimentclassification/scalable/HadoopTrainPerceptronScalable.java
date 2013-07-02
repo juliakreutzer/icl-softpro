@@ -17,6 +17,7 @@ import org.apache.hadoop.mapreduce.lib.jobcontrol.JobControl;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.lib.partition.*;
 
 import de.uniheidelberg.cl.softpro.sentimentclassification.CreateInstances;
 import de.uniheidelberg.cl.softpro.sentimentclassification.HadoopTrainPerceptron;
@@ -35,7 +36,7 @@ public class HadoopTrainPerceptronScalable {
 	private static String newLearningRate = "-4";
 	private static String weightVectorFile = "weightVector.txt";
 	private static Integer numberOfShards; 
-
+	private static String categoryNames;
 	
 	public static void main(String[] args) throws Exception {
 		System.out.println ( "-------------------------------------------------------------");
@@ -45,7 +46,7 @@ public class HadoopTrainPerceptronScalable {
 		System.out.println ( "");
 		
 		if (args.length == 0) {
-			System.out.println ( "hadoop jar scalable.jar [input folder] [output folder] [number of epochs] [number of top features] [learningRate]");
+			System.out.println ( "hadoop jar scalable.jar [input folder] [output folder] [number of epochs] [number of top features] [learningRate] [categoryNames] [random?]");
 			System.exit(0);
 		}
 		if (args.length > 2) {
@@ -63,6 +64,17 @@ public class HadoopTrainPerceptronScalable {
 				newLearningRate =  args[4];
 			}
 		}
+		if (args.length > 5) {
+			if ( args[5] != null) {
+				categoryNames =  args[5];
+			}
+		}
+		if (args.length > 6) {
+			if (args [6] != null) {
+				createRandomShards (args[0], args[1]);
+				System.exit(0);
+			}
+		}
 
 		System.out.println ( "    Started Hadoop MapReduce Scalable Perceptron Training    ");
 		System.out.println ( "-------------------------------------------------------------");
@@ -71,6 +83,7 @@ public class HadoopTrainPerceptronScalable {
 		System.out.println ( "		top k features:      " + new Integer(topKFeatures).toString());
 		System.out.println ( "		learning rate:      " + newLearningRate);
 		System.out.println ( "		name of vector file: " + weightVectorFile);
+		System.out.println ( "		categories: " + categoryNames);
 		System.out.println ( "" );
 		System.out.println ( "	Sit back and relax!");
 		
@@ -79,8 +92,42 @@ public class HadoopTrainPerceptronScalable {
 		}
 	}
 
-	public static void createRandomShards (String pathIn, String pathOut) {
+	public static void createRandomShards (String pathIn, String pathOut) throws IOException, ClassNotFoundException, InterruptedException {
+		System.out.println (" Creating random shards...");
+		Path inFile = new Path (pathIn);
+		Path outFile = new Path (pathOut);
 		
+		long startTimeRS = System.currentTimeMillis();
+		
+		Configuration confRS = new Configuration();
+//		confRS.set("mapred.job.tracker", "local");
+		
+		Job jobRS = new Job (confRS);
+		
+		jobRS.setJarByClass (HadoopTrainPerceptronScalable.class);
+		jobRS.setJobName ("SWP Grp 1 - RandomShards");
+		jobRS.setOutputKeyClass (Text.class);		// data type for map's output key
+		jobRS.setOutputValueClass (Text.class);	// data type for map's output value
+	    	    
+		jobRS.setInputFormatClass (KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
+		jobRS.setOutputFormatClass (TextOutputFormat.class);		// save result of reducers as text
+
+		jobRS.setMapperClass(einMapper.class);
+		jobRS.setReducerClass(einReducer.class);
+		
+		FileInputFormat.setInputPaths (jobRS, inFile);
+		FileOutputFormat.setOutputPath (jobRS, outFile);
+		
+		MultipleOutputs.addNamedOutput (jobRS, "0", TextOutputFormat.class, Text.class, Text.class);
+		MultipleOutputs.addNamedOutput (jobRS, "1", TextOutputFormat.class, Text.class, Text.class);
+		MultipleOutputs.addNamedOutput (jobRS, "2", TextOutputFormat.class, Text.class, Text.class);
+		MultipleOutputs.addNamedOutput (jobRS, "3", TextOutputFormat.class, Text.class, Text.class);
+		
+		System.out.println ("Starting hadoop job NOW");
+		jobRS.waitForCompletion (true);
+		long stopTimeRS = System.currentTimeMillis();
+		long totalTimeRS = stopTimeRS - startTimeRS;
+		System.out.println ("Took " + totalTimeRS + "ms");	
 	}
 	
 	public static void runHadoopJob (Integer currentEpoch, String pathIn, String pathOut ) throws Exception {
@@ -124,7 +171,7 @@ public class HadoopTrainPerceptronScalable {
 		jobOne.setJobName ("SWP Grp 1 - E" + currentEpoch.toString() + " P1");
 		jobOne.setOutputKeyClass (Text.class);		// data type for map's output key
 		jobOne.setOutputValueClass (MapWritable.class);	// data type for map's output value
-	    	    
+	    
 		jobOne.setInputFormatClass (KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
 		jobOne.setOutputFormatClass (TextOutputFormat.class);		// save result of reducers as text
 
@@ -134,11 +181,10 @@ public class HadoopTrainPerceptronScalable {
 		FileInputFormat.setInputPaths (jobOne, inFile);
 		FileOutputFormat.setOutputPath (jobOne, outFile);
 		
-		MultipleOutputs.addNamedOutput(jobOne, "dvd", TextOutputFormat.class, Text.class, DoubleWritable.class);
-		MultipleOutputs.addNamedOutput(jobOne, "books", TextOutputFormat.class, Text.class, DoubleWritable.class);
-		MultipleOutputs.addNamedOutput(jobOne, "electronics", TextOutputFormat.class, Text.class, DoubleWritable.class);
-		MultipleOutputs.addNamedOutput(jobOne, "kitchen", TextOutputFormat.class, Text.class, DoubleWritable.class);
-
+		for (String category : categoryNames.split (";")) {
+			MultipleOutputs.addNamedOutput(jobOne, category, TextOutputFormat.class, Text.class, DoubleWritable.class);
+		}
+		
 		long startTime = System.currentTimeMillis();
 		jobOne.waitForCompletion (true);
 		long stopTime = System.currentTimeMillis();
@@ -379,5 +425,30 @@ public class HadoopTrainPerceptronScalable {
 	        context.write (key, returnValue);
 		}
 		
+	}
+	
+	public static class einMapper extends Mapper <Text, Text, Text, Text> {
+		private int i = 0;
+		
+		public void map (Text key, Text value, Context context) throws IOException, InterruptedException {
+			System.out.println ("[m]  Writing context for " + value.toString() + " as " + Integer.toString (i));
+			context.write (new Text (Integer.toString (i)), value);
+			i++;
+			if (i>3) {
+				System.out.println ("[m]  Resetting i to 0");
+				i = 0;
+			}
+		}
+	}
+	
+	public static class einReducer extends Reducer <Text, Text, Text, Text> {
+		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+			MultipleOutputs <Text, Text> mos = new MultipleOutputs<Text, Text> (context);
+			for (Text value : values) {
+				System.out.println ("[r]  Writing context");
+				mos.write (key, value, key.toString());
+			}
+			mos.close();
+		}
 	}
 }
