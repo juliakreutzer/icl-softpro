@@ -8,11 +8,17 @@ package de.uniheidelberg.cl.softpro.sentimentclassification;
 import java.io.*;
 import java.util.*;
 
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.filecache.DistributedCache;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.KeyValueTextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 
 
@@ -216,18 +222,9 @@ public class HadoopTrainPerceptron {
 		System.out.println( "#####################################");
 		System.out.println( "Initializing Epoch " + currentEpoch.toString());
 		System.out.println( "#####################################");
-		JobConf conf = new JobConf(HadoopTrainPerceptron.class);
+	
+		Configuration conf = new Configuration();
 				
-		conf.setJobName("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
-	    conf.setOutputKeyClass(Text.class);		// data type for map's output key
-	    conf.setOutputValueClass(DoubleWritable.class);	// data type for map's output value
-	    	    
-	    conf.setMapperClass(Map.class);			// which class implements the Mapper?
-	    conf.setReducerClass(Reduce.class);		// which class implements the Reducer?
-
-		conf.setInputFormat(KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
-	    conf.setOutputFormat(TextOutputFormat.class);		// save result of reducers as text
-
 	    Path inFile = new Path (pathIn);
 	    Path outFile = new Path (pathOut + "_e" + currentEpoch.toString());
 
@@ -247,18 +244,34 @@ public class HadoopTrainPerceptron {
 	    	numberOfShards = getNumberOfLinesInFolder (inFile);	// Must be run AFTER fs was instanciated!
 	    }
 	    
+	    
 	    conf.set ("learningRate","1.0E-4");	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
 	    conf.set ("numberOfShards", numberOfShards.toString());
 	    
-	    FileInputFormat.addInputPath(conf, inFile);		// first command line argument used as input path
-	    FileOutputFormat.setOutputPath(conf, outFile);	// second command line argument used as output path
+
+	    Job hdpJob = new Job (conf);
+	    
+	    hdpJob.setJobName("Hadoop Perceptron Training - SoftPro Grp 1 - Epoch " + currentEpoch.toString());
+	    hdpJob.setOutputKeyClass(Text.class);		// data type for map's output key
+	    hdpJob.setOutputValueClass(DoubleWritable.class);	// data type for map's output value
+	    	    
+	    hdpJob.setJarByClass(HadoopTrainPerceptron.class);
+	    
+	    hdpJob.setMapperClass(Map.class);			// which class implements the Mapper?
+	    hdpJob.setReducerClass(Reduce.class);		// which class implements the Reducer?
+
+	    hdpJob.setInputFormatClass(KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
+	    hdpJob.setOutputFormatClass(TextOutputFormat.class);		// save result of reducers as text
+
+	    
+	    FileInputFormat.addInputPath (hdpJob, inFile);		// first command line argument used as input path
+	    FileOutputFormat.setOutputPath (hdpJob, outFile);	// second command line argument used as output path
 	    	    
 	    
 	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);	// copy existing weight vector file from local filesystem to hdfs
 	    DistributedCache.addCacheFile(hdfsPath.toUri(), conf);	// add file to distributed cache
 		
-	    RunningJob hadoopTask = JobClient.runJob(conf);		// start Hadoop-Job
-	    hadoopTask.waitForCompletion();	// wait until all jobs completed
+	    hdpJob.waitForCompletion (true);	// wait until all jobs completed
 	    writeInitializedVector (outFile);	// save the new weight vector to a file in the local file system
 	}
 	
@@ -269,7 +282,7 @@ public class HadoopTrainPerceptron {
 	 * @author mirko
 	 *
 	 */
-	public static class Map extends MapReduceBase implements Mapper<Text, Text, Text, DoubleWritable> {
+	public static class Map extends Mapper<Text, Text, Text, DoubleWritable> {
 		/*
 		 * Implementation of the Hadoop Mapper-Class
 		 * Trains an initialized perceptron on one shard of data
@@ -284,14 +297,15 @@ public class HadoopTrainPerceptron {
 	     * (non-Javadoc)
 	     * @see org.apache.hadoop.mapred.MapReduceBase#configure(org.apache.hadoop.mapred.JobConf)
 	     */
-	    public void configure (JobConf job) {
+	    public void setup (Context context) {
 	    	/*
 	    	 * used to read parameters from JobConf
 	    	 * important to get data from previously trained perceptrons
 	    	 */ 
-	        learningRate = Double.parseDouble (job.get ("learningRate"));							// get learning rate specified in JobConf
+			Configuration config = context.getConfiguration();
+	        learningRate = Double.parseDouble (config.get ("learningRate"));							// get learning rate specified in JobConf
     		try {
-				for( Path cacheFile : DistributedCache.getLocalCacheFiles(job) ) {
+				for( Path cacheFile : DistributedCache.getLocalCacheFiles (config) ) {
 					System.out.println( "  Cache file: " + cacheFile.getName().toString() );
 				}
 			} catch (IOException e) {
@@ -299,7 +313,7 @@ public class HadoopTrainPerceptron {
 			}
 	        try {
 	            String wvCacheName = new Path (weightVectorFile).getName();
-		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (job);
+		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (config);
 		        if (null != cacheFiles && cacheFiles.length > 0) {
 		        	for (Path cachePath : cacheFiles) {
 		        		if (cachePath.getName().endsWith(wvCacheName)) {
@@ -325,21 +339,21 @@ public class HadoopTrainPerceptron {
 	    		initializedWeightVector = convertStringToHashmap (reader.readLine());
 	    	} 
 	    	finally {
-	    		reader.close();
+	    		reader.close(); 
 	    	}
 	    	
 	    }
 
-	    public void map(Text category, Text rawInput, OutputCollector<Text, DoubleWritable> output, Reporter reporter) throws IOException {
+	    public void map(Text category, Text rawInput, Context context) throws IOException, InterruptedException {
 	    	/*
 	    	 * Implements the mapping method;
 	    	 */
-	    	p = new Perceptron (learningRate);
+	    	p = new Perceptron (Double.toString (learningRate));
 	    	p.setWeights (initializedWeightVector);
 	    	
 	    	ArrayList<Instance> trainInstances = CreateInstances.createInstancesFromString( rawInput.toString() );	// converts raw input to a datatype that can be used by the perceptron
 	    				
-	    	trainedPerceptron = p.trainMulti (trainInstances);	// trains perceptron
+	    	trainedPerceptron = p.trainMulti (trainInstances, 1);	// trains perceptron
 	    	
 	    	for( String key : trainedPerceptron.keySet()) {	
 	    		Double value = trainedPerceptron.get (key);
@@ -351,7 +365,7 @@ public class HadoopTrainPerceptron {
 	    		hadoopKey.set (key);
 	    		hadoopValue.set (value);
 	    		
-	    		output.collect (hadoopKey, hadoopValue);	// return a key-value pair for each feature
+	    		context.write (hadoopKey, hadoopValue);	// return a key-value pair for each feature
 	    	}
 	    	
 	    	/* NICE TO REMEMBER:
@@ -390,19 +404,20 @@ public class HadoopTrainPerceptron {
 	 * @author mirko
 	 *
 	 */
-	public static class Reduce extends MapReduceBase implements Reducer<Text, DoubleWritable, Text, Text> {
+	public static class Reduce extends Reducer<Text, DoubleWritable, Text, Text> {
 		
 		public static Integer numberOfShards;
 		
-		public void configure (JobConf job) {
+		public void setup (Context context) {
 	    	/*
 	    	 * used to read parameters from JobConf
 	    	 * important to get the number of shards
 	    	 */ 
-			numberOfShards = Integer.parseInt (job.get ("numberOfShards"));	// get the number of shards
+			Configuration conf = context.getConfiguration();
+			numberOfShards = Integer.parseInt (conf.get ("numberOfShards"));	// get the number of shards
 		}
 	       
-		public void reduce(Text key, Iterator<DoubleWritable> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+		public void reduce(Text key, Iterator<DoubleWritable> values, Context context) throws IOException, InterruptedException {
 			// l2-norm = sqrt (sum ((feature's value)^2)) 
 			Double sum_pow = 0.0; 
 			Double sum = 0.0;
@@ -419,7 +434,7 @@ public class HadoopTrainPerceptron {
 	        
 	        // convert to hadoop data type
 	        Text returnValue = new Text( new String( l2.toString() + "	" + mean.toString()));
-	        output.collect (key, returnValue);
+	        context.write (key, returnValue);
 		}
 	}
 }
