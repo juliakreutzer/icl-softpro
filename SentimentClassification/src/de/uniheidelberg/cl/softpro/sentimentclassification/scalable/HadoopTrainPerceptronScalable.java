@@ -30,13 +30,13 @@ import de.uniheidelberg.cl.softpro.sentimentclassification.Instance;
 
 public class HadoopTrainPerceptronScalable {
 	
-	private static FileSystem fs;
-	private static int numberOfEpochs = 10;
-	private static int topKFeatures = 10;
-	private static String newLearningRate = "-4";
-	private static String weightVectorFile = "weightVector.txt";
-	private static Integer numberOfShards; 
-	private static String categoryNames;
+	private static FileSystem fs;					// used to access the hadoop file system, to get the trained weight vector
+	private static int numberOfEpochs = 10;			// number of epochs for perceptron training
+	private static int topKFeatures = 10;			// number of top k features to select after training
+	private static String newLearningRate = "-4";	// learning rate passed as string
+	private static String weightVectorFile = "weightVector.txt";	// file to save the trained weight vector in hdfs after each epoch
+	private static Integer numberOfShards; 			// number of shards that the corpus is split into; = number of categories
+	private static String[] categoryNames;			// names of the categories
 	
 	public static void main(String[] args) throws Exception {
 		System.out.println ( "-------------------------------------------------------------");
@@ -66,10 +66,10 @@ public class HadoopTrainPerceptronScalable {
 		}
 		if (args.length > 5) {
 			if ( args[5] != null) {
-				categoryNames =  args[5];
+				categoryNames =  args[5].split(";");
 			}
 		}
-		if (args.length > 6) {
+		if (args.length > 6) {				// if args[6] is set to anything, random shards should be created; no perceptron training, only corpus creation!
 			if (args [6] != null) {
 				createRandomShards (args[0], args[1]);
 				System.exit(0);
@@ -83,86 +83,101 @@ public class HadoopTrainPerceptronScalable {
 		System.out.println ( "		top k features:      " + new Integer(topKFeatures).toString());
 		System.out.println ( "		learning rate:      " + newLearningRate);
 		System.out.println ( "		name of vector file: " + weightVectorFile);
-		System.out.println ( "		categories: " + categoryNames);
+		System.out.println ( "		categories: " + args[5] + " (" + categoryNames.length + ")");
 		System.out.println ( "" );
 		System.out.println ( "	Sit back and relax!");
 		
-		for ( int e = 0; e < numberOfEpochs; e++ ) {
+		for ( int e = 1; e <= numberOfEpochs; e++ ) {		// start with epoch=1, rerun hadoop job for each epoch
 			runHadoopJob (e, args[0], args[1]);			
 		}
 	}
 
+	/**
+	 * 
+	 * @param pathIn Path containing the corpus files with "old"/natural category names
+	 * @param pathOut Path to save the new corpus files to
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * @throws InterruptedException
+	 */
 	public static void createRandomShards (String pathIn, String pathOut) throws IOException, ClassNotFoundException, InterruptedException {
 		System.out.println (" Creating random shards...");
-		Path inFile = new Path (pathIn);
-		Path outFile = new Path (pathOut);
+		Path inFile = new Path (pathIn);				// Input path for hadoop job
+		Path outFile = new Path (pathOut);				// Output path for hadoop job
 		
-		long startTimeRS = System.currentTimeMillis();
+		long startTimeRS = System.currentTimeMillis();	// just some log information ;) how much time does the job take?
 		
-		Configuration confRS = new Configuration();
-//		confRS.set("mapred.job.tracker", "local");
+		Configuration confRS = new Configuration();		// sometimes used to pass parameters to mapper and reducer (e.g. confRS.set (String, String))
 		
-		Job jobRS = new Job (confRS);
+		Job jobRS = new Job (confRS);					// Instanciate hadoop job, tell it to use the Configuration object
 		
-		jobRS.setJarByClass (HadoopTrainPerceptronScalable.class);
-		jobRS.setJobName ("SWP Grp 1 - RandomShards");
-		jobRS.setOutputKeyClass (Text.class);		// data type for map's output key
-		jobRS.setOutputValueClass (Text.class);	// data type for map's output value
+		jobRS.setJarByClass (HadoopTrainPerceptronScalable.class);	// Tell hadoop where to find the mapper.class and reducer.class
+		jobRS.setJobName ("SWP Grp 1 - RandomShards");				// title of the hadoop job, to be found in jobtracker
+		jobRS.setOutputKeyClass (Text.class);						// data type for map's output key
+		jobRS.setOutputValueClass (Text.class);						// data type for map's output value
 	    	    
 		jobRS.setInputFormatClass (KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
 		jobRS.setOutputFormatClass (TextOutputFormat.class);		// save result of reducers as text
 
-		jobRS.setMapperClass(einMapper.class);
-		jobRS.setReducerClass(einReducer.class);
+		jobRS.setMapperClass (RandomShardsMapper.class);				// which class to use as mapper? 
+		jobRS.setReducerClass (RandomShardsReducer.class);				// which class to use as reducer?
 		
-		FileInputFormat.setInputPaths (jobRS, inFile);
-		FileOutputFormat.setOutputPath (jobRS, outFile);
+		FileInputFormat.setInputPaths (jobRS, inFile);					// set the input path
+		FileOutputFormat.setOutputPath (jobRS, outFile);				// set the output path, where to save the NamedOutput files
 		
-		MultipleOutputs.addNamedOutput (jobRS, "0", TextOutputFormat.class, Text.class, Text.class);
-		MultipleOutputs.addNamedOutput (jobRS, "1", TextOutputFormat.class, Text.class, Text.class);
-		MultipleOutputs.addNamedOutput (jobRS, "2", TextOutputFormat.class, Text.class, Text.class);
-		MultipleOutputs.addNamedOutput (jobRS, "3", TextOutputFormat.class, Text.class, Text.class);
+		
+		// adds an output file for each category name passed in args[]
+		for (String category : categoryNames) {
+			MultipleOutputs.addNamedOutput (jobRS, category, TextOutputFormat.class, Text.class, Text.class);
+		}
 		
 		System.out.println ("Starting hadoop job NOW");
-		jobRS.waitForCompletion (true);
+		jobRS.waitForCompletion (true);									// wait until hadoop job has completed
 		long stopTimeRS = System.currentTimeMillis();
 		long totalTimeRS = stopTimeRS - startTimeRS;
-		System.out.println ("Took " + totalTimeRS + "ms");	
+		System.out.println ("Took " + totalTimeRS + "ms");
 	}
 	
+	/**
+	 * 
+	 * @param currentEpoch passes the current epoch to hadoop job; important for perceptron training
+	 * @param pathIn path containing the corpus files
+	 * @param pathOut path to save intermediate results in (must be unique!), epoch and phase information will be appended automatically
+	 * @throws Exception
+	 */
 	public static void runHadoopJob (Integer currentEpoch, String pathIn, String pathOut ) throws Exception {
 		
 		System.out.println( "#####################################");
 		System.out.println( "    Phase 1 (Epoch " + currentEpoch.toString() + ")");
 		System.out.println( "#####################################");
-		Configuration confOne = new Configuration();
+		Configuration confOne = new Configuration();			// Configuration for the first phase
 		
-	    Path inFile = new Path (pathIn);
-	    Path outFile = new Path (pathOut + "_e" + currentEpoch.toString());
-	    Path out2File = new Path (pathOut + "2_e" + currentEpoch.toString());
+	    Path inFile = new Path (pathIn);						// path containing the corpus files
+	    Path outFile = new Path (pathOut + "_e" + currentEpoch.toString());		// output path for phase 1, will be used as input path for phase 2
+	    Path out2File = new Path (pathOut + "2_e" + currentEpoch.toString());	// output path for phase 2
 	    
-	    Path hdfsPath = new Path (weightVectorFile);
-	    String localFile;
+	    Path hdfsPath = new Path (weightVectorFile);		// used for DistributedCache: in which file is the trained weight vector saved?
+	    String localFile;									// path of the weight vector file in local filesystem
 	    
-	    if (fs == null) {	// if fs == null it's the first epoch
-	    	fs = FileSystem.get (confOne);	// creates fs-object
-	    	localFile = "emptyVector";	// first epoch: weight vector has to be initialized with zeros
+	    if (fs == null) {					// if fs == null it's the first epoch
+	    	fs = FileSystem.get (confOne);	// creates filesystem-object
+	    	localFile = "emptyVector";		// first epoch: weight vector has to be initialized with zeros
 	    }
 	    else {
 	    	localFile = "initializedVector";	// not-first epoch: use already initialized vector from local file system
 	    }
 	    
 	    
-	    if (numberOfShards == null) {	// it's enough to count the number of shards once
-	    	//numberOfShards = HadoopTrainPerceptron.getNumberOfLinesInFolder (inFile, fs);	// Must be run AFTER fs was instanciated!
-	    	numberOfShards = 4;
+	    if (numberOfShards == null) {				// it's enough to count the number of shards once
+	    	numberOfShards = categoryNames.length;	// set the number of shards
 	    }
 	    
-	    confOne.set ("learningRate", newLearningRate);	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
-	    confOne.set ("numberOfShards", numberOfShards.toString());
-	    confOne.set ("currentEpoch", currentEpoch.toString());   
+	    // Strings that can be accessed by mapper and reducers
+	    confOne.set ("learningRate", newLearningRate);				// learning rate for perceptron training
+	    confOne.set ("numberOfShards", numberOfShards.toString());	// number of shards; important for l2 regularization
+	    confOne.set ("currentEpoch", currentEpoch.toString());   	// current epoch for perceptron training
 	    
-	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);	// copy existing weight vector file from local filesystem to hdfs
+	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);		// copy existing weight vector file from local filesystem to hdfs
 	    DistributedCache.addCacheFile (hdfsPath.toUri(), confOne);	// add file to distributed cache
 		
 	    Job jobOne = new Job (confOne);
@@ -181,7 +196,7 @@ public class HadoopTrainPerceptronScalable {
 		FileInputFormat.setInputPaths (jobOne, inFile);
 		FileOutputFormat.setOutputPath (jobOne, outFile);
 		
-		for (String category : categoryNames.split (";")) {
+		for (String category : categoryNames) {
 			MultipleOutputs.addNamedOutput(jobOne, category, TextOutputFormat.class, Text.class, DoubleWritable.class);
 		}
 		
@@ -427,7 +442,7 @@ public class HadoopTrainPerceptronScalable {
 		
 	}
 	
-	public static class einMapper extends Mapper <Text, Text, Text, Text> {
+	public static class RandomShardsMapper extends Mapper <Text, Text, Text, Text> {
 		private int i = 0;
 		
 		public void map (Text key, Text value, Context context) throws IOException, InterruptedException {
@@ -441,7 +456,7 @@ public class HadoopTrainPerceptronScalable {
 		}
 	}
 	
-	public static class einReducer extends Reducer <Text, Text, Text, Text> {
+	public static class RandomShardsReducer extends Reducer <Text, Text, Text, Text> {
 		public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 			MultipleOutputs <Text, Text> mos = new MultipleOutputs<Text, Text> (context);
 			for (Text value : values) {
