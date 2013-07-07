@@ -3,6 +3,7 @@
 = Todo =
   * fehlende Vektoren trainieren: MT: 10 Epochen, topk 2000/5000/10000/50000, -3,-2,-1,0,1
   * Evaluation: beste Parameter festlegen, 10 Epochen, Testset --> nächste Woche 08.07.13
+  * finale Klassenarchitektur
   * (Kommentieren jjm)
   * (java docs)
   * top k über 1000 ja
