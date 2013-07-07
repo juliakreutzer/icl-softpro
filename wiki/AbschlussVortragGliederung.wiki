@@ -1,4 +1,5 @@
 = wichtige Inhaltspunkte =
+ * finale Klassenarchitektur
  * beste Parameter auf DevSet
  * neues Korpus (unseen)
  * writeReview-Demo
