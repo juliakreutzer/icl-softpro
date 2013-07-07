@@ -247,7 +247,7 @@ learning rate: 0
 learning rate: 1
 
 -----------------------------------
-top k: 500000
+top k: 50000
 
 -----------------------------------
 learning rate: exp
@@ -258,6 +258,11 @@ learning rate: dec
 -----------------------------------
 learning rate: 1divt
 
+small on books:	0.275
+small on dvd:	0.28
+small on electronics:	0.2425
+small on kitchen:	0.195
+small on cat:	0.24812500000000004
 -----------------------------------
 learning rate: -6
 

@@ -367,7 +367,7 @@ learning rate: 0
 learning rate: 1
 
 -----------------------------------
-top k: 500000
+top k: 50000
 
 -----------------------------------
 learning rate: exp
