@@ -5,16 +5,16 @@
   * Evaluation: beste Parameter festlegen, 10 Epochen, Testset --> nächste Woche 08.07.13
   * (Kommentieren jjm)
   * (java docs)
-  * multi task 1divt nochmal starten m
   * top k über 1000 ja
   * (average perceptron????)
   * Vortrag! ab 08.07.13
-  * Korpus erstellen ju
+  * Korpus erstellen ju --done: vielleicht noch ein größeres? mit mehr negativen Rezensionen.
 
   * HadoopPerceptron Aufruf dokumentieren m
   * Namenskonvention für trainierte WeightVectorFiles:
-    * ST (SingleTask): (Kategoriename) | all | small
-    * MT (MultiTask): cat | random
+    * ST (SingleTask): (Kategoriename) | all | small.all
+    * MT (MultiTask)
+    * MTR (MultiTaskRandom)
     * Followed by: number of epochs, learning rate, for MT: Number of Top Features
     * learning rates: if constant -> power of 10: 1/1000 => "-4", 1 => "0", 10 => "1"; "dec", "1divt", "exp"   
     * file ending: .wv
