@@ -1,9 +1,7 @@
-package src.de.uniheidelberg.cl.softpro.sentimentclassification;
+package de.uniheidelberg.cl.softpro.sentimentclassification;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
-
-//vielleicht könnte das für uns interessant sein: http://www.esuli.it/fossil/repo/amazonReviewsDownloader/home
 
 public class WriteReview {
 
@@ -25,7 +23,7 @@ public class WriteReview {
 	}
 	
 	public static int evaluateReview() {
-		HashMap<String, Double> weightVector = Development.weightVectorFromFile(new File("SentimentClassification/weightVectors/ST_small.all_10_-2.wv"));
+		HashMap<String, Double> weightVector = Development.weightVectorFromFile(new File("SentimentClassification/weightVectors/MTR_small.all_10_-2_5000.wv"));
 		HashMap<String, Integer> review = convertReviewToHashMap();
 		int label = 0;
 		if (Perceptron.dotProduct(review, weightVector) > 0) {
@@ -41,7 +39,16 @@ public class WriteReview {
 	public static void main(String[] args) {
 	//	System.out.println(convertReviewToHashMap());
 		while(true){
-			System.out.println(evaluateReview());
+			int label = evaluateReview();
+			if (label ==1){
+				System.out.println("positive!");
+			}
+			else if (label == -1){
+				System.out.println("negative!");
+			}
+			else {
+				System.out.println("don't know ...");
+			}
 		}
 	}
 }
