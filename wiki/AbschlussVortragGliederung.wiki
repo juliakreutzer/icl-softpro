@@ -1,12 +1,12 @@
 = wichtige Inhaltspunkte =
-* beste Parameter auf DevSet
-* neues Korpus (unseen)
-* writeReview-Demo
-* finale Ergebnisse auf TestSet für MTR, MT und ST-Baselines
-* Experimente: WordNet-Synsets, Margin-Perceptron -> welche Unterschiede, warum nicht sinnvoll?
-* Skalierbarkeit MT
-* Unterschied MT - MTR -> sinnvoll?
-* qualitativ: sind Ergebnisse intuitiv (top10 MT/R)
+ * beste Parameter auf DevSet
+ * neues Korpus (unseen)
+ * writeReview-Demo
+ * finale Ergebnisse auf TestSet für MTR, MT und ST-Baselines
+ * Experimente: WordNet-Synsets, Margin-Perceptron -> welche Unterschiede, warum nicht sinnvoll?
+ * Skalierbarkeit MT
+ * Unterschied MT - MTR -> sinnvoll?
+ * qualitativ: sind Ergebnisse intuitiv (top10 MT/R)
 
 
 = Gliederung =
