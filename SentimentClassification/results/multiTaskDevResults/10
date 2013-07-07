@@ -22,11 +22,11 @@ small on cat:	0.75
 -----------------------------------
 learning rate: 1divt
 
-small on books:	0.1625
-small on dvd:	0.115
-small on electronics:	0.1525
-small on kitchen:	0.1375
-small on cat:	0.14187500000000003
+small on books:	0.78
+small on dvd:	0.7775
+small on electronics:	0.7025
+small on kitchen:	0.74
+small on cat:	0.75
 -----------------------------------
 learning rate: -6
 
@@ -113,11 +113,11 @@ small on cat:	0.31375
 -----------------------------------
 learning rate: 1divt
 
-small on books:	0.0175
-small on dvd:	0.02
-small on electronics:	0.0325
-small on kitchen:	0.02
-small on cat:	0.022500000000000003
+small on books:	0.34
+small on dvd:	0.3375
+small on electronics:	0.3175
+small on kitchen:	0.26
+small on cat:	0.31375
 -----------------------------------
 learning rate: -6
 
@@ -204,11 +204,11 @@ small on cat:	0.255625
 -----------------------------------
 learning rate: 1divt
 
-small on books:	0.0025
-small on dvd:	0.0075
-small on electronics:	0.0075
-small on kitchen:	0.0
-small on cat:	0.004375
+small on books:	0.3125
+small on dvd:	0.2975
+small on electronics:	0.24
+small on kitchen:	0.2075
+small on cat:	0.26437499999999997
 -----------------------------------
 learning rate: -6
 
@@ -273,3 +273,162 @@ small on dvd:	0.295
 small on electronics:	0.2375
 small on kitchen:	0.205
 small on cat:	0.25312500000000004
+-----------------------------------
+top k: 2000
+
+-----------------------------------
+learning rate: exp
+
+-----------------------------------
+learning rate: dec
+
+-----------------------------------
+learning rate: 1divt
+
+small on books:	0.2875
+small on dvd:	0.3175
+small on electronics:	0.235
+small on kitchen:	0.2125
+small on cat:	0.263125
+-----------------------------------
+learning rate: -6
+
+-----------------------------------
+learning rate: -5
+
+-----------------------------------
+learning rate: -4
+
+-----------------------------------
+learning rate: -3
+
+-----------------------------------
+learning rate: -2
+
+-----------------------------------
+learning rate: -1
+
+-----------------------------------
+learning rate: 0
+
+-----------------------------------
+learning rate: 1
+
+-----------------------------------
+top k: 5000
+
+-----------------------------------
+learning rate: exp
+
+-----------------------------------
+learning rate: dec
+
+-----------------------------------
+learning rate: 1divt
+
+small on books:	0.275
+small on dvd:	0.27
+small on electronics:	0.23
+small on kitchen:	0.1925
+small on cat:	0.241875
+-----------------------------------
+learning rate: -6
+
+-----------------------------------
+learning rate: -5
+
+-----------------------------------
+learning rate: -4
+
+-----------------------------------
+learning rate: -3
+
+-----------------------------------
+learning rate: -2
+
+-----------------------------------
+learning rate: -1
+
+-----------------------------------
+learning rate: 0
+
+-----------------------------------
+learning rate: 1
+
+-----------------------------------
+top k: 10000
+
+-----------------------------------
+learning rate: exp
+
+-----------------------------------
+learning rate: dec
+
+-----------------------------------
+learning rate: 1divt
+
+small on books:	0.285
+small on dvd:	0.285
+small on electronics:	0.2325
+small on kitchen:	0.1875
+small on cat:	0.2475
+-----------------------------------
+learning rate: -6
+
+-----------------------------------
+learning rate: -5
+
+-----------------------------------
+learning rate: -4
+
+-----------------------------------
+learning rate: -3
+
+-----------------------------------
+learning rate: -2
+
+-----------------------------------
+learning rate: -1
+
+-----------------------------------
+learning rate: 0
+
+-----------------------------------
+learning rate: 1
+
+-----------------------------------
+top k: 500000
+
+-----------------------------------
+learning rate: exp
+
+-----------------------------------
+learning rate: dec
+
+-----------------------------------
+learning rate: 1divt
+
+-----------------------------------
+learning rate: -6
+
+-----------------------------------
+learning rate: -5
+
+-----------------------------------
+learning rate: -4
+
+-----------------------------------
+learning rate: -3
+
+-----------------------------------
+learning rate: -2
+
+-----------------------------------
+learning rate: -1
+
+-----------------------------------
+learning rate: 0
+
+-----------------------------------
+learning rate: 1
+
