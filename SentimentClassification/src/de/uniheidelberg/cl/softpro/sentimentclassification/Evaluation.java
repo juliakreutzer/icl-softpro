@@ -3,84 +3,220 @@ import java.io.*;
 import java.util.*;
 
 public class Evaluation {
+	static String ep = "10";
+	static String learningRate = "-2";
+	static String topK = "5000";
+		
+	/**
+	 * tests all relevant parameter combinations for single task perceptron and saves resulting error rates to files
+	 */
+	public static void singleTest(){
+				
+		//set System.out to file for epoch
+		File file = new File("SentimentClassification/results/testResults/SingleTrainTested");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			System.setOut(new PrintStream(new FileOutputStream(file)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		
+		//these are the train-test pairs we want to inspect:
+		//books on books, dvd on dvd, electronics on electronics, kitchen on kitchen, cat on cat (avg), small on books, small on dvd, small on electronics, small on kitchen, small on cat (avg)
+		
+		//read trained weight vectors from files
+		//HashMap<String, Double> weightVectorAll = weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","all", ep, learningRate)));
+		HashMap<String, Double> weightVectorSmall = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","small.all", ep, learningRate)));
+		HashMap<String, Double> weightVectorBooks =  Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","books", ep, learningRate)));
+		HashMap<String, Double> weightVectorDvd =  Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","dvd", ep, learningRate)));
+		HashMap<String, Double> weightVectorElectronics =  Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","electronics", ep, learningRate)));
+		HashMap<String, Double> weightVectorKitchen =  Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","kitchen", ep, learningRate)));
+
+		//read test instances
+		//ArrayList<Instance> devSetAll = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","all")));
+		//ArrayList<Instance> devSetSmall = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","small.all")));
+		ArrayList<Instance> testSetBooks = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","books")));
+		ArrayList<Instance> testSetDvd = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","dvd")));
+		ArrayList<Instance> testSetElectronics = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","electronics")));
+		ArrayList<Instance> testSetKitchen = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","kitchen")));
+
+		//create and test perceptrons for train and dev pairs -> print these results
+		//System.out.println("all on all:\t"+new Perceptron(weightVectorAll).test(devSetAll));
+		//System.out.println("small on small:\t"+new Perceptron(weightVectorSmall).test(devSetSmall));
+		double e1 = new Perceptron(weightVectorBooks).test(testSetBooks);
+		System.out.println("books on books:\t"+e1);
+		double e2 = new Perceptron(weightVectorDvd).test(testSetDvd);
+		System.out.println("dvd on dvd:\t"+e2);
+		double e3 = new Perceptron(weightVectorElectronics).test(testSetElectronics);
+		System.out.println("electronics on electronics:\t"+e3);
+		double e4 = new Perceptron(weightVectorKitchen).test(testSetKitchen);
+		System.out.println("kitchen on kitchen:\t"+e4);
+		double avgCatOnCat = (e1+e2+e3+e4)/4;
+		System.out.println("cat on cat:\t"+avgCatOnCat);
+		//Perceptron p = new Perceptron(weightVectorAll);
+		//double f1 = p.test(devSetBooks);
+		//double f2 = p.test(devSetDvd);
+		//double f3 = p.test(devSetElectronics);
+		//double f4 = p.test(devSetKitchen);
+		//double avgAllOnCat = (f1+f2+f3+f4)/4;
+		//System.out.println("all on cat:\t"+avgAllOnCat);
+		Perceptron q = new Perceptron(weightVectorSmall);
+		double g1 = q.test(testSetBooks);
+		System.out.println("small on books:\t"+g1);
+		double g2 = q.test(testSetDvd);
+		System.out.println("small on dvd:\t"+g2);
+		double g3 = q.test(testSetElectronics);
+		System.out.println("small on electronics:\t"+g3);
+		double g4 = q.test(testSetKitchen);
+		System.out.println("small on kitchen:\t"+g4);
+		double avgSmallOnCat = (g1+g2+g3+g4)/4;
+		System.out.println("small on cat:\t"+avgSmallOnCat+"\n");
+	}
+
 	
-	public static void main(String[] args) {
+	/**
+	 * tests all relevant parameter combinations for multi task perceptron with categories as shards and saves resulting error rates to files
+	 */
+	public static void multiTest(){
+	
 		
-		//hier wollen wir nach Parameter-Optimierung einmalig die entsprechenden Gewichtsvektoren laden und sie auf dem TestSet testen
-		//das funktioniert für single genauso wie für multi -> Auswahl der Gewichtsvektoren
-		//Ergebnisse müssen irgendwie gespeichert werden
+		//set System.out to file for epoch
+		File file = new File("SentimentClassification/results/testResults/MultiTrainTested");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			System.setOut(new PrintStream(new FileOutputStream(file)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+				
+		//these are the train-dev pairs we want to inspect:
+		//small on books, small on dvd, small on electronics, small on kitchen, small on cat
 		
+		//read trained weight vectors from files
+		//HashMap<String, Double> weightVectorAll = weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", ep, learningRate, topK)));
+		HashMap<String, Double> weightVectorSmall = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", ep, learningRate, topK)));
 		
-		//steht jetzt alles in Development!!!
-		//Trainingsdateien einlesen
-		/*ArrayList<Instance> train_instances_all = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/all.train.corpus.final.formatted"));
-		ArrayList<Instance> train_instances_books = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/books.train.corpus.final.formatted"));
-		ArrayList<Instance> train_instances_dvd = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/dvd.train.corpus.final.formatted"));
-		ArrayList<Instance> train_instances_kitchen = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/kitchen.train.corpus.final.formatted"));
-		ArrayList<Instance> train_instances_electronics = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/electronics.train.corpus.final.formatted"));
+		if (weightVectorSmall == null){
+			System.err.println(String.format("weight vector file could not be found: SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", ep, learningRate, topK));
+		}
 		
-		//devset einlesen
-		ArrayList<Instance> dev_instances_all = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/all.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_books = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/books.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_dvd = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/dvd.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_kitchen = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/kitchen.dev.corpus.final.formatted"));
-		ArrayList<Instance> dev_instances_electronics = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/electronics.dev.corpus.final.formatted"));
+		//read dev instances
+		//ArrayList<Instance> devSetAll = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","all")));
+		//ArrayList<Instance> devSetSmall = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","small.all")));
+		ArrayList<Instance> testSetBooks = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","books")));
+		ArrayList<Instance> testSetDvd = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","dvd")));
+		ArrayList<Instance> testSetElectronics = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","electronics")));
+		ArrayList<Instance> testSetKitchen = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","kitchen")));
+
+		//create and test perceptrons for train and dev pairs -> print these results
+		//System.out.println("all on all:\t"+new Perceptron(weightVectorAll).test(devSetAll));
+		//System.out.println("small on small:\t"+new Perceptron(weightVectorSmall).test(devSetSmall));
+		double e1 = new Perceptron(weightVectorSmall).test(testSetBooks);
+		System.out.println("small on books:\t"+e1);
+		double e2 = new Perceptron(weightVectorSmall).test(testSetDvd);
+		System.out.println("small on dvd:\t"+e2);
+		double e3 = new Perceptron(weightVectorSmall).test(testSetElectronics);
+		System.out.println("small on electronics:\t"+e3);
+		double e4 = new Perceptron(weightVectorSmall).test(testSetKitchen);
+		System.out.println("small on kitchen:\t"+e4);
+		double avgSmallOnCat = (e1+e2+e3+e4)/4;
+		System.out.println("small on cat:\t"+avgSmallOnCat);
+	}
+
 		
-		//Training und weigthVectorFile erstellen
-		int epochs = 50;				//Epochen
-		String learningRate = "1";	//Lernrate
-		System.out.println("Epochen: " + epochs + ", Lernrate: " + learningRate);
+		/**
+		 * tests all relevant parameter combinations for multi task random perceptron and saves resulting error rates to files
+		 */
+	public static void multiRandomTest(){
+	
+		File file = new File("SentimentClassification/results/testResults/MultiTrainRandomTested");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			System.setOut(new PrintStream(new FileOutputStream(file)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+				
+		//these are the train-dev pairs we want to inspect:
+		//small on books, small on dvd, small on electronics, small on kitchen, small on cat
 		
-		Perceptron p_all = new Perceptron(epochs, learningRate);
-		p_all.trainSingle(train_instances_all);
-		p_all.writeWeightsToFile(new File("ST_all"));
+		//read trained weight vectors from files
+		//HashMap<String, Double> weightVectorAll = weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", ep, learningRate, topK)));
+		HashMap<String, Double> weightVectorSmall = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","small.all", ep, learningRate, topK)));
 		
-		Perceptron p_books = new Perceptron(epochs, learningRate);
-		p_books.trainSingle(train_instances_books);
-		p_books.writeWeightsToFile(new File("ST_books"));
+		if (weightVectorSmall == null){
+			System.err.println(String.format("weight vector file could not be found: SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","small.all", ep, learningRate, topK));
+		}
 		
-		Perceptron p_dvd = new Perceptron(epochs, learningRate);
-		p_dvd.trainSingle(train_instances_dvd);
-		p_dvd.writeWeightsToFile(new File("ST_dvd"));
+		//read dev instances
+		//ArrayList<Instance> devSetAll = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","all")));
+		//ArrayList<Instance> devSetSmall = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","small.all")));
+		ArrayList<Instance> testSetBooks = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","books")));
+		ArrayList<Instance> testSetDvd = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","dvd")));
+		ArrayList<Instance> testSetElectronics = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","electronics")));
+		ArrayList<Instance> testSetKitchen = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.test.corpus.final.formatted","kitchen")));
+
+		//create and test perceptrons for train and dev pairs -> print these results
+		//System.out.println("all on all:\t"+new Perceptron(weightVectorAll).test(devSetAll));
+		//System.out.println("small on small:\t"+new Perceptron(weightVectorSmall).test(devSetSmall));
+		double e1 = new Perceptron(weightVectorSmall).test(testSetBooks);
+		System.out.println("small on books:\t"+e1);
+		double e2 = new Perceptron(weightVectorSmall).test(testSetDvd);
+		System.out.println("small on dvd:\t"+e2);
+		double e3 = new Perceptron(weightVectorSmall).test(testSetElectronics);
+		System.out.println("small on electronics:\t"+e3);
+		double e4 = new Perceptron(weightVectorSmall).test(testSetKitchen);
+		System.out.println("small on kitchen:\t"+e4);
+		double avgSmallOnCat = (e1+e2+e3+e4)/4;
+		System.out.println("small on cat:\t"+avgSmallOnCat);
+	}
+
+	public static void testSnacks(){
+		File file = new File("SentimentClassification/results/testResults/Snacks");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			System.setOut(new PrintStream(new FileOutputStream(file)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 		
-		Perceptron p_kitchen = new Perceptron(epochs, learningRate);
-		p_kitchen.trainSingle(train_instances_kitchen);
-		p_kitchen.writeWeightsToFile(new File("ST_kitchen"));
+		ArrayList<Instance> testSetSnacks = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/makeCorpus/4snacks.test.formatted"));
 		
-		Perceptron p_electronics = new Perceptron(epochs, learningRate);
-		p_electronics.trainSingle(train_instances_electronics);
-		p_electronics.writeWeightsToFile(new File("ST_electronics"));
+		HashMap<String, Double> weightVectorSmallST = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","small.all", "10", "-2")));
+		double e2 = new Perceptron(weightVectorSmallST).test(testSetSnacks);
+		System.out.println("ST (-2) on snacks: "+e2);
+
+		HashMap<String, Double> weightVectorSmallMTR = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
+		double e3 = new Perceptron(weightVectorSmallMTR).test(testSetSnacks);
+		System.out.println("MTR (-2 top 5000) on snacks: "+e3);
 		
-		//weigthVector einlesen
-		HashMap<String, Double> wv_all = weightVectorFromFile(new File ("ST_all"));
-		HashMap<String, Double> wv_books = weightVectorFromFile(new File ("ST_books"));
-		HashMap<String, Double> wv_dvd = weightVectorFromFile(new File ("ST_dvd"));
-		HashMap<String, Double> wv_kitchen = weightVectorFromFile(new File ("ST_kitchen"));
-		HashMap<String, Double> wv_electronics = weightVectorFromFile(new File ("ST_electronics"));
+		HashMap<String, Double> weightVectorSmallMT = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
+		double e1 = new Perceptron(weightVectorSmallMT).test(testSetSnacks);
+		System.out.println("MT (-2 top 5000) on snacks: "+e1);
 		
-		//Perceptron erstellen mit eingelesenem weigthVector
-		Perceptron perceptronTest_all = new Perceptron(wv_all);
-		Perceptron perceptronTest_books = new Perceptron(wv_books);
-		Perceptron perceptronTest_dvd = new Perceptron(wv_dvd);
-		Perceptron perceptronTest_kitchen = new Perceptron(wv_kitchen);
-		Perceptron perceptronTest_electronics = new Perceptron(wv_electronics);
-		
-		//errorRate berechnen mit Perceptron-Methode test
-		double errorRate_all = perceptronTest_all.test(dev_instances_all);
-		System.out.println("All on All: " + errorRate_all);
-		
-		double errorRate_books = perceptronTest_books.test(dev_instances_books);
-		System.out.println("Books on Books: " + errorRate_books);
-		
-		double errorRate_dvd = perceptronTest_dvd.test(dev_instances_dvd);
-		System.out.println("Dvd on Dvd: " + errorRate_dvd);
-		
-		double errorRate_kitchen = perceptronTest_kitchen.test(dev_instances_kitchen);
-		System.out.println("Kitchen on Kitchen: " + errorRate_kitchen);
-		
-		double errorRate_electronics = perceptronTest_electronics.test(dev_instances_electronics);
-		System.out.println("Electronics on Electronics: " + errorRate_electronics);
-		*/
 	}
 	
+	public static void main(String[] args){
+		//singleTest();
+		//multiTest();
+		//multiRandomTest();
+		testSnacks();
+	}	
 }
