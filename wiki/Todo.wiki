@@ -5,10 +5,10 @@
     -> Anleitung zu Perl-Skripten ist online 
     -> python-Skript: python extractCorpusFormat.py <kategorie> <corpus in csv (perl-output)> <outputfile>
     -> in Evaluierungsklasse wie für Snacks eine Testmethode schreiben und laufen lassen -> Ergebnisse wie für Snacks speichern.
+    -> CorpusMetadata
   * aufräumen: auskommentierte Teile... Weg damit!
   * finale Klassenarchitektur 15.7.
   * Kommentieren jjm bis 15.7.
   * java docs am 15.7.
   * Vortrag! ab 08.07.13
-  * Korpus erstellen ju --done: vielleicht noch ein größeres? mit mehr negativen Rezensionen.
   * HadoopPerceptron Aufruf dokumentieren m
