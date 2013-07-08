@@ -11,3 +11,23 @@
 
 
 = Gliederung =
+25min, Anforderungen:
+1) Wie wurde der Lösungsvorschlag umgesetzt?
+2) Evaluationsergebnisse
+3) Demo
+4) Lessons Learned -> Schwächen+Probleme beim Projektablauf, Verbesserungsvorschläge
+
+1) Aufgabenstellung + Lösungsansatz wdh. (siehe Spez.vortrag)
+2) Umsetzung
+   Korpusformat 
+   Klassenarchitektur (grob)
+   Implementierung der Shards
+   Parameteroptimierung -> WordNet + MarginPerceptron-Varianten
+3) Evaluationsergebnisse 
+   Baselines (avg) 
+   Interpretation
+   unseen Korpora (*4) + Ergebnisse
+4) Demo
+5) Fazit 
+   Problem: Hadoop + Skalierbarkeit + Machine Learning (Iterativ)
+   Verbesserungsvorschlag: grooooßes Korpus
