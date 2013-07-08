@@ -213,10 +213,41 @@ public class Evaluation {
 		
 	}
 	
+
+	public static void testGardening(){
+		File file = new File("SentimentClassification/results/testResults/Gardening");
+		try {
+			file.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			System.setOut(new PrintStream(new FileOutputStream(file)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		ArrayList<Instance> testSetSnacks = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/makeCorpus/gardening.test.formatted"));
+		
+		HashMap<String, Double> weightVectorSmallST = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","small.all", "10", "-2")));
+		double e2 = new Perceptron(weightVectorSmallST).test(testSetSnacks);
+		System.out.println("ST (-2) on gardening: "+e2);
+
+		HashMap<String, Double> weightVectorSmallMTR = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
+		double e3 = new Perceptron(weightVectorSmallMTR).test(testSetSnacks);
+		System.out.println("MTR (-2 top 5000) on gardening: "+e3);
+		
+		HashMap<String, Double> weightVectorSmallMT = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
+		double e1 = new Perceptron(weightVectorSmallMT).test(testSetSnacks);
+		System.out.println("MT (-2 top 5000) on gardening: "+e1);
+		
+	}
+	
 	public static void main(String[] args){
 		//singleTest();
 		//multiTest();
 		//multiRandomTest();
-		testSnacks();
+		//testSnacks();
+		testGardening();
 	}	
 }
