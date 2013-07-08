@@ -1,22 +1,10 @@
 #summary Todo-Liste
 
 = Todo =
-  * fehlende Vektoren trainieren: MT: 10 Epochen, topk 2000/5000/10000/50000, -3,-2,-1,0,1 --> Tabelle  --done
-  * Evaluation: beste Parameter festlegen: 10 Epochen, Learning Rate -2, top5000 (siehe MTR_.....ods)
-  * Testset testen + Snack-> finale Baselines und Error Rates
-  * finale Klassenarchitektur
-  * (Kommentieren jjm)
-  * (java docs)
-  * (average perceptron????)
+  * aufräumen: auskommentierte Teile... Weg damit!
+  * finale Klassenarchitektur 15.7.
+  * Kommentieren jjm bis 15.7.
+  * java docs am 15.7.
   * Vortrag! ab 08.07.13
   * Korpus erstellen ju --done: vielleicht noch ein größeres? mit mehr negativen Rezensionen.
-
   * HadoopPerceptron Aufruf dokumentieren m
-  * Namenskonvention für trainierte WeightVectorFiles:
-    * ST (SingleTask): (Kategoriename) | all | small.all
-    * MT (MultiTask)
-    * MTR (MultiTaskRandom)
-    * Followed by: number of epochs, learning rate, for MT: Number of Top Features
-    * learning rates: if constant -> power of 10: 1/1000 => "-4", 1 => "0", 10 => "1"; "dec", "1divt", "exp"   
-    * file ending: .wv
-    * e.g. ST_books_10_-4.wv
