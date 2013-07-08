@@ -144,7 +144,11 @@ public class HadoopTrainPerceptronScalable {
 	 * @param pathIn path containing the corpus files
 	 * @param pathOut path to save intermediate results in (must be unique!), epoch and phase information will be appended automatically
 	 * @throws Exception
+	 * 
+	 * This class runs two hadoop jobs. The first job trains an average perceptron for each category. The second job calculates the l2 norm and the average value of each of the weight vector's features.
+	 * After each epoch, the weight vector is saved into the local file system and then is subject of top-k-feature selection.  
 	 */
+
 	public static void runHadoopJob (Integer currentEpoch, String pathIn, String pathOut ) throws Exception {
 		
 		System.out.println( "#####################################");
@@ -180,7 +184,7 @@ public class HadoopTrainPerceptronScalable {
 	    fs.copyFromLocalFile (new Path (localFile), hdfsPath);		// copy existing weight vector file from local filesystem to hdfs
 	    DistributedCache.addCacheFile (hdfsPath.toUri(), confOne);	// add file to distributed cache
 		
-	    Job jobOne = new Job (confOne);
+	    Job jobOne = new Job (confOne);								// job for phase 1
 		
 	    jobOne.setJarByClass (HadoopTrainPerceptronScalable.class);
 		jobOne.setJobName ("SWP Grp 1 - E" + currentEpoch.toString() + " P1");
@@ -190,28 +194,29 @@ public class HadoopTrainPerceptronScalable {
 		jobOne.setInputFormatClass (KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
 		jobOne.setOutputFormatClass (TextOutputFormat.class);		// save result of reducers as text
 
-		jobOne.setMapperClass(mapTrainSmallPerceptrons.class);
-		jobOne.setReducerClass(reduceUnitePerceptrons.class);
+		jobOne.setMapperClass(mapTrainSmallPerceptrons.class);		// map class of the first hadoop job, trains several small average perceptrons		
+		jobOne.setReducerClass(reduceUnitePerceptrons.class);		// creates one average perceptron of all "small" perceptrons per category 
 		
-		FileInputFormat.setInputPaths (jobOne, inFile);
-		FileOutputFormat.setOutputPath (jobOne, outFile);
-		
+		FileInputFormat.setInputPaths (jobOne, inFile);				// folder that contains our corpus
+		FileOutputFormat.setOutputPath (jobOne, outFile);			// folder that our weight vectors will be written to
+
+		// create one weight vector file per category:
 		for (String category : categoryNames) {
-			MultipleOutputs.addNamedOutput(jobOne, category, TextOutputFormat.class, Text.class, DoubleWritable.class);
+			MultipleOutputs.addNamedOutput(jobOne, category, TextOutputFormat.class, Text.class, DoubleWritable.class);	
 		}
 		
 		long startTime = System.currentTimeMillis();
-		jobOne.waitForCompletion (true);
+		jobOne.waitForCompletion (true);							// wait for job one to complete
 		long stopTime = System.currentTimeMillis();
 		long totalTime = stopTime - startTime;
 		System.out.println ("Took " + totalTime + "ms");
 		
-		Configuration confTwo = new Configuration();
-		confTwo.set ("learningRate", confOne.get ("learningRate"));	// data to be accessed by map and reducer instances, "test" => key; "hallo" => value
-		confTwo.set ("numberOfShards", confOne.get ("numberOfShards"));
+		Configuration confTwo = new Configuration();				// Configuration for job two
+		confTwo.set ("learningRate", confOne.get ("learningRate"));	// learning rate [currently unused!]
+		confTwo.set ("numberOfShards", confOne.get ("numberOfShards"));	// number of shards/categories that were processed -> important for l2 and average calculation
 
 		
-		Job jobTwo = new Job (confTwo);
+		Job jobTwo = new Job (confTwo);								// Job for phase 2
 		
 		jobTwo.setJarByClass (HadoopTrainPerceptronScalable.class);
 		jobTwo.setJobName ("SWP Grp 1 - E" + currentEpoch.toString() + " P2");
@@ -221,40 +226,48 @@ public class HadoopTrainPerceptronScalable {
 		jobTwo.setInputFormatClass (KeyValueTextInputFormat.class);	// files read by line; each line = one map instance; line split in "key	value"
 		jobTwo.setOutputFormatClass (TextOutputFormat.class);		// save result of reducers as text
 
-		jobTwo.setMapperClass(mapOrderThings.class);
-		jobTwo.setReducerClass(reduceCalculateThings.class);
+		jobTwo.setMapperClass(mapOrderThings.class);				// map class of second hadoop job, gets the features and combines them with the category [assigning the category actually is not necessary for further processing; the main purpose of the mapper is to pass the features to the reducer.]
+		jobTwo.setReducerClass(reduceCalculateThings.class);		// calculates l2 norm and the average value of each feature
 		
-		RemoteIterator<LocatedFileStatus> fileList = fs.listFiles(outFile, false);
+		RemoteIterator<LocatedFileStatus> fileList = fs.listFiles(outFile, false);	// get a list of files inside phase one's output directory 
 		
+		// only add those files to input, that are ment to be processed. On some systems, hadoop saves log files inside the output directory, so we have to tell our system, not to use the logs.
 		while (fileList.hasNext()) {
 			Path currentFile = fileList.next().getPath();
 			String currentFilename = currentFile.getName();
-			if (!currentFilename.startsWith("_") && !currentFilename.startsWith(".") && !currentFilename.startsWith("part")) {
-				FileInputFormat.addInputPath(jobTwo, currentFile);
+			if (!currentFilename.startsWith("_") && !currentFilename.startsWith(".") && !currentFilename.startsWith("part")) {	// log files start with "_", temporary files start with ".", uncategorized (empty) files start with "part"
+				FileInputFormat.addInputPath(jobTwo, currentFile);	// add file to input queue
 			}
 		}
 		
-		FileOutputFormat.setOutputPath (jobTwo, out2File);
+		FileOutputFormat.setOutputPath (jobTwo, out2File);			// set output path of phase 2
 		
 		System.out.println( "#####################################");
 		System.out.println( "    Phase 2 (Epoch " + currentEpoch.toString() + ")");
 		System.out.println( "#####################################");
 		long startTime2 = System.currentTimeMillis();
-		jobTwo.waitForCompletion (true);
+		jobTwo.waitForCompletion (true);							// wait until phase 2 completed
 		long stopTime2 = System.currentTimeMillis();
 		long totalTime2 = stopTime2 - startTime2;
 		System.out.println ("Took " + totalTime2 + "ms");
 		
-	    HadoopTrainPerceptron.writeInitializedVector (out2File, fs, topKFeatures);	// save the new weight vector to a file in the local file system
+	    HadoopTrainPerceptron.writeInitializedVector (out2File, fs, topKFeatures);	// save the new weight vector to a file in the local file system and do top k feature extraction
 	}
 
+	/**
+	 * Mapper class of phase 1
+	 * See description of {@link runHadoopJob}
+	 * @author mirko
+	 *
+	 */
 	public static class mapTrainSmallPerceptrons extends Mapper<Text, Text, Text, MapWritable> {
 		private HashMap <String, Perceptron> perceptrons = new HashMap <String, Perceptron> ();
 		private String learningRate;	// value set in configure(), used to store passed data
 		private String currentEpoch;
 		
 		private HashMap <String, Double> initializedWeightVector;
-		
+
+
 		public void run (Context context) throws IOException, InterruptedException {
 			setup(context);
 			while (context.nextKeyValue()) {
@@ -270,22 +283,16 @@ public class HadoopTrainPerceptronScalable {
 	    	 */
 			Configuration config = context.getConfiguration();
 			
-	        this.learningRate = config.get ("learningRate");							// get learning rate specified in JobConf
-	        this.currentEpoch = config.get ("currentEpoch");
-    		try {
-				for( Path cacheFile : DistributedCache.getLocalCacheFiles (config) ) {
-					System.out.println( "  Cache file: " + cacheFile.getName().toString() );
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	        this.learningRate = config.get ("learningRate");				// get learning rate specified in JobConf
+	        this.currentEpoch = config.get ("currentEpoch");				// get the number of the current epoch as passed in JobConf
+
 	        try {
-	            String wvCacheName = new Path (weightVectorFile).getName();
-		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (config);
+	            String wvCacheName = new Path (weightVectorFile).getName();			// get the specified name of the file in the distributed cache that contains the already trained weight vector  
+		        Path [] cacheFiles = DistributedCache.getLocalCacheFiles (config);	// get an array of files that are stored in distributed cache 
 		        if (null != cacheFiles && cacheFiles.length > 0) {
-		        	for (Path cachePath : cacheFiles) {
-		        		if (cachePath.getName().endsWith (wvCacheName)) {
-		        			readWeightVector (cachePath);
+		        	for (Path cachePath : cacheFiles) {						// iterate through files in distributed cache
+		        		if (cachePath.getName().endsWith (wvCacheName)) {	// filenames in distributed cache look like "/tmp/hadoop-[user]/namenode01.lan[actual filename]". Therefore, we can only compare the d.c. filename's ending with the weight vector filename
+		        			readWeightVector (cachePath);					// save weight vector into hashmap	
 		        			break;
 		        		}
 		        	}
@@ -312,9 +319,13 @@ public class HadoopTrainPerceptronScalable {
 	    	
 	    }
 	    
+	    /**
+	     * @param key 	Key of the split, usually a category name
+	     * @param value	Value of the split, should be in the format  "feature:value feature:value [...] #label#:[positive|negative]"
+	     */
 	    protected void map(Text key, Text value, Context context) throws IOException {
 
-			if (!this.perceptrons.containsKey(key.toString())) {
+			if (!this.perceptrons.containsKey (key.toString())) {
 				Perceptron newPerceptron = new Perceptron (this.learningRate);
 				newPerceptron.setWeights (this.initializedWeightVector);
 				this.perceptrons.put (key.toString(), newPerceptron);
