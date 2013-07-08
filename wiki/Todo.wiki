@@ -1,6 +1,10 @@
 #summary Todo-Liste
 
 = Todo =
+  * jeder ein Korpus erstellen: perl Skripte & python-Skript in makeCorpus
+    -> Anleitung zu Perl-Skripten ist online 
+    -> python-Skript: python extractCorpusFormat.py <kategorie> <corpus in csv (perl-output)> <outputfile>
+    -> in Evaluierungsklasse wie für Snacks eine Testmethode schreiben und laufen lassen -> Ergebnisse wie für Snacks speichern.
   * aufräumen: auskommentierte Teile... Weg damit!
   * finale Klassenarchitektur 15.7.
   * Kommentieren jjm bis 15.7.
