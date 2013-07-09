@@ -36,7 +36,8 @@ public class Evaluation {
 		HashMap<String, Double> weightVectorDvd =  Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","dvd", ep, learningRate)));
 		HashMap<String, Double> weightVectorElectronics =  Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","electronics", ep, learningRate)));
 		HashMap<String, Double> weightVectorKitchen =  Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","kitchen", ep, learningRate)));
-
+		HashMap<String, Double> weightVectorAll =  Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","all", ep, learningRate)));
+		
 		//read test instances
 		//ArrayList<Instance> devSetAll = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","all")));
 		//ArrayList<Instance> devSetSmall = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","small.all")));
@@ -76,6 +77,18 @@ public class Evaluation {
 		System.out.println("small on kitchen:\t"+g4);
 		double avgSmallOnCat = (g1+g2+g3+g4)/4;
 		System.out.println("small on cat:\t"+avgSmallOnCat+"\n");
+		
+		Perceptron r = new Perceptron(weightVectorAll);
+		double h1 = r.test(testSetBooks);
+		System.out.println("all on books:\t"+h1);
+		double h2 = r.test(testSetDvd);
+		System.out.println("all on dvd:\t"+h2);
+		double h3 = r.test(testSetElectronics);
+		System.out.println("all on electronics:\t"+h3);
+		double h4 = r.test(testSetKitchen);
+		System.out.println("all on kitchen:\t"+h4);
+		double avgAllOnCat = (h1+h2+h3+h4)/4;
+		System.out.println("all on cat:\t"+avgAllOnCat+"\n");
 	}
 
 	
@@ -102,11 +115,16 @@ public class Evaluation {
 		//small on books, small on dvd, small on electronics, small on kitchen, small on cat
 		
 		//read trained weight vectors from files
-		//HashMap<String, Double> weightVectorAll = weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", ep, learningRate, topK)));
+		
 		HashMap<String, Double> weightVectorSmall = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", ep, learningRate, topK)));
 		
 		if (weightVectorSmall == null){
 			System.err.println(String.format("weight vector file could not be found: SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", ep, learningRate, topK));
+		}
+		HashMap<String, Double> weightVectorAll = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", ep, learningRate, topK)));
+		
+		if (weightVectorAll == null){
+			System.err.println(String.format("weight vector file could not be found: SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", ep, learningRate, topK));
 		}
 		
 		//read dev instances
@@ -130,6 +148,17 @@ public class Evaluation {
 		System.out.println("small on kitchen:\t"+e4);
 		double avgSmallOnCat = (e1+e2+e3+e4)/4;
 		System.out.println("small on cat:\t"+avgSmallOnCat);
+		
+		double f1 = new Perceptron(weightVectorAll).test(testSetBooks);
+		System.out.println("all on books:\t"+f1);
+		double f2 = new Perceptron(weightVectorAll).test(testSetDvd);
+		System.out.println("all on dvd:\t"+f2);
+		double f3 = new Perceptron(weightVectorAll).test(testSetElectronics);
+		System.out.println("all on electronics:\t"+f3);
+		double f4 = new Perceptron(weightVectorAll).test(testSetKitchen);
+		System.out.println("all on kitchen:\t"+f4);
+		double avgAllOnCat = (f1+f2+f3+f4)/4;
+		System.out.println("all on cat:\t"+avgAllOnCat);
 	}
 
 		
@@ -151,7 +180,7 @@ public class Evaluation {
 		}
 				
 		//these are the train-dev pairs we want to inspect:
-		//small on books, small on dvd, small on electronics, small on kitchen, small on cat
+		//small on books, small on dvd, small on electronics, small on kitchen, small on cat and everything with all
 		
 		//read trained weight vectors from files
 		//HashMap<String, Double> weightVectorAll = weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", ep, learningRate, topK)));
@@ -160,7 +189,11 @@ public class Evaluation {
 		if (weightVectorSmall == null){
 			System.err.println(String.format("weight vector file could not be found: SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","small.all", ep, learningRate, topK));
 		}
+		HashMap<String, Double> weightVectorAll = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","all", ep, learningRate, topK)));
 		
+		if (weightVectorAll == null){
+			System.err.println(String.format("weight vector file could not be found: SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","all", ep, learningRate, topK));
+		}
 		//read dev instances
 		//ArrayList<Instance> devSetAll = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","all")));
 		//ArrayList<Instance> devSetSmall = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","small.all")));
@@ -182,6 +215,17 @@ public class Evaluation {
 		System.out.println("small on kitchen:\t"+e4);
 		double avgSmallOnCat = (e1+e2+e3+e4)/4;
 		System.out.println("small on cat:\t"+avgSmallOnCat);
+		
+		double f1 = new Perceptron(weightVectorAll).test(testSetBooks);
+		System.out.println("all on books:\t"+f1);
+		double f2 = new Perceptron(weightVectorAll).test(testSetDvd);
+		System.out.println("all on dvd:\t"+f2);
+		double f3 = new Perceptron(weightVectorAll).test(testSetElectronics);
+		System.out.println("all on electronics:\t"+f3);
+		double f4 = new Perceptron(weightVectorAll).test(testSetKitchen);
+		System.out.println("all on kitchen:\t"+f4);
+		double avgAllOnCat = (f1+f2+f3+f4)/4;
+		System.out.println("all on cat:\t"+avgAllOnCat);
 	}
 
 	public static void testSnacks(){
@@ -201,15 +245,28 @@ public class Evaluation {
 		
 		HashMap<String, Double> weightVectorSmallST = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","small.all", "10", "-2")));
 		double e2 = new Perceptron(weightVectorSmallST).test(testSetSnacks);
-		System.out.println("ST (-2) on snacks: "+e2);
+		System.out.println("ST, small (-2) on snacks: "+e2);
 
 		HashMap<String, Double> weightVectorSmallMTR = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
 		double e3 = new Perceptron(weightVectorSmallMTR).test(testSetSnacks);
-		System.out.println("MTR (-2 top 5000) on snacks: "+e3);
+		System.out.println("MTR, small (-2 top 5000) on snacks: "+e3);
 		
 		HashMap<String, Double> weightVectorSmallMT = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
 		double e1 = new Perceptron(weightVectorSmallMT).test(testSetSnacks);
-		System.out.println("MT (-2 top 5000) on snacks: "+e1);
+		System.out.println("MT, small (-2 top 5000) on snacks: "+e1);
+		
+		
+		HashMap<String, Double> weightVectorAllST = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","all", "10", "-2")));
+		double f2 = new Perceptron(weightVectorAllST).test(testSetSnacks);
+		System.out.println("ST, all (-2) on snacks: "+f2);
+
+		HashMap<String, Double> weightVectorAllMTR = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","all", "10", "-2", "5000")));
+		double f3 = new Perceptron(weightVectorAllMTR).test(testSetSnacks);
+		System.out.println("MTR, all (-2 top 5000) on snacks: "+f3);
+		
+		HashMap<String, Double> weightVectorAllMT = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", "10", "-2", "5000")));
+		double f1 = new Perceptron(weightVectorAllMT).test(testSetSnacks);
+		System.out.println("MT, all (-2 top 5000) on snacks: "+f1);
 		
 	}
 	
@@ -231,15 +288,28 @@ public class Evaluation {
 		
 		HashMap<String, Double> weightVectorSmallST = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","small.all", "10", "-2")));
 		double e2 = new Perceptron(weightVectorSmallST).test(testSetSnacks);
-		System.out.println("ST (-2) on gardening: "+e2);
+		System.out.println("ST, small (-2) on gardening: "+e2);
 
 		HashMap<String, Double> weightVectorSmallMTR = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
 		double e3 = new Perceptron(weightVectorSmallMTR).test(testSetSnacks);
-		System.out.println("MTR (-2 top 5000) on gardening: "+e3);
+		System.out.println("MTR, small (-2 top 5000) on gardening: "+e3);
 		
 		HashMap<String, Double> weightVectorSmallMT = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
 		double e1 = new Perceptron(weightVectorSmallMT).test(testSetSnacks);
-		System.out.println("MT (-2 top 5000) on gardening: "+e1);
+		System.out.println("MT, small (-2 top 5000) on gardening: "+e1);
+		
+		
+		HashMap<String, Double> weightVectorAllST = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","all", "10", "-2")));
+		double f2 = new Perceptron(weightVectorAllST).test(testSetSnacks);
+		System.out.println("ST, all (-2) on gardening: "+f2);
+
+		HashMap<String, Double> weightVectorAllMTR = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","all", "10", "-2", "5000")));
+		double f3 = new Perceptron(weightVectorAllMTR).test(testSetSnacks);
+		System.out.println("MTR, all (-2 top 5000) on gardening: "+f3);
+		
+		HashMap<String, Double> weightVectorAllMT = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", "10", "-2", "5000")));
+		double f1 = new Perceptron(weightVectorAllMT).test(testSetSnacks);
+		System.out.println("MT, all (-2 top 5000) on gardening: "+f1);
 		
 	}
 	
@@ -260,15 +330,28 @@ public class Evaluation {
 		
 		HashMap<String, Double> weightVectorSmallST = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","small.all", "10", "-2")));
 		double e2 = new Perceptron(weightVectorSmallST).test(testSetOutdoor);
-		System.out.println("ST (-2) on outdoor: "+e2);
+		System.out.println("ST, small (-2) on outdoor: "+e2);
 
 		HashMap<String, Double> weightVectorSmallMTR = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
 		double e3 = new Perceptron(weightVectorSmallMTR).test(testSetOutdoor);
-		System.out.println("MTR (-2 top 5000) on outdoor: "+e3);
+		System.out.println("MTR, small (-2 top 5000) on outdoor: "+e3);
 		
 		HashMap<String, Double> weightVectorSmallMT = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","small.all", "10", "-2", "5000")));
 		double e1 = new Perceptron(weightVectorSmallMT).test(testSetOutdoor);
-		System.out.println("MT (-2 top 5000) on outdoor: "+e1);
+		System.out.println("MT, small (-2 top 5000) on outdoor: "+e1);
+		
+		
+		HashMap<String, Double> weightVectorAllST = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/ST_%s_%s_%s.wv","all", "10", "-2")));
+		double f2 = new Perceptron(weightVectorAllST).test(testSetOutdoor);
+		System.out.println("ST, all (-2) on outdoor: "+f2);
+
+		HashMap<String, Double> weightVectorAllMTR = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MTR_%s_%s_%s_%s.wv","all", "10", "-2", "5000")));
+		double f3 = new Perceptron(weightVectorAllMTR).test(testSetOutdoor);
+		System.out.println("MTR, all (-2 top 5000) on outdoor: "+f3);
+		
+		HashMap<String, Double> weightVectorAllMT = Development.weightVectorFromFile(new File(String.format("SentimentClassification/weightVectors/MT_%s_%s_%s_%s.wv","all", "10", "-2", "5000")));
+		double f1 = new Perceptron(weightVectorAllMT).test(testSetOutdoor);
+		System.out.println("MT, all (-2 top 5000) on outdoor: "+f1);
 		
 	}
 	
@@ -278,6 +361,6 @@ public class Evaluation {
 		//multiRandomTest();
 		//testSnacks();
 		//testGardening();
-		testOutdoor();
+		//testOutdoor();
 	}	
 }
