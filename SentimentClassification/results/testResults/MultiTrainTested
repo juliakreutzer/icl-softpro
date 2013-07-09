@@ -2,9 +2,9 @@ small on books:	0.275
 small on dvd:	0.2775
 small on electronics:	0.24
 small on kitchen:	0.2225
-small on cat:	0.25375
 all on books:	0.2375
 all on dvd:	0.2175
 all on electronics:	0.155
 all on kitchen:	0.145
+small on cat:	0.25375
 all on cat:	0.18875
