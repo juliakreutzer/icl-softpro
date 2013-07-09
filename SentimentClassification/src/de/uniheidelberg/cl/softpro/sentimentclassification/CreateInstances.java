@@ -1,10 +1,14 @@
-package de.uniheidelberg.cl.softpro.sentimentclassification;
+package src.de.uniheidelberg.cl.softpro.sentimentclassification;
 
 //import Instance;
 
 import java.io.*;
 import java.util.*;
 
+/**
+ * @author jasmin
+ * reads text files and converts to different formats which are needed for further work
+ */
 public class CreateInstances {
 	
 	
@@ -53,10 +57,10 @@ public class CreateInstances {
 	}
 	
 	/**
-	 * liest Datei ein in Format: kat (tab) feature:count feature:count #label#:positive (neue Zeile) kat ....
+	 * reads file in following format: category (tab) feature:count feature:count #label#:positive (new line) category ....
 	 * gibt eine ArrayList mit je einer Instance pro review aus
 	 * @param f
-	 * @return
+	 * @return 
 	 */
 	public static ArrayList<Instance> createInstancesFromFileNewFormat(File f) {
 		String line = new String();
