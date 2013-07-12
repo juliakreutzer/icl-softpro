@@ -1,14 +1,10 @@
 #summary Todo-Liste
 
 = Todo =
-  * jeder ein Korpus erstellen: perl Skripte & python-Skript in makeCorpus
-    -> Anleitung zu Perl-Skripten ist online 
-    -> python-Skript: python extractCorpusFormat.py <kategorie> <corpus in csv (perl-output)> <outputfile>
-    -> in Evaluierungsklasse wie für Snacks eine Testmethode schreiben und laufen lassen -> Ergebnisse wie für Snacks speichern.
-    -> CorpusMetadata
-  * aufräumen: auskommentierte Teile... Weg damit!
+  * aufräumen: auskommentierte Teile... Weg damit! -> v.a. HadoopTrain
   * finale Klassenarchitektur 15.7.
   * Kommentieren jjm bis 15.7.
   * java docs am 15.7.
   * Vortrag! ab 08.07.13
+    siehe: https://docs.google.com/presentation/d/1NB74w6O1PDeHtm7GRn47h1mKu7gETslEmVu-m2DtKk0/edit?usp=sharing
   * HadoopPerceptron Aufruf dokumentieren m
