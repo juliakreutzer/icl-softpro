@@ -1,31 +1,40 @@
 package de.uniheidelberg.cl.softpro.sentimentclassification;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.HashMap;
 
 /**
- * Class for testing on development set -> optimization of parameters
- * parameters that are included in test series are set in class variables
- * the train-dev pairs have to be set directly in test methods
+ * Class for testing on development set for the optimization of parameters.
+ * 
+ * Here, the single task training, multi task testing and multi task random testing are performed.
+ * Multi task (random) training needs to be done beforehand with hadoop.
+ * 
+ * Parameters that are included in test series are set in class variables.
+ * 
+ * The train-dev pairs have to be set directly in the test methods.
+ * 
+ * Results (measure: error rate) are saved into one file per epoch-setting in directory results.
  */
 public class Development {
-	static String[] epochs = {"1", "10", "100"};
-	static String[] epochsMulti = {"1","10", "20", "30"};
+	static String[] epochs = {"1", "10", "100"}; 
+	static String[] epochsMulti = {"1","10", "20", "30"}; //range of epochs for multi task testing
 	static String[] learningRates = {"exp", "dec", "1divt", "-6", "-5", "-4", "-3", "-2", "-1", "0", "1"}; //constants are exponents to power of 10 -> e.g. "0" => 1; "1" => 10
 	static String[] setNames = {"all", "small.all", "books", "electronics", "dvd", "kitchen"};
-	static String[] topKs = {"10", "100", "1000", "2000", "5000", "10000", "50000"};
+	static String[] topKs = {"10", "100", "1000", "2000", "5000", "10000", "50000"}; //only needed in multi task perceptron
 	
-	// wandelt Datei mit Gewichtsvektor (Format: feature:count feature:count ...) in eine HashMap<String, Double> um
+	/**
+	 * Reads a weight vector from a given file to a HashMap<String, Double>. 
+	 * Weight vector format: feature1:count1 feature2:count2 feature3:count3 ...
+	 * @param f File where weight vector is read from. Format: feature1:count1 feature2:count2 feature3:count3 ...
+	 * @return a HashMap<String, Double> of feature-count-pairs representing the weight vector. If given file is empty or cannot be found, the HashMap is null.
+	 */
 	public static HashMap<String, Double> weightVectorFromFile(File f) {
 		String line = new String();
 		HashMap<String, Double> weightVector = new HashMap<String, Double>();
@@ -51,18 +60,26 @@ public class Development {
 			e.printStackTrace();
 			weightVector = null;
 		}
-	
+		
 		return weightVector;
 	}
 		
 	/**
-	 * trains all relevant parameter combinations and saves resulting weight vectors to files
+	 * Trains all relevant parameter combinations and saves resulting weight vectors to files.
+	 * Iterates for training over all given parameters (class variables).
+	 * Corpus is read from directory "data/processed_acl/corpus_final_formatted"
+	 * Weight vectors are saved in "weightVectors". Mind the naming conventions! (see readme)
 	 */
 	public static void singleTrain(){
 		
-		//Training und weightVectorFiles erstellen
 		for (String name : setNames) {
+			//read training set
 			ArrayList<Instance> trainset = CreateInstances.createInstancesFromFileNewFormat(new File("SentimentClassification/data/processed_acl/corpus_final_formatted/"+name+".train.corpus.final.formatted"));
+			if (trainset == null){
+				System.err.println("Corpus file could not be read. Training continues with next given file.");
+				continue;
+			}
+			//for each parameter setting, train a perceptron and save the trained weight vector
 			for (String epoch : epochs) {
 				int epochInt = Integer.parseInt(epoch);
 				for (String learningRate : learningRates) {
@@ -76,7 +93,9 @@ public class Development {
 	}
 	
 	/**
-	 * tests all relevant parameter combinations for single task perceptron and saves resulting error rates to files
+	 * Tests all relevant parameter combinations for single task perceptron and saves resulting error rates to files (to "results/singleTaskDevResults_ALL/Baselines/", one per epoch setting).
+	 * dev-test pairs have to be defined within method.
+	 * Weight vectors are read from directory "weightVectors". Mind the naming conventions! (see readme)
 	 */
 	public static void singleTest(){
 		
@@ -88,11 +107,13 @@ public class Development {
 				file.createNewFile();
 			} catch (IOException e) {
 				e.printStackTrace();
+				System.err.println("Out path could not be set.");
 			}
 			try {
 				System.setOut(new PrintStream(new FileOutputStream(file)));
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
+				System.err.println("Out path could not be set.");
 			}
 			
 			System.out.println(ep+" epochs\n");
@@ -171,7 +192,9 @@ public class Development {
 	}
 	
 	/**
-	 * tests all relevant parameter combinations for multi task perceptron with categories as shards and saves resulting error rates to files
+	 * Tests all relevant parameter combinations for multi task perceptron with categories as shards and saves resulting error rates to files (to "/results/multiTaskDevResults_ALL/", one per epoch setting).
+	 * dev-test pairs have to be defined within method.
+	 * Weight vectors are read from directory "weightVectors". Mind the naming conventions! (see readme) 
 	 */
 		public static void multiTest(){
 			
@@ -183,11 +206,13 @@ public class Development {
 					file.createNewFile();
 				} catch (IOException e) {
 					e.printStackTrace();
+					System.err.println("Out path could not be set.");
 				}
 				try {
 					System.setOut(new PrintStream(new FileOutputStream(file)));
 				} catch (FileNotFoundException e) {
 					e.printStackTrace();
+					System.err.println("Out path could not be set.");
 				}
 				
 				System.out.println(ep+" epochs\n");
@@ -211,7 +236,6 @@ public class Development {
 						if (weightVectorSmall == null || weightVectorAll == null){
 							continue;
 						}
-						
 						
 						//read dev instances
 						//ArrayList<Instance> devSetAll = CreateInstances.createInstancesFromFileNewFormat(new File(String.format("SentimentClassification/data/processed_acl/corpus_final_formatted/%s.dev.corpus.final.formatted","all")));
@@ -258,8 +282,10 @@ public class Development {
 		}
 		
 		/**
-		 * tests all relevant parameter combinations for multi task random perceptron and saves resulting error rates to files
-		 */
+	    * Tests all relevant parameter combinations for multi task random sharded perceptron and saves resulting error rates to files (to "/results/multiTaskRandomDevResults_ALL/", one per epoch setting).
+		* dev-test pairs have to be defined within method.
+		* Weight vectors are read from directory "weightVectors". Mind the naming conventions! (see readme) 
+		*/
 				public static void multiRandomTest(){
 					
 					for (String ep : epochsMulti){
@@ -270,11 +296,13 @@ public class Development {
 							file.createNewFile();
 						} catch (IOException e) {
 							e.printStackTrace();
+							System.err.println("Out path could not be set.");
 						}
 						try {
 							System.setOut(new PrintStream(new FileOutputStream(file)));
 						} catch (FileNotFoundException e) {
 							e.printStackTrace();
+							System.err.println("Out path could not be set.");
 						}
 						
 						System.out.println(ep+" epochs\n");
@@ -342,14 +370,26 @@ public class Development {
 					}
 				}
 	
-	
+	/**
+	 * Here you call training and dev-testing methods.
+	 * Please change output paths within methods if you want to avoid overwriting existing files when training or testing again.
+	 * @param args not needed here.
+	 */
 	public static void main(String[] args){
-	 //	singleTrain();
-	 //	System.out.println("training completed, now start testing...");
-		singleTest();
+		System.out.println("Start single task training.");
+	 	singleTrain();
+	 	System.out.println("Single task training completed, now start testing.");
+	 	
+		System.out.println("Start single task testing.");
+	 	singleTest();
+	 	
+	 	System.out.println("Start multi task testing.");
 		multiTest();
+		
+		System.out.println("Start multi task (random sharded) testing.");
 		multiRandomTest();
 		
+		System.out.println("Training and all tests are completed.");
 	}
 	
 }

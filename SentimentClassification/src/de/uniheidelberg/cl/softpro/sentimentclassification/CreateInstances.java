@@ -94,7 +94,8 @@ public class CreateInstances {
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
-			System.err.println("File not found");
+			System.err.println("Corpus file "+f+" not found.");
+			return null;
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
