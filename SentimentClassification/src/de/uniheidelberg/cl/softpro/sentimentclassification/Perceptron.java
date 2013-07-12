@@ -13,6 +13,20 @@ import java.lang.Math;
  * Class that represents a Perceptron with a weight vector, and a number of epochs and a learning rate for training
  */
 public class Perceptron{
+	
+	 /*
+	 * instance variables are:
+	 * HashMap<String,Double> - representing the weight vector
+	 * int epochs - number of epochs for training
+	 * String learningRate - representing the learning rate for training
+	 * 
+	 * Perceptrons can be initiated by given ...
+	 * 1)epochs and learningRate
+	 * 2)only learningRate (epochs default:1)
+	 * 3)weight vector
+	 * 4)default parameters (epochs:10, learningRate -2)
+	 */
+	
 	private HashMap<String,Double> weights = new HashMap<String,Double>();
 	private int epochs;
 	private String learningRate; //global learning rate is string	
