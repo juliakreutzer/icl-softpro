@@ -10,15 +10,25 @@ import java.util.HashMap;
 import java.lang.Math;
 
 /**
- * class that represents an Perceptron for testing and training
- * @author julia
+ * Class that represents a Perceptron
+ * 
+ * instance variables are:
+ * HashMap<String,Double> - representing the weight vector
+ * int epochs - number of epochs for training
+ * String learningRate - representing the learning rate for training
+ * 
+ * Perceptrons can be initiated by given ...
+ * 1)epochs and learningRate
+ * 2)only learningRate (epochs default:1)
+ * 3)weight vector
+ * 4)default parameters (epochs:10, learningRate -2)
  */
 public class Perceptron{
 	private HashMap<String,Double> weights = new HashMap<String,Double>();
 	private int epochs;
 	private String learningRate; //global learning rate is string	
 	/**
-	 * Constructor: creates new SingleTaskPerceptron instance 
+	 * Constructor: creates new Perceptron instance 
 	 * @param epochs number of training epochs
 	 * @param learningRate learningRate for training
 	 */
@@ -29,8 +39,8 @@ public class Perceptron{
 	
 	/**
 	 * constructor with learningRate parameter
-	 * epochs are set to 1
-	 * @param learningRate
+	 * epochs are set to 1 in order to use this constructor for parallel multi task learning
+	 * @param learningRate 
 	 */
 	public Perceptron(String learningRate){
 		this(1,learningRate);
@@ -47,10 +57,10 @@ public class Perceptron{
 	
 	/**
 	 * default constructor
-	 * epochs are set to 1, learningRate to 0.0001
+	 * epochs are set to 10, learningRate to 0.01
 	 */
 	public Perceptron(){
-		this(1, "-4");
+		this(10, "-2");
 	}
 	
 	/**
@@ -89,57 +99,6 @@ public class Perceptron{
 		}
 	}
 
-	/* eventuell (hoffentlich) überflüssig
-	/**
-	 * trains the SingleTaskPerceptron instance on a given training set for all epochs
-	 * returns the AVERAGE of updated vectors for all epochs
-	 * @param trainset must be an Array of Instances
-	 * @return the trained weight vector in HashMap<String,Integer> format
-	 
-	public HashMap<String,Double> trainSingleAverage(ArrayList<Instance> trainset){
-		//for each epoch
-		@SuppressWarnings("unchecked")
-		HashMap<String,Double>[] allWeightVectors = new HashMap[this.epochs];
-		
-		for (int t=1; t<=this.epochs; t++){			
-			
-			//various learning rates
-			double currentLearningRate = 0; //local learning rate is double
-			
-			if (this.learningRate.equals("exp")){
-				currentLearningRate = 1*Math.pow(0.85,-1/new Double(trainset.size()));
-			}
-			else if (this.learningRate.equals("dec")){
-				currentLearningRate = 1/(1+new Double(t)/new Double(trainset.size()));
-			}
-			else if (this.learningRate.equals("1divt")){
-				currentLearningRate = 1/new Double(t);
-			}
-			else if (Double.parseDouble(this.learningRate)>=-10 || Double.parseDouble(this.learningRate)<=10   ){
-				currentLearningRate = Math.pow(10,Double.parseDouble(this.learningRate));
-			}
-						
-			for (Instance i : trainset){
-
-				//if misclassified, update with gradient
-				if (this.misclassified(i)){
-					//update weights
-					for (String feature : i.getFeatures()){
-						Double featureValue = new Double("0.0");
-						//if feature can be found in current weights
-						if (this.weights.containsKey(feature)){
-							featureValue = this.weights.get(feature);
-						}
-						//update weight
-						this.weights.put(feature, featureValue+(currentLearningRate*i.getFeatureVector().get(feature)*i.getLabel()));
-					}
-				}
-			}
-			allWeightVectors[t-1]= this.weights;
-		}
-		allWeightVectors.		
-	}	
-	*/
 	
 	/**
 	 * trains the SingleTaskPerceptron instance on a given training set for all epochs
@@ -197,7 +156,7 @@ public class Perceptron{
 	/**
 	 * trains the Perceptron on a given set of instances, but only for one epoch
 	 * @param trainset ArrayList of instances which contain training samples
-	 * @return error rate (double), i.e. #correctly_classified_samples / #all_samples
+	 * @return the trained weight vector in HashMap<String,Integer> format
 	 */
 	public HashMap<String,Double> trainMulti(ArrayList<Instance> trainset, int currentEpoch){
 		for (Instance i : trainset){
@@ -253,7 +212,7 @@ public class Perceptron{
 	/**
 	 * tests the SingleTaskPerceptron instance on a given test set
 	 * @param testset must be an Array of Instances
-	 * @return
+	 * @return error rate (double), i.e. #correctly_classified_samples / #all_samples
 	 */
 	public double test(ArrayList<Instance> testset){
 		int errors = 0;
@@ -298,14 +257,8 @@ public class Perceptron{
 	
 	/**
 	 * stores the weight vector in the given file
-	 * note the name conventions:     
-	 * ST (SingleTask?): (Kategoriename) | all | small
-	 * MT (MultiTask?): cat | random
-	 * Followed by: number of epochs, learning rate, for MT: Number of Top Features
-	 * learning rates: if constant -> power of 10: 1/1000 => "-4", 1 => "0", 10 => "1"; "dec", "1divt", "exp"   
-	 * file ending: .wv
-	 * e.g. ST_books_10_-4.wv
-	 * e.g. MT_Random_100_-4_100.wv 
+	 * note the naming conventions: (see readme)
+	 * <ST|MT|MTR>_<training set>_<number of epochs in training>_<learning rate>_<top k features selected>.wv 
 	 * @param outFile
 	 */
 	public void writeWeightsToFile(File outFile){
