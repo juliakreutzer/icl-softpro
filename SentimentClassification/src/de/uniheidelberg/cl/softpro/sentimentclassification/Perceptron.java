@@ -10,18 +10,7 @@ import java.util.HashMap;
 import java.lang.Math;
 
 /**
- * Class that represents a Perceptron
- * 
- * instance variables are:
- * HashMap<String,Double> - representing the weight vector
- * int epochs - number of epochs for training
- * String learningRate - representing the learning rate for training
- * 
- * Perceptrons can be initiated by given ...
- * 1)epochs and learningRate
- * 2)only learningRate (epochs default:1)
- * 3)weight vector
- * 4)default parameters (epochs:10, learningRate -2)
+ * Class that represents a Perceptron with a weight vector, and a number of epochs and a learning rate for training
  */
 public class Perceptron{
 	private HashMap<String,Double> weights = new HashMap<String,Double>();
@@ -40,7 +29,7 @@ public class Perceptron{
 	/**
 	 * constructor with learningRate parameter
 	 * epochs are set to 1 in order to use this constructor for parallel multi task learning
-	 * @param learningRate 
+	 * @param learningRate must be a String
 	 */
 	public Perceptron(String learningRate){
 		this(1,learningRate);
@@ -259,7 +248,7 @@ public class Perceptron{
 	 * stores the weight vector in the given file
 	 * note the naming conventions: (see readme)
 	 * <ST|MT|MTR>_<training set>_<number of epochs in training>_<learning rate>_<top k features selected>.wv 
-	 * @param outFile
+	 * @param outFile is the output file where the weight vector is saved
 	 */
 	public void writeWeightsToFile(File outFile){
 		
