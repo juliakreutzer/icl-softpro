@@ -1,6 +1,7 @@
 #summary Todo-Liste
 
 = Todo =
+  * reviewsOrganicFood + Metadata-Update
   * aufräumen: auskommentierte Teile... Weg damit! -> v.a. HadoopTrain
   * finale Klassenarchitektur 15.7.
   * Kommentieren jjm bis 15.7.
@@ -8,3 +9,4 @@
   * Vortrag! ab 08.07.13
     siehe: https://docs.google.com/presentation/d/1NB74w6O1PDeHtm7GRn47h1mKu7gETslEmVu-m2DtKk0/edit?usp=sharing
   * HadoopPerceptron Aufruf dokumentieren m
+  * README: Aufrufe (Test, Training etc.), evtl. Beispiel
