@@ -7,7 +7,7 @@ import java.util.*;
 
 /**
  * @author jasmin
- * reads text files and converts to different formats which are needed for further work
+ * This class provides various methods to convert the corpus text files into different formats which are needed for further work.
  */
 public class CreateInstances {
 	
@@ -57,10 +57,9 @@ public class CreateInstances {
 	}
 	
 	/**
-	 * reads file in following format: category (tab) feature:count feature:count #label#:positive (new line) category ....
-	 * gibt eine ArrayList mit je einer Instance pro review aus
-	 * @param f
-	 * @return 
+	 * reads text file given in following format: category (tab) feature:count feature:count #label#:positive (new line) category .... and converts it into ArrayList of Instances with one Instance per review
+	 * @param f file to be read and converted
+	 * @return reviews as ArrayList of Instances (ArrayList<Instance>)
 	 */
 	public static ArrayList<Instance> createInstancesFromFileNewFormat(File f) {
 		String line = new String();
@@ -102,8 +101,12 @@ public class CreateInstances {
 		}
 		return instanceArray;
 	}
-	//liest String ein in Format: feature:count feature:count #label#:positive<>feature:count ....
-	// gibt eine ArrayList mit je einer Instance pro review aus
+	
+	/**
+	 * reads string of reviews given in following format: feature:count feature:count #label#:positive<>feature:count .... and converts it into ArrayList of Instances with one Instance per review
+	 * @param s string to be read and converted
+	 * @return reviews as ArrayList of Instances (ArrayList<Instance>)
+	 */
 	//used in HadoopTrainPerceptronScalable and HadoopTrainPerceptron
 	public static ArrayList<Instance> createInstancesFromString(String s) {
 		String[] reviews = s.split("<>");
