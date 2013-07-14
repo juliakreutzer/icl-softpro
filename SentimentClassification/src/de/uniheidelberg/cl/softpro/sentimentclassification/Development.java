@@ -29,12 +29,14 @@ public class Development {
 	static String[] setNames = {"all", "small.all", "books", "electronics", "dvd", "kitchen"};
 	static String[] topKs = {"10", "100", "1000", "2000", "5000", "10000", "50000"}; //only needed in multi task perceptron
 	
+
 	/**
 	 * Reads a weight vector from a given file to a HashMap<String, Double>. 
 	 * Weight vector format: feature1:count1 feature2:count2 feature3:count3 ...
 	 * @param f File where weight vector is read from. Format: feature1:count1 feature2:count2 feature3:count3 ...
 	 * @return a HashMap<String, Double> of feature-count-pairs representing the weight vector. If given file is empty or cannot be found, the HashMap is null.
 	 */
+
 	public static HashMap<String, Double> weightVectorFromFile(File f) {
 		String line = new String();
 		HashMap<String, Double> weightVector = new HashMap<String, Double>();
