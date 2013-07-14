@@ -298,11 +298,12 @@ public class Evaluation {
 	 * @param args
 	 */
 	public static void main(String[] args){
-		singleTest();
+	singleTest();
 		multiTest();
 		multiRandomTest();
 		testUnseen("snacks");
 		testUnseen("outdoor");
 		testUnseen("gardening");
+		testUnseen("organicfood");
 	}	
 }
