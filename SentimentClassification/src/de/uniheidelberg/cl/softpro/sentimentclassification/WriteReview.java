@@ -3,8 +3,16 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Scanner;
 
+/**
+ * @author jasmin
+ * This class offers the possibility to write your own reviews and tests if they are classified positive or negative. 
+ */
 public class WriteReview {
-
+	
+	/**
+	 * reads review from standard input and converts it into a HashMap<String, Integer>
+	 * @return review (HashMap<String, Integer>)
+	 */
 	public static HashMap<String, Integer> convertReviewToHashMap() {
 		Scanner s = new Scanner(System.in);
 		System.out.println("Type your review: ");
@@ -22,6 +30,10 @@ public class WriteReview {
 		return reviewAsHashMap;
 	}
 	
+	/**
+	 * calculates dot product of review as HashMap and weight vector and evaluates if review is positive or negative
+	 * @return label (int)
+	 */
 	public static int evaluateReview() {
 		HashMap<String, Double> weightVector = Development.weightVectorFromFile(new File("SentimentClassification/weightVectors/MTR_small.all_10_-2_5000.wv"));
 		HashMap<String, Integer> review = convertReviewToHashMap();
