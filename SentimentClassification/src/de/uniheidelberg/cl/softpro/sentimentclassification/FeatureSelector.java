@@ -4,9 +4,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 /**
- * Selects top k features of a weight vector
- * @author hering
- *
+ * Provides top k feature selection
  */
 
 public class FeatureSelector {

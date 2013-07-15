@@ -251,8 +251,6 @@ public class HadoopTrainPerceptronScalable {
 	/**
 	 * Mapper class of phase 1
 	 * See description of {@link runHadoopJob}
-	 * @author mirko
-	 *
 	 */
 	public static class mapTrainSmallPerceptrons extends Mapper<Text, Text, Text, MapWritable> {
 		private HashMap <String, Perceptron> perceptrons = new HashMap <String, Perceptron> ();		// HashMap, that will contain one "small" perceptron for each category
@@ -372,7 +370,6 @@ public class HadoopTrainPerceptronScalable {
 	/**
 	 * Reducer class of phase 1; Calculates the average perceptron of the Mappers' "small" perceptrons
 	 * In the end we have one perceptron per category
-	 * @author mirko
 	 *
 	 */
 	public static class reduceUnitePerceptrons extends Reducer <Text, MapWritable, Text, DoubleWritable> {
@@ -423,7 +420,6 @@ public class HadoopTrainPerceptronScalable {
 
 	/**
 	 * Mapper class of phase 2; gets the category that the feature belongs to
-	 * @author mirko
 	 *
 	 */
 	public static class mapOrderThings extends Mapper <Text, Text, Text, MapWritable> {
@@ -443,7 +439,6 @@ public class HadoopTrainPerceptronScalable {
 	
 	/**
 	 * Reducer class of phase 2; calculates l2 norms and average values
-	 * @author mirko
 	 *
 	 */
 	public static class reduceCalculateThings extends Reducer <Text, MapWritable, Text, Text> {
@@ -477,7 +472,6 @@ public class HadoopTrainPerceptronScalable {
 	 * It works pretty simple: 
 	 * We have a counter i, that counts the number of splits that were processed so far. When returning the input value to context, we use the counter's value as key (=category name). As soon as the counter reaches the number of random shards we want to get, it is reset to 0.  
 	 *
-	 * @author mirko
 	 *
 	 */
 	public static class RandomShardsMapper extends Mapper <Text, Text, Text, Text> {
@@ -499,7 +493,6 @@ public class HadoopTrainPerceptronScalable {
 	/**
 	 * Reducer to generate random shards. 
 	 * It actually does nothing except from writing (key, value) to a distinct file that corresponds to its category name 
-	 * @author mirko
 	 *
 	 */
 	public static class RandomShardsReducer extends Reducer <Text, Text, Text, Text> {
