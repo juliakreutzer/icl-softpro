@@ -35,7 +35,7 @@ public class WriteReview {
 	 * @return label (int)
 	 */
 	public static int evaluateReview() {
-		HashMap<String, Double> weightVector = Development.weightVectorFromFile(new File("SentimentClassification/weightVectors/MTR_small.all_10_-2_5000.wv"));
+		HashMap<String, Double> weightVector = Development.weightVectorFromFile(new File("/home/mirko/workspace/SoftPro/svn/weightVectors/MTR_small.all_10_-2_5000.wv"));
 		HashMap<String, Integer> review = convertReviewToHashMap();
 		int label = 0;
 		if (Perceptron.dotProduct(review, weightVector) > 0) {
