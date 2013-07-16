@@ -28,7 +28,7 @@ public class Development {
 	static String[] learningRates = {"exp", "dec", "1divt", "-6", "-5", "-4", "-3", "-2", "-1", "0", "1"}; //constants are exponents to power of 10 -> e.g. "0" => 1; "1" => 10
 	static String[] setNames = {"all", "small.all", "books", "electronics", "dvd", "kitchen"};
 	static String[] topKs = {"10", "100", "1000", "2000", "5000", "10000", "50000"}; //only needed in multi task perceptron
-	
+	static PrintStream stdout = System.out;
 
 	/**
 	 * Reads a weight vector from a given file to a HashMap<String, Double>. 
@@ -190,6 +190,7 @@ public class Development {
 				System.out.println("small on cat:\t"+avgSmallOnCat);
 				System.out.println("all on cat:\t"+avgAllOnCat);
 			}
+			System.setOut(stdout); //reset out path
 		}
 	}
 	
@@ -281,6 +282,7 @@ public class Development {
 					}
 				}
 			}
+			System.setOut(stdout); //reset out path
 		}
 		
 		/**
@@ -370,28 +372,40 @@ public class Development {
 							}
 						}
 					}
+					System.setOut(stdout); //reset out path
 				}
 	
 	/**
 	 * Here you call training and dev-testing methods.
 	 * Please change output paths within methods if you want to avoid overwriting existing files when training or testing again.
-	 * @param args not needed here.
+	 * @param args 
 	 */
 	public static void main(String[] args){
-		System.out.println("Start single task training.");
-	 	singleTrain();
-	 	System.out.println("Single task training completed, now start testing.");
-	 	
-		System.out.println("Start single task testing.");
-	 	singleTest();
-	 	
-	 	System.out.println("Start multi task testing.");
-		multiTest();
+		String task = args[0];
 		
-		System.out.println("Start multi task (random sharded) testing.");
-		multiRandomTest();
+		if (task.equals("singletrain")){
+			System.out.println("Start single task training.");
+		 	singleTrain();
+			System.out.println("Finished single task training.");
+		}
 		
-		System.out.println("Training and all tests are completed.");
+		else if (task.equals("singletest")){
+			System.out.println("Start single task testing.");
+			singleTest();
+			System.out.println("Finished single task testing.");
+		}
+
+		else if (task.equals("multitest")){
+			System.out.println("Start multi task testing.");
+			multiTest();
+			System.out.println("Finished multi task testing.");
+		}
+	 	
+		else if (task.equals("multirandomtest")){
+			System.out.println("Start multi task (random sharded) testing.");
+			multiRandomTest();
+			System.out.println("Finished multi task (random sharded) testing.");
+		}
 	}
 	
 }
