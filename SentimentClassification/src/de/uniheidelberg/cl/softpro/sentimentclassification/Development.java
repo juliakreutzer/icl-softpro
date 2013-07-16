@@ -378,7 +378,7 @@ public class Development {
 	/**
 	 * Here you call training and dev-testing methods.
 	 * Please change output paths within methods if you want to avoid overwriting existing files when training or testing again.
-	 * @param args 
+	 * @param args defines the task that will be run [singletrain, singletest, multitest, multirandomtest]
 	 */
 	public static void main(String[] args){
 		String task = args[0];

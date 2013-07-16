@@ -295,15 +295,51 @@ public class Evaluation {
 	
 	/**
 	 * Here you can define which tests will be performed when running main.
-	 * @param args
+	 * @param args defines which task will be run [singletest, multitest, multirandomtest, testsnacks, testoutdoor, testgardening, testorganicfood]
 	 */
 	public static void main(String[] args){
-		singleTest();
-		multiTest();
-		multiRandomTest();
-		testUnseen("snacks");
-		testUnseen("outdoor");
-		testUnseen("gardening");
-		testUnseen("organicfood");
+		String task = args[0];
+		
+		if (task.equals("singletest")){
+			System.out.println("Start single task testing.");
+			singleTest();
+			System.out.println("Finished single task testing.");
+		}
+
+		else if (task.equals("multitest")){
+			System.out.println("Start multi task testing.");
+			multiTest();
+			System.out.println("Finished multi task testing.");
+		} 
+		
+		else if (task.equals("multirandomtest")){
+			System.out.println("Start multi task (random sharded) testing.");
+			multiRandomTest();
+			System.out.println("Finished multi task (random sharded) testing.");
+		}
+
+		else if (task.equals("testsnacks")){
+			System.out.println("Start testing on snacks corpus.");
+			testUnseen("snacks");
+			System.out.println("Finished testing on snacks corpus.");
+		}
+
+		else if (task.equals("testoutdoor")){
+			System.out.println("Start testing on outdoor corpus.");
+			testUnseen("outdoor");
+			System.out.println("Finished testing on outdoor corpus.");
+		}
+		
+		else if (task.equals("testgardening")){
+			System.out.println("Start testing on gardening corpus.");
+			testUnseen("gardening");
+			System.out.println("Finished testing on gardening corpus.");
+		}
+		
+		else if (task.equals("testorganicfood")){
+			System.out.println("Start testing on organicfood corpus.");
+			testUnseen("organicfood");
+			System.out.println("Finished testing on organicfood corpus.");
+		}
 	}	
 }
