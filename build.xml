@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<project basedir="." default="build" name="softpro">
+    <property environment="env"/>
+
+    <target name="init">
+        <mkdir dir="SentimentClassification/bin"/>
+        <copy includeemptydirs="false" todir="SentimentClassification/bin">
+            <fileset dir="SentimentClassification/src">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="clean">
+        <delete dir="SentimentClassification/bin"/>
+    </target>
+
+    <target depends="init" name="build">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac destdir="SentimentClassification/bin" source="${source}" target="${target}">
+            <src path="SentimentClassification/src"/>
+            <classpath refid="SentimentClassification/bin"/>
+        </javac>
+    </target>
+
+    <target depends="build" name="Development">
+        <java classname="de.uniheidelberg.cl.softpro.sentimentclassification.Development" failonerror="true" fork="yes" classpath="SentimentClassification/bin">
+		<arg value="${arg1}"/>
+        </java>
+    </target>
+
+    <target depends="build" name="Evaluation">
+        <java classname="de.uniheidelberg.cl.softpro.sentimentclassification.Evaluation" failonerror="true" fork="yes" classpath="SentimentClassification/bin">
+		<arg value="${arg1}"/>
+        </java>
+    </target>
+
+    <target depends="build" name="WriteReview">
+        <java classname="de.uniheidelberg.cl.softpro.sentimentclassification.WriteReview" failonerror="true" fork="yes" classpath="SentimentClassification/bin">
+		<arg value="${arg1}"/>        
+		</java>
+    </target>
+</project>
