@@ -1,0 +1,14 @@
+Buildfile: /home/julia/Dokumente/Uni/SS2013/swp/swp-2/softpro/build.xml
+
+init:
+
+build:
+     [echo] softpro: /home/julia/Dokumente/Uni/SS2013/swp/swp-2/softpro/build.xml
+     [echo] HadoopTrainPerceptronScalable was not included in build. Please install hadoop package and comment out this exclude in build.xml
+
+WriteReview:
+     [echo] your review: +asdasnao+
+     [java] don't know ...
+
+BUILD SUCCESSFUL
+Total time: 1 second

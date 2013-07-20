@@ -18,9 +18,16 @@
 
     <target depends="init" name="build">
         <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac destdir="SentimentClassification/bin" source="${source}" target="${target}">
-            <src path="SentimentClassification/src"/>
-            <classpath refid="SentimentClassification/bin"/>
+
+	<!--comment out the next line if hadoop libraries are complete -->
+		<echo message="HadoopTrainPerceptronScalable was not included in build. Please install hadoop package and comment out this exclude in build.xml"/>
+
+        <javac srcdir="SentimentClassification/src" destdir="SentimentClassification/bin" source="1.6" target="1.6" includeantruntime="true">
+            <classpath path="SentimentClassification/bin"/>
+
+	<!--comment out next line if hadoop libraries are complete -->
+			<exclude name="**/HadoopTrainPerceptronScalable.java"/> 
+
         </javac>
     </target>
 
@@ -37,6 +44,7 @@
     </target>
 
     <target depends="build" name="WriteReview">
+		<echo message="your review: ${arg1}"/>
         <java classname="de.uniheidelberg.cl.softpro.sentimentclassification.WriteReview" failonerror="true" fork="yes" classpath="SentimentClassification/bin">
 		<arg value="${arg1}"/>        
 		</java>
