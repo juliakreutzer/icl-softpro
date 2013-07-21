@@ -8,12 +8,13 @@
 \beamer@subsectionintoc {2}{2}{Methoden}{9}{0}{2}
 \beamer@subsectionintoc {2}{3}{Korpusformat}{10}{0}{2}
 \beamer@subsectionintoc {2}{4}{Klassenarchitektur}{11}{0}{2}
-\beamer@subsectionintoc {2}{5}{Hadoop}{13}{0}{2}
-\beamer@sectionintoc {3}{Evaluation}{20}{0}{3}
-\beamer@subsectionintoc {3}{1}{Baselines}{21}{0}{3}
-\beamer@subsectionintoc {3}{2}{Fakten, Fakten, Fakten}{22}{0}{3}
-\beamer@subsectionintoc {3}{3}{Unseen Corpora}{25}{0}{3}
-\beamer@subsectionintoc {3}{4}{Features}{27}{0}{3}
-\beamer@sectionintoc {4}{Demo}{28}{0}{4}
-\beamer@sectionintoc {5}{Fazit}{30}{0}{5}
-\beamer@sectionintoc {6}{Referenzen}{33}{0}{6}
+\beamer@subsectionintoc {2}{5}{Hadoop}{12}{0}{2}
+\beamer@sectionintoc {3}{Evaluation}{19}{0}{3}
+\beamer@subsectionintoc {3}{1}{Baselines}{20}{0}{3}
+\beamer@subsectionintoc {3}{2}{Fakten, Fakten, Fakten}{21}{0}{3}
+\beamer@subsectionintoc {3}{3}{Unseen Corpora}{24}{0}{3}
+\beamer@subsectionintoc {3}{4}{Features}{26}{0}{3}
+\beamer@sectionintoc {4}{Demo}{27}{0}{4}
+\beamer@subsectionintoc {4}{1}{Beispieldaten}{28}{0}{4}
+\beamer@sectionintoc {5}{Fazit}{29}{0}{5}
+\beamer@sectionintoc {6}{Referenzen}{32}{0}{6}
