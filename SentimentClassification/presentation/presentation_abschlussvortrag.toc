@@ -1,0 +1,16 @@
+\beamer@endinputifotherversion {3.10pt}
+\select@language {german}
+\beamer@sectionintoc {1}{Aufgabenstellung und L\IeC {\"o}sungsansatz}{3}{0}{1}
+\beamer@subsectionintoc {1}{1}{Aufgabenstellung}{4}{0}{1}
+\beamer@subsectionintoc {1}{2}{L\IeC {\"o}sungsansatz}{5}{0}{1}
+\beamer@sectionintoc {2}{Umsetzung}{6}{0}{2}
+\beamer@subsectionintoc {2}{1}{Daten}{7}{0}{2}
+\beamer@subsectionintoc {2}{2}{Methoden}{9}{0}{2}
+\beamer@subsectionintoc {2}{3}{Korpusformat}{10}{0}{2}
+\beamer@subsectionintoc {2}{4}{Klassenarchitektur}{11}{0}{2}
+\beamer@subsectionintoc {2}{5}{Hadoop}{13}{0}{2}
+\beamer@sectionintoc {3}{Evaluation}{20}{0}{3}
+\beamer@subsectionintoc {3}{1}{Baselines}{21}{0}{3}
+\beamer@sectionintoc {4}{Demo}{22}{0}{4}
+\beamer@sectionintoc {5}{Fazit}{24}{0}{5}
+\beamer@sectionintoc {6}{Referenzen}{26}{0}{6}
