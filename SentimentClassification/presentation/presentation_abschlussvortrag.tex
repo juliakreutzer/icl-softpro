@@ -21,7 +21,7 @@
 \title{Sentiment Classification}
 \subtitle{Multi-Task-Learning und l1/l2-Regularisierung}
 \date{22. Juli 2013}
-%\titlegraphic{\includegraphics[scale=•]{•}=4cm,height=3cm]{MediaWiki-notext.pdf}}
+\titlegraphic{\includegraphics[width=4cm,height=3cm]{squirrel.eps}}
 
 \definecolor{unihdred}{RGB}{153, 0, 0}
 \definecolor{yellow}{RGB}{255, 255, 0}
@@ -62,6 +62,7 @@
 \subsection{Lösungsansatz}
 \frame{
 	\frametitle{Lösungsansatz}
+	\large
 	\begin{itemize}
 	\item Anwendung von Multitask-Learning mit verteilter l1/l2- Regularisierung zur Feature-Selektion
 	\item Die Produktkategorien (books, dvd, electronics, kitchen) entsprechen den Tasks des Multi-Task-Learnings
@@ -119,6 +120,7 @@
 \subsection{Korpusformat}
 \frame{
 	\frametitle{Korpusformat}
+	\large
 	\begin{itemize}
 	\item Format einer Rezension:\\
 	{\small Kategorie	feature:count feature:count (...) \#label\#:[positive$\vert$negative]}
@@ -138,7 +140,7 @@
 \frame{
 	\frametitle{Klassenarchitektur}
 	\begin{center}
-	\includegraphics[scale=0.33]{Klassenarchitektur.pdf} 
+	\includegraphics[scale=0.33]{Klassenarchitektur.eps} 
 	\end{center}
 }
 
@@ -146,6 +148,7 @@
 \subsection{Hadoop}
 \frame{
 	\frametitle{Hadoop - MT Learning}
+	\large
 	\begin{itemize}
 	\item Aufruf der jar-Datei mit Hadoop
 	\item Angabe der Parameter (top k Features, Epochen, Kategorien) \\[0.5cm]
@@ -156,14 +159,14 @@
 \frame{
 	\frametitle{Hadoop - MT Learning}
 	\begin{center}
-	\includegraphics[scale=0.35]{MapReducePhases.pdf} 
+	\includegraphics[scale=0.35]{MapReducePhases.eps} 
 	\end{center}
 
 }
 \frame{
 	\frametitle{Hadoop - Random Shards}
 	\begin{center}
-	\includegraphics[scale=0.35]{RandomShards.pdf} 
+	\includegraphics[scale=0.35]{RandomShards.eps} 
 	\end{center}
 
 }
@@ -197,7 +200,7 @@
 \frame{
 	\frametitle{Hadoop - Random Shards}
 	\begin{center}
-	\includegraphics[scale=0.35]{RandomShards.pdf} 
+	\includegraphics[scale=0.35]{RandomShards.eps} 
 	\end{center}
 
 }
