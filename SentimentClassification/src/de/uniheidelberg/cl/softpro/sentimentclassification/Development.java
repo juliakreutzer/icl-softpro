@@ -37,7 +37,7 @@ public class Development {
 	 * @return a HashMap<String, Double> of feature-count-pairs representing the weight vector. If given file is empty or cannot be found, the HashMap is null.
 	 */
 
-	public static HashMap<String, Double> weightVectorFromFile(File f) {
+	public static HashMap<String, Double> weightVectorFromFile (File f) {
 		String line = new String();
 		HashMap<String, Double> weightVector = new HashMap<String, Double>();
 		try {
