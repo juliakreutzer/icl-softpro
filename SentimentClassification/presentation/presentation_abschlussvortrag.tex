@@ -9,6 +9,9 @@
 \usepackage{color}
 \usepackage{listings} 
 \usepackage{algorithm2e}
+\usepackage{tabularx} 
+\usepackage{xcolor,colortbl}
+\usepackage{arydshln}
 
 \lstset{numbers=left, numberstyle=\tiny, numbersep=5pt} 
 \lstset{language=html}
@@ -19,6 +22,8 @@
 %\titlegraphic{\includegraphics[scale=•]{•}=4cm,height=3cm]{MediaWiki-notext.pdf}}
 
 \definecolor{unihdred}{RGB}{153, 0, 0}
+\definecolor{yellow}{RGB}{255, 255, 0}
+\definecolor{rosa}{RGB}{244, 204, 204}
 
 \usecolortheme[RGB={153, 0, 0}]{structure}
 \usepackage{beamerthemesplit}
@@ -231,8 +236,133 @@
 	\item Single-Task-Learning auf allen Daten
 	\item Multi-Task-Learning mit random shards
 	\end{itemize}
-
 }
+
+\subsection{Fakten, Fakten, Fakten}
+\frame{
+	\frametitle{Single Task Learning}
+	\newcolumntype{Y}{>{\columncolor{yellow}}c}
+	\begin{center}
+		\resizebox{10cm}{!} {
+			\begin{tabular}{ l | c c Y }
+					&	\textbf{independent}	&	\textbf{small}	&	\textbf{all}		\\ \hline
+		books		&	0,2275		&	0,3000	&	0,1925\\
+		dvd			&	0,2200		&	0,2750	&	0,2000	\\
+		electronics	&	0,1825		&	0,2100	&	0,1525	\\
+		kitchen		&	0,1475		&	0,2325	&	0,1425	\\ \hline
+		average		&	0,1944		&	0,2544	&	0,1719	
+			\end{tabular}
+		},
+	\end{center}
+}
+
+\frame{
+	\frametitle{Multi Task Learning}
+	\begin{center}
+		\resizebox{10cm}{!} {
+			\begin{tabular}{ l | c c }
+					&	\textbf{shards = tasks}	&	\textbf{random shards}	\\ \hline
+		books		&	\cellcolor{yellow}0,2375		&	0,2400	\\
+		dvd			&	0,2175		&	\cellcolor{yellow}0,1900	\\
+		electronics	&	0,1550		&	\cellcolor{yellow}0,1500	\\
+		kitchen		&	\cellcolor{yellow}0.1450		&	0,1525	\\ \hline
+		average		&	0,1888		&	\cellcolor{yellow}0,1831
+			\end{tabular}
+		}
+	\end{center}
+}
+\frame{
+	\frametitle{Vergleich}
+	\begin{center}
+		\resizebox{10cm}{!} {
+			\begin{tabular}{ l | c | c }
+					&	\textbf{average error rate}	&	\textbf{average vector length}	\\ \hline
+		ST independent		&	0,1944		&	63.213	\\
+		ST small			&	0,2544		&	78.089	\\
+		\rowcolor{rosa} 
+		ST all				&	0,1719		&	194.627	\\ \hdashline
+		\rowcolor{yellow} 
+		MT shards = tasks	&	0,1888		&	5.000	\\
+		\rowcolor{yellow}
+		MT random shards	&	0,1831		&	5.000
+			\end{tabular}
+		}
+	\end{center}
+}
+
+\subsection{Unseen Corpora}
+\frame{
+	\frametitle{Unseen Corpora}
+	Erstellung zusätzlicher Testcorpora:
+	\begin{itemize}
+	\item Herunterladen von Amazon-Kundenrezensionen:\\
+	http://www.esuli.it/fossil/repo/amazonReviewsDownloader/index
+	\item eigenes Python-Skript zum Formatieren \\[0.5cm]
+	\end{itemize}
+	Korpora haben unterschiedliche Längen und sind nicht ausgeglichen:
+\begin{scriptsize}
+	\begin{center}
+		\resizebox{8cm}{!} {
+			\begin{tabular}{ c c c }
+			Kategorie	&	Rezensionen	&	Anteil positiv\\ \hline
+			gardening	&	1865		&	0,8\\
+			outdoor		&	916			&	0,86\\
+			snacks		&	208			&	0,95\\
+			organicfood	&	97211		&	0,88\\
+			\end{tabular}
+		}
+	\end{center}
+\end{scriptsize}
+}
+
+\frame{
+	\frametitle{Unseen Corpora}
+	\begin{center}
+%		\resizebox{6cm}{!} {
+			\begin{tabular}{ c | c }
+					&	\parbox{5cm}{\centering\textbf{average error rate \\ on unseen test corpora}}	\\ \hline
+			ST independent	&	0,2611 \\
+				books		&	0,4164 \\
+				dvd			&	0,2997 \\
+				electornics	&	0,1873 \\
+	    	\rowcolor{yellow}
+				kitchen		&	0,1410 \\
+			ST small		&	0,2253 \\
+			ST all			&	0,1781 \\\hdashline
+			\rowcolor{yellow}
+			MT shards = tasks &	0,1616 \\
+			MT random shards &	0,1776 \\
+			\end{tabular}
+%		}
+	\end{center}
+}
+
+\subsection{Unseen Corpora}
+\frame{
+	\frametitle{Unseen Corpora}
+	Erstellung zusätzlicher Testcorpora:
+	\begin{itemize}
+	\item Herunterladen von Amazon-Kundenrezensionen:\\
+	http://www.esuli.it/fossil/repo/amazonReviewsDownloader/index
+	\item eigenes Python-Skript zum Formatieren \\[0.5cm]
+	\end{itemize}
+	Korpora haben unterschiedliche Längen und sind nicht ausgeglichen:
+\begin{scriptsize}
+	\begin{center}
+		\resizebox{8cm}{!} {
+			\begin{tabular}{ c c c }
+			Kategorie	&	Rezensionen	&	Anteil positiv\\ \hline
+			gardening	&	1865		&	0,8\\
+			outdoor		&	916			&	0,86\\
+			snacks		&	208			&	0,95\\
+			organicfood	&	97211		&	0,88\\
+			\end{tabular}
+		}
+	\end{center}
+\end{scriptsize}
+}
+
+
 \section{Demo}
 \frame{
 	\huge{}
