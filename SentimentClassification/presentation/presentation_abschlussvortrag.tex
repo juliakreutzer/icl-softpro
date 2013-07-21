@@ -337,54 +337,96 @@
 	\end{center}
 }
 
-\subsection{Unseen Corpora}
+\subsection{Features}
 \frame{
-	\frametitle{Unseen Corpora}
-	Erstellung zusätzlicher Testcorpora:
+	\frametitle{Features}
+	Top 10 Features nach Multi Task Learning mit Random Shards:\\
 	\begin{itemize}
-	\item Herunterladen von Amazon-Kundenrezensionen:\\
-	http://www.esuli.it/fossil/repo/amazonReviewsDownloader/index
-	\item eigenes Python-Skript zum Formatieren \\[0.5cm]
+	\item $kagan:-0.4$
+	\item $worst:-0.8000000000000006$
+	\item $poor:-0.4700000000000001$
+	\item $boring:-0.7000000000000004$
+	\item $the_best:0.5200000000000002$ 
+	\item $(pp.:0.58$
+	\item $excellent:0.6800000000000004$
+	\item $bad:-0.38$
+	\item $disappointed:-0.5000000000000002$
+	\item $wonderful:0.5100000000000002$
 	\end{itemize}
-	Korpora haben unterschiedliche Längen und sind nicht ausgeglichen:
-\begin{scriptsize}
-	\begin{center}
-		\resizebox{8cm}{!} {
-			\begin{tabular}{ c c c }
-			Kategorie	&	Rezensionen	&	Anteil positiv\\ \hline
-			gardening	&	1865		&	0,8\\
-			outdoor		&	916			&	0,86\\
-			snacks		&	208			&	0,95\\
-			organicfood	&	97211		&	0,88\\
-			\end{tabular}
-		}
-	\end{center}
-\end{scriptsize}
 }
 
 
 \section{Demo}
 \frame{
-	\huge{}
+	\begin{center}
+	\huge{Demo}\\
+	\LARGE{- check your sentiment!}
+	\end{center}
 }
 \frame{
-	\frametitle{}
+	\frametitle{Demo}
+	Rezensionen zum Buch \glqq Software Project Survival Guide\grqq: \\
+	5 Sterne:\\
+	{\tiny This book is especially helpful to those either: 1) new to managing projects 2) have never been formally trained in managing projects 3) are more on the business side of the fence and need insight into the software development process. I highly recommend this book if you fall into any of the above categories. I also recommend buying this book for any non-technical bosses.}\\
+	2 Sterne:\\
+	{\tiny Here is "another Project Management Book" or "Do This, Do That Book". It is just about "doing something in order step". It has a wrong name; it is not a survival book. Survival means "The continuation of life or existence" according to Webster Dictionary and I can assure you that you cannot survive by just following these steps and actions. Your most important ve precious resources are your project team. If you are an experienced project manager, this book is totally a vast of time. There is nothing new inside. If you are new to project management, you may have some idea about agile-driven classical project management, but you should know that it is just a one of many sides of project management. Maybe, I said maybe, you can use this book as a checklist.}
+
+
 
 }
 \section{Fazit}
 \frame{
-	\huge{}
+	\begin{center}
+	\huge{Fazit}\\
+	\LARGE{- our sentiment}
+	\end{center}
 }
 \frame{
-	\frametitle{}
-
+	\frametitle{Fazit}
+	Ergebnisse:
+	\begin{itemize}
+	\item Multi-Task Learning besser als Single-Task Learning auf einzelnen Kategorien (independent)
+	\item Random shards besser als taskspezifische shards
+	\item beste Ergebnisse beim Single-Task-Training auf allen Daten (pooled), aber nur um 0.01 besser als Multi-Task-Perceptron
+	\item aber: Größe der Gewichtsvektoren, d.h. Anzahl der Features bei Multi-Task geringer bei vergleichbaren Ergebnissen
+	\item Unseen Corpora: Multi-Task besser als Single-Task\\[1cm]
+	\item Feature Selektion \& paralleles Lernen sind nützlich, vor allem bei unbekannten Kategorien führt es zu einer besseren Klassifizierung der Daten
+	\end{itemize}
 }
+
+\frame{
+	\frametitle{Fazit}
+	Verbesserungsvorschläge \& weitere Ideen:
+	\begin{itemize}
+	\item Korpora: größer, andere Tasks, z.B. Filme
+	\item Features: \glqq mehr\grqq Information (semantisch, syntaktisch, ...)
+	\item Variation der Anzahl der random shards
+	\item Vergleich mit \glqq average\grqq-Single-Task-Perceptron
+	\item Verwendung alternativer MR-Frameworks, die besser für iterative Prozesse geeignet sind, z.B. Spark
+	\end{itemize}
+}
+
 \section{Referenzen}
 \frame{
-	\huge{}
+	\begin{center}
+	\huge{Referenzen}\\
+	\LARGE{- Inspiration und Anleitung}
+	\end{center}
 }
 \frame{
-	\frametitle{}
+	\frametitle{Referenzen}
+\begin{scriptsize}
+	\begin{itemize}
+	\item \textbf{Joint Feature Selection in Distributed Stochastic Learning for Large-Scale Discriminative Training in SMT}\\
+(P.Simianer, S. Riezler, C. Dyer. In Proceedings of the 50th Annual Meeting of the Association for Computational Linguistics (ACL 2012)).
+	\item \textbf{Domain Adaptation for Sentiment Classification}\\
+(John Blitzer, Mark Dredze, Fernando Pereira. Biographies, Bollywood, Boom-boxes and Blenders. Association of Computational Linguistics (ACL), 2007).
+	\item \textbf{Stochastic Gradient Descent Training for L1-regularized Log-linear Models with Cumulative Penalty}\\
+(Yoshimasa Tsuruoka, Jun’ichi Tsujii, Sophia Ananiadou. In Proceedings of the Joint Conference of the 47th Annual Meeting of the ACL and the 4th International Joint Conference on Natural Language Processing of the AFNLP (ACL, 2009)).
+	\item \textbf{Learning with Kernels - Support Vector Machines, Regularization, Optimization, and Beyond}\\
+(Bernhard Scholkopf, Alexander J. Smola. The MIT Press, 2002).
+	\end{itemize}
+\end{scriptsize}
 
 }
 
