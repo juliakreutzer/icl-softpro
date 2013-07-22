@@ -13,8 +13,7 @@
 \usepackage{xcolor,colortbl}
 \usepackage{arydshln}
 
-\lstset{numbers=left, numberstyle=\tiny, numbersep=5pt} 
-\lstset{language=java}
+
 \beamertemplatenavigationsymbolsempty
 
 \author{Mirko Hering, Julia Kreutzer, Jasmin Schröck}
@@ -140,7 +139,7 @@
 \frame{
 	\frametitle{Klassenarchitektur}
 	\begin{center}
-	\includegraphics[scale=0.33]{Klassenarchitektur.eps} 
+	\includegraphics[scale=0.25]{Klassenarchitektur.eps} 
 	\end{center}
 }
 
@@ -151,7 +150,9 @@
 	\large
 	\begin{itemize}
 	\item Aufruf der jar-Datei mit Hadoop
-	\item Angabe der Parameter (top k Features, Epochen, Kategorien) \\[0.5cm]
+	\item Angabe der Parameter (top k Features, Epochen, Kategorien)\\
+{\scriptsize hadoop jar HadoopTrainScalable.jar PathIn PathOut 5 1000 divt \grqq books;electronics;dvd;kitchen \grqq}
+	\\[0.5cm]
 	\item Innerhalb einer Epoche: Durchlauf der Phasen 1 \& 2
 	\item Abschließend: Selektion der top k Features
 	\end{itemize}
@@ -198,13 +199,6 @@
 }
 
 \frame{
-	\frametitle{Hadoop - Random Shards}
-	\begin{center}
-	\includegraphics[scale=0.35]{RandomShards.eps} 
-	\end{center}
-
-}
-\frame{
 	\frametitle{Parameter-Optimierung}
 	{\large Maß: Error-Rate}
 	\begin{itemize}
@@ -228,7 +222,8 @@
 
 \subsection{Baselines}
 \frame{
-	\frametitle{Wie gut klassifiziert unser regularisierter Multi-Task Perceptron...}
+	\frametitle{Baselines}
+	{\large Wie gut klassifiziert unser regularisierter Multi Task Perceptron...}
 	\begin{itemize}
 	\item ... jede einzelne Kategorie?
 	\item ... im Vergleich zu Single-Task Learning?
