@@ -20,7 +20,7 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
 
 	<!--comment out the next line if hadoop libraries are complete -->
-		<echo message="HadoopTrainPerceptronScalable was not included in build. Please install hadoop package and comment out this exclude in build.xml"/>
+		<echo message="To build HadoopTrainPerceptronScalable and a hadoop-runnable jar file, run ant create_hadoop "/>
 
         <javac srcdir="SentimentClassification/src" destdir="SentimentClassification/bin" source="1.6" target="1.6" includeantruntime="true">
             <classpath path="SentimentClassification/bin"/>
@@ -48,5 +48,40 @@
         <java classname="de.uniheidelberg.cl.softpro.sentimentclassification.WriteReview" failonerror="true" fork="yes" classpath="SentimentClassification/bin">
 		<arg value="${arg1}"/>        
 		</java>
+    </target>
+    
+    <target name="clean_hadoop">
+	<delete dir="/drives/local/data/Documents/Dev/Softpro/SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+	<delete file="/drives/local/data/Documents/Dev/Softpro/SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop.jar"/>
+    </target>
+    
+    <target name="create_hadoop" depends="clean_hadoop,build">
+        <jar destfile="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop.jar" excludes="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop.jar">
+            <manifest>
+                <attribute name="Main-Class" value="de.uniheidelberg.cl.softpro.sentimentclassification.HadoopTrainPerceptronScalable"/>
+                <attribute name="Class-Path" value=". sc_hadoop_lib/hadoop-annotations.jar sc_hadoop_lib/hadoop-annotations-2.0.0-cdh4.3.0.jar sc_hadoop_lib/hadoop-auth.jar sc_hadoop_lib/hadoop-auth-2.0.0-cdh4.3.0.jar sc_hadoop_lib/hadoop-common.jar sc_hadoop_lib/hadoop-common-2.0.0-cdh4.3.0.jar sc_hadoop_lib/hadoop-common-2.0.0-cdh4.3.0-tests.jar sc_hadoop_lib/hadoop-ant.jar sc_hadoop_lib/hadoop-ant-2.0.0-mr1-cdh4.3.0.jar sc_hadoop_lib/hadoop-core.jar sc_hadoop_lib/hadoop-core-2.0.0-mr1-cdh4.3.0.jar sc_hadoop_lib/hadoop-examples.jar sc_hadoop_lib/hadoop-examples-2.0.0-mr1-cdh4.3.0.jar sc_hadoop_lib/hadoop-test.jar sc_hadoop_lib/hadoop-test-2.0.0-mr1-cdh4.3.0.jar sc_hadoop_lib/hadoop-tools.jar sc_hadoop_lib/hadoop-tools-2.0.0-mr1-cdh4.3.0.jar"/>
+            </manifest>
+            <fileset dir="SentimentClassification/bin"/>
+	    <exclude name="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop.jar" />
+        </jar>
+        <delete dir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <mkdir dir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop/hadoop-annotations.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop/hadoop-annotations-2.0.0-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop/hadoop-auth.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop/hadoop-auth-2.0.0-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop/hadoop-common.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop/hadoop-common-2.0.0-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop/hadoop-common-2.0.0-cdh4.3.0-tests.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-ant.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-ant-2.0.0-mr1-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-core.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-core-2.0.0-mr1-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-examples.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-examples-2.0.0-mr1-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-test.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-test-2.0.0-mr1-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-tools.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
+        <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-tools-2.0.0-mr1-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
     </target>
 </project>
