@@ -84,4 +84,8 @@
         <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-tools.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
         <copy file="/usr/lib/hadoop-0.20-mapreduce/hadoop-tools-2.0.0-mr1-cdh4.3.0.jar" todir="SentimentClassification/bin/de/uniheidelberg/cl/softpro/sentimentclassification/sc_hadoop_lib"/>
     </target>
+    
+    <target name="all" depends="build, create_hadoop">
+	    <echo> Built everything! </echo>
+    </target>
 </project>
