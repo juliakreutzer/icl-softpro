@@ -7,8 +7,8 @@ build:
      [echo] HadoopTrainPerceptronScalable was not included in build. Please install hadoop package and comment out this exclude in build.xml
 
 WriteReview:
-     [echo] your review: +asdasnao+
-     [java] don't know ...
+     [echo] your review: +ads+
+     [java] negative!
 
 BUILD SUCCESSFUL
 Total time: 1 second
