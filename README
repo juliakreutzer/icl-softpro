@@ -1,0 +1,205 @@
+ABOUT
+	With this tool you can do tests on sentiment classification via both single task 
+	and multi task learning (perceptron). The multi task learner also allows to do 
+	feature extraction via l1/l2 regularization. 
+
+
+DIRECTORY STRUCTURE
+	src/de/uniheidelberg/cl/softpro/sentimentclassification
+		contains the java source code
+
+	bin/de/uniheidelberg/cl/softpro/sentimentclassification
+		contains precompiled java binaries
+
+	doc
+		contains the java-doc of the project
+
+	demo
+		provides a demo script
+
+	makeCorpus
+		provides unseen data corpora and scripts to create new unigram corpora
+
+	results
+		contains the results of various test runs
+
+	weightVectors
+		contains the trained weight vectors used for the group’s tests
+
+	weightVectorLength
+		provides a script that calculates the length of a weight vector. Basically 
+		used for debugging
+		
+	data
+		contains corpora and scripts for preprocessing
+
+	data/corpus_final
+		deprecated corpus format
+
+	data/corpus_final_formatted
+		corpora to be used; see description of the corpus below
+
+	data/corpus_final_formatted_WN
+		corpora extended with wordnet synsets
+
+
+INSTALLATION REQUIREMENTS
+	-an installation of JDK 6 (OpenJDK recommended)
+	-ant >= 1.7
+	-Cloudera Hadoop 4 (cdh-4.2.1; only multi task learning, random shard creation)
+	-Python 2.7 (corpus preprocessing, corpus creation)
+	-perl >= 5
+
+	Please make sure that the JAVA_HOME variable points to  the Java 6 (and not to a
+	Java 7) installation. Also, please check, whether calling the python command invokes 
+	python 2.7 or python 3.
+
+
+COMPILING
+	To compile the whole project, simply run
+	ant all
+
+	To compile just the single task implementation, run
+	ant build
+
+	To compile the multi task hadoop implementation, run
+	ant create_hadoop
+	(Important: the cloudera hadoop jars have to be located in /usr/lib/hadoop 
+	and /usr/lib/hadoop-0.20-mapreduce; that’s the default location after installing CDH)
+
+
+CORPUS
+	The used corpus data can be found in SentimentClassification/data/corpus_final_formatted
+
+	For each category (books, dvd, electronics, kitchen) and for the whole corpus (all), as 
+	well as for a corpus that contains reviews of each category, but is only as big as a corpus 
+	for one category (all.small), there is a set for training (60%), development (20%) and testing(20%).
+
+	Names of the files: 
+		<category or all or all.small>.<dev or test or train>.corpus.final.formatted.
+
+	Format of the files:
+		category (tab) feature:count feature:count …  #label#:positive (new line) ….
+
+
+TRAINING / SINGLE TASK
+	> ant Development singletrain
+	Performs Single-Task training on training set of corpus.
+	The parameter sets and corpus names for training have to be defined as class variables in 
+	SentimentClassification/src/de/uniheidelberg/cl/softpro/sentimentclassification/Development.java
+
+	Corpus files (e.g. “<corpusname or category>.train.corpus.final.formatted”) are read from 
+	SentimentClassification/data/processed_acl/corpus_final_formatted/
+
+	Trained weight vectors are saved in SentimentClassification/weightVectors/ to a file named according 
+	to the parameter set: 
+	“ST_<corpusname or category>_<#epochs>_<learningRate>.wv"
+
+
+TRAINING / MULTI TASK
+	To do multi task learning with hadoop and top k feature selection, simply run
+	hadoop jar sc_hadoop.jar [input folder] [output folder] [number of epochs] [number of top features] [learningRate] [categoryNames]
+
+	The jar file is located in bin/de/uniheidelberg/cl/softpro/sentimentclassification 
+	Default values are:
+		number of epochs: 10
+		number of top k features: 10
+		learningRate: -4
+	
+	
+CREATE RANDOM SHARDS
+	To create a corpus with categories assigned randomly, simply run
+	hadoop jar sc_hadoop.jar [input folder] [output folder] 0 0 0 “0;1;2;3” randomShards
+
+	[input folder] must contain a supported corpus
+	[output folder] will contain 4 files with random categories
+	“0:1:2:3” are the categories’ names; currently, only the creation of 4 shards is supported
+
+
+TEST ON DEVELOPMENT SET
+	> ant Development singletest
+	> ant Development multitest
+	> ant Development multirandomtest
+	Perform testing on development set of corpus, for single task, multi task and multi random task respectively.
+
+	The parameter sets for testing have to be defined as class variables in 
+	SentimentClassification/src/de/uniheidelberg/cl/softpro/sentimentclassification/Development.java
+	
+	Corpus files (e.g. “<corpusname or category>.train.corpus.final.formatted”) are read from 
+	SentimentClassification/data/processed_acl/corpus_final_formatted/
+
+	The results are saved in 
+	SentimentClassification/results/singleTaskDevResults_ALL/Baselines/<epoch> for single task, 
+	SentimentClassification/results/multiTaskDevResults_ALL/<epoch> for multi task and 
+	SentimentClassification/results/multiTaskRandomDevResults_ALL/<epoch> for multi random task.
+
+
+EVALUATION
+	> ant Evaluation singletest
+	> ant Evaluation multitest
+	> ant Evaluation multirandomtest
+	Perform testing on test set of corpus, for single task, multi task and multi random task respectively.
+	The parameters for testing have to be defined as class variables in 
+	SentimentClassification/src/de/uniheidelberg/cl/softpro/sentimentclassification/Evaluation.java
+	
+	Corpus files (e.g. “<corpusname or category>.train.corpus.final.formatted”) are read from 
+	SentimentClassification/data/processed_acl/corpus_final_formatted/
+	
+	The results are saved in 
+	SentimentClassification/results/testResults/SingleTrainTested for single task, 
+	SentimentClassification/results/testResults/MultiTrainTested for multi task and 
+	SentimentClassification/results/testResults/MultiTrainRandomTested for multi random task.
+
+	Our results on prepared corpus:
+
+	Training parameters:
+
+	Tested parameters in Development:
+		epochs = {"1", "10", "100"} for single task
+		epochsMulti = {"1","10", "20", "30"} for multi task
+		learningRates = {"exp", "dec", "1divt", "-6", "-5", "-4", "-3", "-2", "-1", "0", "1"}
+		topKs = {"10", "100", "1000", "2000", "5000", "10000", "50000"}
+
+	Best parameters(average on train-dev pairs) and therefore used in Evaluation:
+		epoch = "10"
+		learningRate = "-2"
+		topK = "5000"
+
+
+DEMO
+	> demo/writeReviewDemo.sh
+	You will be asked to type your review. Please avoid surrounding quotation marks. Your review will be 
+	classified by our system. The result is printed to a file named “outmessage_ant” and as well to the 
+	console output. Note that you will find additional information about the ant targets that were run in 
+	“outmessage_ant”.
+
+
+SOURCE DOCUMENTATION
+	See folder doc
+
+
+AUTHORS
+	Jasmin Schröck <schroeck@cl.uni-heidelberg.de>
+	Julia Kreutzer <kreutzer@cl.uni-heidelberg.de>
+	Mirko Hering <hering@cl.uni-heidelberg.de>
+
+
+CONTACT
+	swp-ss13-01@cl.uni-heidelberg.de
+
+
+REFERENCES
+	“Joint Feature Selection in Distributed Stochastic Learning for Large-Scale Discriminative 
+	Training in SMT” (P.Simianer, S. Riezler, C. Dyer. In Proceedings of the 50th Annual Meeting of 
+	the Association for Computational Linguistics (ACL 2012))
+
+	“Domain Adaptation for Sentiment Classification” (John Blitzer, Mark Dredze, Fernando Pereira. 
+	Biographies, Bollywood, Boom-boxes and Blenders. Association of Computational Linguistics (ACL), 2007)
+
+	“Stochastic Gradient Descent Training for L1-regularized Log-linear Models with
+	Cumulative Penalty” (Yoshimasa Tsuruoka, Jun’ichi Tsujii, Sophia Ananiadou. In Proceedings of the 
+	Joint Conference of the 47th Annual Meeting of the ACL and the 4th International Joint Conference on 
+	Natural Language Processing of the AFNLP (ACL, 2009))
+
+	“Learning with Kernels - Support Vector Machines, Regularization, Optimization, and
+	Beyond” (Bernhard Scholkopf, Alexander J. Smola. The MIT Press, 2002)
