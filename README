@@ -150,10 +150,6 @@ EVALUATION
 	SentimentClassification/results/testResults/MultiTrainTested for multi task and 
 	SentimentClassification/results/testResults/MultiTrainRandomTested for multi random task.
 
-	Our results on prepared corpus:
-
-	Training parameters:
-
 	Tested parameters in Development:
 		epochs = {"1", "10", "100"} for single task
 		epochsMulti = {"1","10", "20", "30"} for multi task
