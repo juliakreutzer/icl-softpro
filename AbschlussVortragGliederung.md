@@ -1,0 +1,29 @@
+# wichtige Inhaltspunkte #
+  * finale Klassenarchitektur
+  * beste Parameter auf DevSet
+  * neues Korpus (unseen)
+  * writeReview-Demo
+  * finale Ergebnisse auf TestSet für MTR, MT und ST-Baselines
+  * Experimente: WordNet-Synsets, Margin-Perceptron -> welche Unterschiede, warum nicht sinnvoll?
+  * Skalierbarkeit MT
+  * Unterschied MT - MTR -> sinnvoll?
+  * qualitativ: sind Ergebnisse intuitiv (top10 MT/R)
+
+
+# Gliederung #
+25min, Anforderungen:
+  1. Wie wurde der Lösungsvorschlag umgesetzt?
+  1. Evaluationsergebnisse
+  1. Demo
+  1. Lessons Learned -> Schwächen+Probleme beim Projektablauf, Verbesserungsvorschläge
+
+  1. Aufgabenstellung + Lösungsansatz wdh. (siehe Spez.vortrag)
+  1. Umsetzung
+> > Korpusformat
+> > Klassenarchitektur (grob)
+> > Implementierung der Shards
+> > Parameteroptimierung -> WordNet + MarginPerceptron-Varianten
+  1. Evaluationsergebnisse
+> > Baselines (avg)
+> > Interpretation
+> > unseen Korpora (

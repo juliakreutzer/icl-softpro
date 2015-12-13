@@ -1,0 +1,40 @@
+Projektverzeichnis auf ella: /resources/softpro/ss13/gruppe1
+
+svn: https://www.cl.uni-heidelberg.de/svn/sp-ss13-01
+
+## 14.5. Forschungsplan ##
+ERLEDIGT!
+  * Projektbeschreibung: Ziel, Methode, Evaluierung, Daten, Tools
+  * Wie plant ihr Ergebnisse zu evaluieren?
+  * Welche Tools und Daten sollen verwendet werden?
+  * Abgabe schriftlich, ca. 2 Seiten
+  * Wer macht was? -> eher Spezifikation
+  * grober Aufbau
+  * was muss überhaupt gemacht werden?
+
+
+## 21.5. Vortrag fertig vorbereitet ##
+
+## 28.5. Spezifikationsvortrag ##
+  * Problemstellung, Lösungsansatz, Evaluation
+  * Auswahl/Sichtung von Ressourcen und Algorithmen/Verfahren
+  * Modularisierung, Zuteilung, Zeitplan
+  * Programmarchitektur
+  * abstrakte Version vom Code
+  * Vortrag: 25 Minuten
+
+## 20.6. Multi-Task zusammenbauen ##
+  * Eine super Einführung in Hadoop hier: http://developer.yahoo.com/hadoop/tutorial/module4.html
+  * Beispiel für Iterationen in Hadoop: http://stackoverflow.com/questions/5702018/how-to-re-run-whole-map-reduce-in-hadoop-before-job-completion
+## 27.6. Implementierung fertig ##
+
+  * Zeit zum Testen, Verbessern, Ändern ;-)
+
+## 22.7. Abschlussvortrag ##
+  * Umsetzung des Lösungsansatzes
+  * Evaluation
+  * Demo
+  * Lessons learned
+  * Vortrag: 25 Minuten
+
+# 30.7. Abgabefrist #

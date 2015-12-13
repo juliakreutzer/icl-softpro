@@ -1,0 +1,6 @@
+# Todo #
+  * reviewsOrganicfood
+  * Vortrag! ab 08.07.13
+> > siehe: https://docs.google.com/presentation/d/1NB74w6O1PDeHtm7GRn47h1mKu7gETslEmVu-m2DtKk0/edit?usp=sharing
+  * HadoopPerceptron Aufruf dokumentieren m
+  * README: Aufrufe (Test, Training etc.), evtl. Beispiel
